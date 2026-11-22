@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asal Usul Sompoton — Pameran WebAR Warisan Sabah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <style>
+    :root {
+      --bg-void: #030906;
+      --bg-deep: #07140D;
+      --bg-card: rgba(11, 28, 19, 0.86);
+      --gold: #F2C14E;
+      --gold-bright: #FFE8A3;
+      --amber: #D66926;
+      --gourd: #8A4518;
+      --emerald-glow: #4ADE80;
+      --ivory: #FAF6EC;
+      --muted: #93A89B;
+      --line: rgba(242, 193, 78, 0.22);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-void);
+      color: var(--ivory);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* KURSOR MAGNETIK BERASASKAN GPU (TRANSLATE3D) */
+    @media (pointer: fine) {
+      .cursor-dot, .cursor-ring {
+        position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+        border-radius: 50%; will-change: transform;
+      }
+      .cursor-dot {
+        width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+        background: var(--gold-bright); box-shadow: 0 0 10px var(--gold);
+      }
+      .cursor-ring {
+        width: 34px; height: 34px; margin: -17px 0 0 -17px;
+        border: 1.5px solid rgba(242, 193, 78, 0.55);
+        transition: width 0.2s ease, height 0.2s ease, margin 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      }
+      .cursor-ring.active {
+        width: 54px; height: 54px; margin: -27px 0 0 -27px;
+        background: rgba(242, 193, 78, 0.12); border-color: var(--gold-bright);
+      }
+    }
+    @media (pointer: coarse) {
+      .cursor-dot, .cursor-ring { display: none !important; }
+    }
+
+    /* TIRAI PEMBUKAAN PAMERAN */
+    #intro-curtain {
+      position: fixed; inset: 0; z-index: 10000;
+      background: radial-gradient(circle at center, #0F291B 0%, #020704 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+      will-change: transform, opacity;
+      transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.7s ease;
+    }
+    #intro-curtain.hide { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+    .curtain-kicker {
+      font-size: 0.72rem; letter-spacing: 5px; color: var(--gold); text-transform: uppercase;
+      opacity: 0; animation: fadeInUp 0.55s ease forwards;
+    }
+    .curtain-title {
+      font-family: 'Cinzel Decorative', serif; font-size: clamp(1.7rem, 4.5vw, 3.2rem);
+      background: linear-gradient(120deg, var(--gold-bright), var(--gold), var(--amber));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: 4px; opacity: 0; animation: fadeInUp 0.7s 0.12s ease forwards;
+    }
+    .curtain-bar {
+      width: 260px; height: 2px; transform: scaleX(0);
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: barGrow 0.9s 0.18s ease forwards;
+    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes barGrow { to { transform: scaleX(1); } }
+
+    /* BAR KEMAJUAN BERASASKAN GPU (SCALEX) */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 2000;
+      transform-origin: left; transform: scaleX(0); will-change: transform;
+      background: linear-gradient(90deg, var(--emerald-glow), var(--gold), var(--amber));
+      box-shadow: 0 0 10px var(--gold);
+    }
+
+    /* KANVAS KUNANG-KUNANG & AURORA RINGAN (TANPA FILTER BLUR BERAT) */
+    #magic-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .aurora {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      will-change: transform; animation: driftAura 18s ease-in-out infinite alternate;
+    }
+    .aura-1 {
+      width: 680px; height: 680px; top: -180px; right: -140px;
+      background: radial-gradient(circle, rgba(27, 107, 66, 0.28) 0%, transparent 68%);
+    }
+    .aura-2 {
+      width: 620px; height: 620px; bottom: -100px; left: -180px; animation-delay: -6s;
+      background: radial-gradient(circle, rgba(184, 93, 25, 0.22) 0%, transparent 68%);
+    }
+    @keyframes driftAura { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(40px, 30px, 0) scale(1.1); } }
+
+    /* KOMPAS BAB TERAPUNG (SISI KANAN) */
+    .chapter-compass {
+      position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 900;
+      display: flex; flex-direction: column; gap: 14px; align-items: center;
+    }
+    .compass-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(242, 193, 78, 0.28); border: 1px solid rgba(242, 193, 78, 0.5);
+      transition: transform 0.2s, background 0.2s; position: relative; display: block;
+    }
+    .compass-dot:hover, .compass-dot.active {
+      background: var(--gold); transform: scale(1.45); box-shadow: 0 0 10px var(--gold);
+    }
+    .compass-dot::before {
+      content: attr(data-label); position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      background: rgba(3, 9, 6, 0.94); color: var(--gold-bright); font-size: 0.7rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+      white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .compass-dot:hover::before { opacity: 1; }
+
+    /* BUTANG SUASANA RIMBA TERAPUNG */
+    .ambient-fab {
+      position: fixed; bottom: 22px; right: 22px; z-index: 950;
+      display: inline-flex; align-items: center; gap: 9px;
+      background: rgba(7, 20, 13, 0.92); border: 1px solid rgba(242, 193, 78, 0.45);
+      color: var(--gold-bright); padding: 10px 16px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.6); transition: transform 0.2s, border-color 0.2s;
+    }
+    .ambient-fab:hover { transform: translateY(-2px); border-color: var(--gold); }
+    .ambient-fab.on { background: linear-gradient(135deg, rgba(242,193,78,0.22), rgba(214,105,38,0.28)); }
+    .amb-bars { display: flex; gap: 2.5px; align-items: flex-end; height: 13px; }
+    .amb-bars span { width: 2.5px; height: 4px; background: var(--gold); border-radius: 2px; }
+    .ambient-fab.on .amb-bars span { animation: eqMini 0.6s ease-in-out infinite alternate; }
+    .ambient-fab.on .amb-bars span:nth-child(2) { animation-delay: 0.15s; }
+    .ambient-fab.on .amb-bars span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes eqMini { from { height: 3px; } to { height: 13px; } }
+
+    /* NAVBAR KACA PREMIUM */
+    .nav-wrap {
+      position: fixed; top: 14px; left: 0; right: 0; z-index: 1000;
+      display: flex; justify-content: center; padding: 0 4%;
+    }
+    .navbar {
+      width: 100%; max-width: 1220px;
+      background: rgba(4, 12, 8, 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(242, 193, 78, 0.25); border-radius: 999px;
+      padding: 9px 12px 9px 22px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+      color: var(--gold-bright); font-family: 'Cinzel Decorative', serif;
+      font-weight: 700; font-size: 0.98rem; letter-spacing: 0.8px;
+    }
+    .brand-emblem {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber));
+      display: grid; place-items: center; font-size: 1rem;
+      box-shadow: 0 0 14px rgba(242, 193, 78, 0.4);
+    }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.83rem; font-weight: 600;
+      letter-spacing: 0.4px; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold-bright); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+
+    .lang-switch {
+      display: flex; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 3px;
+    }
+    .lang-switch button {
+      border: none; background: transparent; color: var(--muted);
+      padding: 5px 11px; border-radius: 999px; font-size: 0.74rem; font-weight: 800; cursor: pointer;
+    }
+    .lang-switch button.active { background: var(--gold); color: var(--bg-void); }
+
+    /* BUTANG EMAS BERKILAU */
+    .btn-luxe {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber));
+      color: #050D08; text-decoration: none;
+      padding: 11px 22px; border-radius: 999px; font-weight: 800; font-size: 0.86rem;
+      display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(242, 193, 78, 0.28); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-luxe::before {
+      content: ""; position: absolute; top: 0; left: -120%; width: 65%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      transform: skewX(-22deg); transition: left 0.6s;
+    }
+    .btn-luxe:hover::before { left: 150%; }
+    .btn-luxe:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(242, 193, 78, 0.45); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.05); color: var(--ivory); text-decoration: none;
+      padding: 12px 24px; border-radius: 999px; font-weight: 600; font-size: 0.88rem;
+      border: 1px solid rgba(242, 193, 78, 0.35); display: inline-flex; align-items: center; gap: 8px;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(242, 193, 78, 0.14); border-color: var(--gold); transform: translateY(-2px); }
+
+    /* HERO PAMERAN MUZIUM + BUKU 3D BOLEH DIBUKA */
+    .hero {
+      min-height: 100vh; position: relative; z-index: 2;
+      padding: 132px 7% 90px; max-width: 1380px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px; padding: 7px 16px; border-radius: 999px;
+      background: rgba(242, 193, 78, 0.1); border: 1px solid rgba(242, 193, 78, 0.34);
+      color: var(--gold-bright); font-size: 0.74rem; font-weight: 700;
+      letter-spacing: 2.2px; text-transform: uppercase; margin-bottom: 22px;
+    }
+    .live-pulse {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--emerald-glow);
+      box-shadow: 0 0 10px var(--emerald-glow); animation: pulseDot 1.6s infinite;
+    }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .hero h1 {
+      font-family: 'Cinzel Decorative', serif; font-size: clamp(2.7rem, 5.4vw, 4.9rem);
+      line-height: 1.04; color: #fff; font-weight: 900; margin-bottom: 20px;
+    }
+    .hero h1 span {
+      display: block;
+      background: linear-gradient(120deg, var(--gold-bright) 0%, var(--gold) 45%, var(--amber) 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-lead {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.38rem; line-height: 1.52;
+      color: #D2DFD7; max-width: 560px; margin-bottom: 32px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 42px; }
+    .hero-actions .btn-luxe { padding: 15px 30px; font-size: 0.96rem; }
+
+    .hero-metrics {
+      display: grid; grid-template-columns: repeat(3, max-content); gap: 34px;
+      padding-top: 24px; border-top: 1px solid rgba(242, 193, 78, 0.2);
+    }
+    .metric strong {
+      display: block; font-family: 'Cinzel Decorative', serif; font-size: 1.65rem; color: var(--gold);
+    }
+    .metric span { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.6px; }
+
+    /* PENTAS HERO: BUKU 3D BOLEH DIBUKA + TOGOL 3D */
+    .hero-stage {
+      position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px;
+      perspective: 1400px;
+    }
+    .orbit-ring {
+      position: absolute; width: 400px; height: 400px; border-radius: 50%;
+      border: 1px dashed rgba(242, 193, 78, 0.22); pointer-events: none;
+      will-change: transform; animation: spinSlow 36s linear infinite;
+    }
+    .orbit-ring::after {
+      content: "✦"; position: absolute; top: -10px; left: 50%; color: var(--gold); font-size: 1rem;
+    }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+    .hero-toggle {
+      display: inline-flex; background: rgba(7, 20, 13, 0.92);
+      border: 1px solid rgba(242, 193, 78, 0.38); border-radius: 999px; padding: 4px; z-index: 5;
+    }
+    .hero-toggle button {
+      border: none; background: transparent; color: var(--muted);
+      padding: 7px 16px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: 0.2s;
+    }
+    .hero-toggle button.active {
+      background: linear-gradient(135deg, var(--gold), var(--amber)); color: var(--bg-void);
+    }
+
+    /* BUKU 3D YANG TERBUKA BILA HOVER */
+    .magic-book {
+      position: relative; width: 295px; height: 415px; z-index: 3;
+      transform-style: preserve-3d; transform: rotateY(-18deg) rotateX(6deg);
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1); cursor: pointer;
+      will-change: transform;
+    }
+    .magic-book:hover { transform: rotateY(-8deg) rotateX(2deg) scale(1.03); }
+    .book-inside {
+      position: absolute; inset: 4px 4px 4px 10px; border-radius: 6px 16px 16px 6px;
+      background: linear-gradient(135deg, #FBF4E1 0%, #EAD9B7 100%);
+      color: #16261C; padding: 28px 22px; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      box-shadow: inset 12px 0 24px rgba(0,0,0,0.18), 0 24px 50px rgba(0,0,0,0.75);
+    }
+    .book-inside h4 { font-family: 'Cinzel Decorative', serif; font-size: 1.05rem; color: #8A4518; margin-bottom: 10px; }
+    .book-inside p { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; line-height: 1.45; margin-bottom: 16px; }
+    .book-cover-leaf {
+      position: absolute; inset: 0; transform-origin: left center;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-style: preserve-3d; will-change: transform;
+    }
+    .magic-book:hover .book-cover-leaf { transform: rotateY(-38deg); }
+    .book-cover-leaf img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 6px 20px 20px 6px;
+      box-shadow: -12px 18px 40px rgba(0,0,0,0.7), 0 0 0 1.5px rgba(242, 193, 78, 0.5);
+      display: block;
+    }
+    .book-hover-tip { font-size: 0.75rem; color: var(--gold-bright); opacity: 0.85; letter-spacing: 0.5px; z-index: 4; }
+
+    #hero-3d-box {
+      display: none; width: 360px; max-width: 92%; height: 415px; z-index: 3;
+      border-radius: 26px; background: radial-gradient(circle at center, #183E2B, #06120B);
+      border: 1.5px solid rgba(242, 193, 78, 0.5);
+      box-shadow: 0 24px 54px rgba(0,0,0,0.75); overflow: hidden; position: relative;
+    }
+    #hero-3d-box model-viewer { width: 100%; height: 100%; }
+
+    /* JALUR WARISAN BERGERAK + MOTIF LINANGKIT */
+    .linangkit-strip {
+      height: 6px; width: 100%; position: relative; z-index: 3;
+      background: repeating-linear-gradient(135deg, #060E0A 0 10px, var(--gold) 10px 15px, var(--amber) 15px 20px, #060E0A 20px 28px);
+    }
+    .marquee-wrap {
+      position: relative; z-index: 3; overflow: hidden;
+      background: rgba(9, 24, 16, 0.94); padding: 14px 0;
+    }
+    .marquee-track {
+      display: flex; gap: 42px; width: max-content;
+      will-change: transform; animation: marquee 28s linear infinite;
+    }
+    .marquee-track span {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.84rem;
+      color: var(--gold-bright); letter-spacing: 2.8px; white-space: nowrap;
+    }
+    @keyframes marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+
+    /* SEKSYEN EDITORIAL + NOMBOR BAB GERGASI */
+    section.wrap {
+      padding: 96px 7%; max-width: 1320px; margin: 0 auto; position: relative; z-index: 2;
+      contain: layout style;
+    }
+    .sec-head { text-align: center; max-width: 720px; margin: 0 auto 52px; position: relative; }
+    .chapter-watermark {
+      position: absolute; top: -46px; left: 50%; transform: translateX(-50%);
+      font-family: 'Cinzel Decorative', serif; font-size: 6.5rem; font-weight: 900;
+      color: rgba(242, 193, 78, 0.055); pointer-events: none; line-height: 1; user-select: none;
+    }
+    .sec-kicker {
+      color: var(--gold); font-size: 0.74rem; font-weight: 800;
+      letter-spacing: 3.2px; text-transform: uppercase; margin-bottom: 10px; display: block;
+    }
+    .sec-head h2 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.85rem, 3.6vw, 2.8rem); color: #fff; margin-bottom: 12px;
+    }
+    .sec-head p { color: var(--muted); font-size: 0.98rem; }
+
+    /* KAD SPOTLIGHT RINGAN (TANPA BACKDROP-FILTER BERAT PADA SETIAP KAD) */
+    .spot-card {
+      position: relative; background: var(--bg-card); border: 1px solid var(--line);
+      border-radius: 26px; overflow: hidden;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .spot-card::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 50%), rgba(242, 193, 78, 0.14), transparent 45%);
+      transition: opacity 0.25s;
+    }
+    .spot-card:hover::before { opacity: 1; }
+    .spot-card:hover { border-color: rgba(242, 193, 78, 0.55); }
+
+    /* PENTAS 3 DIORAMA UTAMA */
+    .pedestal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .pedestal-card { padding: 18px; display: flex; flex-direction: column; }
+    .pedestal-stage {
+      height: 270px; border-radius: 18px; overflow: hidden; position: relative;
+      background: radial-gradient(circle at 50% 60%, #1E4F36 0%, #06130C 100%);
+      border: 1px solid rgba(242, 193, 78, 0.22); margin-bottom: 16px;
+    }
+    .pedestal-stage model-viewer { width: 100%; height: 100%; }
+    .pedestal-tag {
+      position: absolute; top: 12px; left: 12px; z-index: 4;
+      background: rgba(3, 9, 6, 0.88); color: var(--gold-bright);
+      border: 1px solid rgba(242, 193, 78, 0.4); font-size: 0.72rem; font-weight: 800;
+      padding: 4px 11px; border-radius: 999px;
+    }
+    .pedestal-card h3 { font-family: 'Cinzel Decorative', serif; font-size: 1.12rem; color: #fff; margin-bottom: 6px; }
+    .pedestal-card p { font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; flex: 1; }
+
+    /* ALAT MUZIK SOMPOTON VISUAL SEBENAR */
+    .sompoton-studio {
+      padding: 44px 40px; display: grid; grid-template-columns: 0.95fr 1.15fr;
+      gap: 40px; align-items: center;
+    }
+    .kbd-hint {
+      display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      margin: 14px 0 22px; font-size: 0.8rem; color: var(--muted);
+    }
+    .kbd-hint kbd {
+      background: rgba(242, 193, 78, 0.14); border: 1px solid rgba(242, 193, 78, 0.4);
+      color: var(--gold-bright); padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.74rem;
+    }
+    .studio-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .instrument-box {
+      position: relative; border-radius: 24px; overflow: hidden;
+      background: radial-gradient(circle at bottom, rgba(214, 105, 38, 0.2), rgba(3, 9, 6, 0.94));
+      border: 1px solid rgba(242, 193, 78, 0.28); padding: 28px 18px 22px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    #wave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.9; }
+    .sompoton-body { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+    .pipes-stage {
+      display: flex; align-items: flex-end; justify-content: center; gap: 10px;
+      height: 195px; padding: 0 12px; position: relative; z-index: 3;
+    }
+    .pipe {
+      width: 42px; border-radius: 12px 12px 2px 2px; border: none; cursor: pointer;
+      background: linear-gradient(90deg, #B57920 0%, #FCE296 42%, #D4942A 78%, #73440E 100%);
+      color: #07120B; font-weight: 800; font-size: 0.72rem;
+      display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+      padding-bottom: 10px; transition: transform 0.1s, box-shadow 0.12s;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.5); position: relative;
+    }
+    .pipe::before {
+      content: ""; position: absolute; top: 32%; left: -2px; right: -2px; height: 6px;
+      background: linear-gradient(90deg, #5A2C0A, #9C571F, #4A2308); border-radius: 2px;
+    }
+    .pipe:hover { transform: translateY(-7px); box-shadow: 0 0 22px rgba(242, 193, 78, 0.7); }
+    .pipe.active { transform: scaleY(0.96); background: #FFF8DB; box-shadow: 0 0 30px var(--gold-bright); }
+    .pipe small { font-size: 0.62rem; opacity: 0.75; margin-top: 2px; }
+
+    .gourd-base {
+      width: 240px; height: 76px; margin-top: -12px; position: relative; z-index: 2;
+      background: radial-gradient(circle at 38% 30%, #D98236 0%, #9E4F1B 55%, #4A2208 100%);
+      border-radius: 50% 50% 46% 46% / 35% 35% 65% 65%;
+      border: 2px solid rgba(255, 224, 150, 0.25);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.7), inset 0 -10px 20px rgba(0,0,0,0.45);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gourd-base::before {
+      content: ""; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+      width: 196px; height: 10px; border-radius: 999px;
+      background: repeating-linear-gradient(90deg, #3A1D08 0 8px, #C77C2E 8px 14px);
+    }
+    .gourd-label {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.72rem; letter-spacing: 2.5px;
+      color: rgba(255, 232, 163, 0.85); margin-top: 10px;
+    }
+    .floating-note {
+      position: absolute; pointer-events: none; font-size: 1.5rem; color: var(--gold-bright);
+      font-weight: 800; animation: noteRise 1s ease-out forwards; z-index: 10;
+    }
+    @keyframes noteRise {
+      0% { transform: translate3d(0,0,0) scale(0.8); opacity: 1; }
+      100% { transform: translate3d(14px,-90px,0) scale(1.4); opacity: 0; }
+    }
+    .note-status {
+      position: relative; z-index: 3; margin-top: 16px; text-align: center;
+      font-size: 0.86rem; color: var(--gold-bright); font-weight: 600; min-height: 22px;
+    }
+
+    /* WARISAN & KAMUS 3D */
+    .heritage-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; align-items: start; }
+    .story-box { padding: 36px; }
+    .story-box p { font-family: 'Cormorant Garamond', serif; font-size: 1.28rem; color: #E4EDE7; margin-bottom: 18px; line-height: 1.65; }
+    .drop-cap::first-letter {
+      font-family: 'Cinzel Decorative', serif; float: left; font-size: 3.7rem; line-height: 0.8;
+      padding-right: 12px; color: var(--gold); font-weight: 900;
+    }
+    .tabs-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tab-btn {
+      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04); color: var(--muted); font-weight: 700; font-size: 0.82rem;
+      cursor: pointer; transition: 0.2s;
+    }
+    .tab-btn.active { background: var(--gold); color: var(--bg-void); border-color: var(--gold); }
+    .tab-panel { padding: 30px; min-height: 220px; }
+    .tab-panel h3 { font-family: 'Cinzel Decorative', serif; color: var(--gold-bright); font-size: 1.3rem; margin-bottom: 10px; }
+    .tab-panel p { color: var(--muted); font-size: 0.95rem; }
+
+    .dict-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+    .flip-card { background: transparent; height: 178px; perspective: 1000px; cursor: pointer; }
+    .flip-inner {
+      position: relative; width: 100%; height: 100%; text-align: center;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-front, .flip-back {
+      position: absolute; inset: 0; backface-visibility: hidden; border-radius: 22px; padding: 22px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .flip-front {
+      background: linear-gradient(145deg, rgba(16, 42, 29, 0.92), rgba(6, 16, 11, 0.96));
+      border: 1px solid var(--line);
+    }
+    .flip-front:hover { border-color: var(--gold); }
+    .flip-front h3 { font-family: 'Cinzel Decorative', serif; color: var(--gold-bright); font-size: 1.35rem; margin-bottom: 6px; }
+    .flip-front span { font-size: 0.74rem; color: var(--emerald-glow); font-weight: 600; }
+    .flip-back {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber));
+      color: var(--bg-void); transform: rotateY(180deg);
+    }
+    .flip-back strong { font-size: 1.05rem; margin-bottom: 4px; }
+    .flip-back p { font-size: 0.84rem; font-weight: 700; }
+
+    /* 3 BAHASA + GALERI 12 BABAK */
+    .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .lang-card { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; }
+    .lang-card:hover { transform: translateY(-5px); }
+    .lang-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .code-pill {
+      padding: 6px 14px; border-radius: 10px; font-weight: 800; font-size: 0.82rem;
+      background: rgba(242, 193, 78, 0.16); color: var(--gold); border: 1px solid rgba(242, 193, 78, 0.35);
+    }
+    .eq { display: flex; gap: 3px; align-items: flex-end; height: 20px; opacity: 0.3; }
+    .eq span { width: 3.5px; height: 6px; background: var(--emerald-glow); border-radius: 2px; }
+    .lang-card.playing .eq { opacity: 1; }
+    .lang-card.playing .eq span { animation: bounceEq 0.55s ease-in-out infinite alternate; }
+    .lang-card.playing .eq span:nth-child(2) { animation-delay: 0.15s; }
+    .lang-card.playing .eq span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounceEq { from { height: 4px; } to { height: 20px; } }
+    .lang-card h3 { font-family: 'Cinzel Decorative', serif; font-size: 1.22rem; margin-bottom: 8px; color: #fff; }
+    .lang-card p { font-size: 0.88rem; color: var(--muted); margin-bottom: 22px; }
+    .sample-row {
+      display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.38);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 11px 14px;
+      color: #fff; font-weight: 600; font-size: 0.86rem; cursor: pointer; margin-bottom: 16px; width: 100%;
+    }
+    .sample-row:hover { border-color: var(--gold); color: var(--gold-bright); }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .filter-bar { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 34px; }
+    .filter-btn {
+      padding: 10px 22px; border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04); color: var(--muted); font-weight: 700; font-size: 0.85rem;
+      cursor: pointer; transition: 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--gold); color: var(--bg-void); border-color: var(--gold); }
+
+    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .page-card {
+      position: relative; border-radius: 20px; overflow: hidden;
+      background: rgba(11, 28, 19, 0.9); border: 1px solid rgba(242, 193, 78, 0.18);
+      text-decoration: none; color: #fff; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .page-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 18px 36px rgba(0,0,0,0.65); }
+    .page-card img {
+      width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block;
+      background: radial-gradient(circle at center, #1E4F36 0%, #06130C 100%);
+    }
+    .p-num {
+      position: absolute; top: 10px; left: 10px; z-index: 5; width: 28px; height: 28px;
+      border-radius: 50%; background: rgba(3, 9, 6, 0.9); color: var(--gold);
+      font-weight: 800; font-size: 0.78rem; display: grid; place-items: center;
+      border: 1px solid rgba(242, 193, 78, 0.45);
+    }
+    .p-badges { position: absolute; top: 10px; right: 10px; z-index: 5; display: flex; gap: 5px; }
+    .p-tag { padding: 3px 9px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; }
+    .tag-3d { background: var(--gold); color: var(--bg-void); }
+    .tag-sfx { background: rgba(3, 9, 6, 0.9); color: var(--emerald-glow); border: 1px solid var(--emerald-glow); }
+    .p-body { padding: 14px 15px; }
+    .p-body h4 { font-size: 0.88rem; font-weight: 600; line-height: 1.38; color: var(--ivory); }
+
+    /* KUIZ & SIJIL DIGITAL PNG */
+    .quiz-box { max-width: 760px; margin: 0 auto; padding: 40px 34px; }
+    .quiz-q { font-size: 1.18rem; font-weight: 700; color: #fff; margin-bottom: 20px; }
+    .quiz-opts { display: grid; gap: 11px; }
+    .quiz-opt {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.16);
+      color: var(--ivory); padding: 14px 18px; border-radius: 14px;
+      text-align: left; font-size: 0.94rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+    }
+    .quiz-opt:hover { border-color: var(--gold); background: rgba(242,193,78,0.12); }
+    .quiz-opt.correct { background: rgba(40, 140, 85, 0.42); border-color: var(--emerald-glow); }
+    .quiz-opt.wrong { background: rgba(180, 45, 45, 0.42); border-color: #F87171; }
+    .name-input {
+      width: 100%; max-width: 340px; padding: 13px 18px; border-radius: 999px;
+      border: 1.5px solid var(--gold); background: rgba(0,0,0,0.45); color: #fff;
+      font-size: 0.95rem; text-align: center; margin: 14px 0; outline: none;
+    }
+    .badge-card {
+      margin: 22px auto 0; max-width: 450px; padding: 30px 24px; border-radius: 24px;
+      background: radial-gradient(circle at top, #1F5137, #05110A);
+      border: 2px solid var(--gold); text-align: center;
+      box-shadow: 0 0 36px rgba(242, 193, 78, 0.3);
+      animation: popIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes popIn { from { transform: scale(0.84); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .badge-card .medal { font-size: 3rem; margin-bottom: 6px; }
+    .badge-card h3 { font-family: 'Cinzel Decorative', serif; color: var(--gold-bright); font-size: 1.32rem; margin-bottom: 4px; }
+    .badge-card .winner-name { font-size: 1.28rem; font-weight: 800; color: #fff; margin: 8px 0; }
+
+    .confetti {
+      position: fixed; width: 9px; height: 9px; z-index: 3000; pointer-events: none;
+      will-change: transform; animation: confettiDrop 2.4s ease-out forwards;
+    }
+    @keyframes confettiDrop {
+      0% { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; }
+      100% { transform: translate3d(0,100vh,0) rotate(720deg); opacity: 0; }
+    }
+
+    /* FAQ & FOOTER */
+    .faq-list { max-width: 820px; margin: 0 auto; }
+    .faq-item {
+      background: var(--bg-card); border: 1px solid var(--line);
+      border-radius: 18px; margin-bottom: 12px; overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; background: transparent; border: none; color: #fff;
+      padding: 19px 24px; font-size: 0.96rem; font-weight: 700; text-align: left;
+      display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+    }
+    .faq-q span { color: var(--gold); font-size: 1.35rem; transition: transform 0.25s; }
+    .faq-item.open .faq-q span { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; padding: 0 24px; color: var(--muted); font-size: 0.92rem; transition: max-height 0.3s ease; }
+    .faq-item.open .faq-a { max-height: 180px; padding-bottom: 20px; }
+
+    .reveal { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.show { opacity: 1; transform: translate3d(0, 0, 0); }
+
+    footer {
+      position: relative; z-index: 2; background: #020604; padding: 54px 7%;
+      text-align: center; border-top: 1px solid var(--line); font-size: 0.88rem; color: var(--muted);
+    }
+    footer strong { color: var(--gold-bright); }
+    .team-row { margin: 10px 0 12px; color: #fff; font-weight: 600; }
+
+    @media (max-width: 960px) {
+      .nav-links, .chapter-compass { display: none; }
+      .hero, .pedestal-grid, .sompoton-studio, .heritage-grid, .lang-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 112px; text-align: center; }
+      .hero-lead { margin: 0 auto 28px; }
+      .hero-actions, .hero-metrics { justify-content: center; }
+      .sompoton-studio { padding: 28px 20px; }
+      .ambient-fab { bottom: 14px; right: 14px; padding: 8px 13px; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- KURSOR MAGNETIK -->
+  <div class="cursor-dot" id="c-dot"></div>
+  <div class="cursor-ring" id="c-ring"></div>
+
+  <!-- TIRAI PEMBUKAAN PAMERAN -->
+  <div id="intro-curtain">
+    <div class="curtain-kicker">PAMERAN WEBAR WARISAN SABAH</div>
+    <div class="curtain-title">ASAL USUL SOMPOTON</div>
+    <div class="curtain-bar"></div>
+  </div>
+
+  <div id="scroll-progress"></div>
+  <canvas id="magic-canvas"></canvas>
+  <div class="aurora aura-1"></div>
+  <div class="aurora aura-2"></div>
+
+  <!-- KOMPAS BAB TERAPUNG -->
+  <div class="chapter-compass">
+    <a href="#top" class="compass-dot active" data-target="top" data-label="Utama"></a>
+    <a href="#diorama" class="compass-dot" data-target="diorama" data-label="01 · Pentas 3D"></a>
+    <a href="#studio" class="compass-dot" data-target="studio" data-label="02 · Sompoton Maya"></a>
+    <a href="#kisah" class="compass-dot" data-target="kisah" data-label="03 · Warisan"></a>
+    <a href="#kamus" class="compass-dot" data-target="kamus" data-label="04 · Kamus 3D"></a>
+    <a href="#halaman" class="compass-dot" data-target="halaman" data-label="05 · 12 Babak"></a>
+    <a href="#kuiz" class="compass-dot" data-target="kuiz" data-label="06 · Kuiz & Sijil"></a>
+  </div>
+
+  <!-- BUTANG SUASANA RIMBA TERAPUNG -->
+  <button class="ambient-fab" id="ambient-fab" onclick="toggleAmbient()">
+    <div class="amb-bars"><span></span><span></span><span></span></div>
+    <span id="amb-label">Suasana Rimba: MATI</span>
+  </button>
+
+  <!-- NAVBAR -->
+  <div class="nav-wrap">
+    <nav class="navbar">
+      <a href="#top" class="brand">
+        <span class="brand-emblem">🎋</span>
+        <span>Sompoton AR</span>
+      </a>
+      <div class="nav-links">
+        <a href="#diorama" data-i18n="nav_3d">Pentas 3D</a>
+        <a href="#studio" data-i18n="nav_studio">Sompoton</a>
+        <a href="#kisah" data-i18n="nav_story">Warisan</a>
+        <a href="#kamus" data-i18n="nav_dict">Kamus</a>
+        <a href="#halaman" data-i18n="nav_pages">12 Babak</a>
+        <a href="#kuiz" data-i18n="nav_quiz">Kuiz</a>
+      </div>
+      <div class="nav-right">
+        <div class="lang-switch">
+          <button id="btn-bm" class="active" onclick="setLang('bm')">BM</button>
+          <button id="btn-en" onclick="setLang('en')">EN</button>
+        </div>
+        <a href="ar.html" class="btn-luxe" data-i18n="nav_scan">Imbas AR</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- HERO PAMERAN MUZIUM -->
+  <header id="top" class="hero">
+    <div>
+      <div class="hero-badge">
+        <span class="live-pulse"></span>
+        <span data-i18n="hero_tag">Pameran Interaktif Borneo • UMS FKI</span>
+      </div>
+      <h1>Asal Usul <span>Sompoton</span></h1>
+      <p class="hero-lead" data-i18n="hero_desc">
+        Hidupkan lagenda cinta sejati Aki dan Odu dari kaki Gunung Kinabalu. Imbas halaman buku menggunakan telefon pintar untuk meneroka diorama 3D isometrik, penceritaan 3 bahasa, sari kata langsung, dan alunan asli Sompoton tanpa aplikasi.
+      </p>
+      <div class="hero-actions">
+        <a href="ar.html" class="btn-luxe">📷 <span data-i18n="btn_scan">Mula Imbas Buku (AR)</span></a>
+        <a href="viewer.html?page=4" class="btn-ghost">🧊 <span data-i18n="btn_3d">Mod 3D Tanpa Buku</span></a>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric"><strong>12</strong><span data-i18n="m_pages">Halaman Target AR</span></div>
+        <div class="metric"><strong>3D</strong><span data-i18n="m_3d">Diorama + Smart SFX</span></div>
+        <div class="metric"><strong>3 Bahasa</strong><span data-i18n="m_lang">BM · EN · KDZ</span></div>
+      </div>
+    </div>
+
+    <!-- PENTAS HERO: BUKU 3D BOLEH DIBUKA ⇄ PRATONTON 3D (LAZY LOAD) -->
+    <div class="hero-stage">
+      <div class="orbit-ring"></div>
+      <div class="hero-toggle">
+        <button id="tog-book" class="active" onclick="switchHeroMode('book')">📖 Buku 3D</button>
+        <button id="tog-3d" onclick="switchHeroMode('3d')">✨ Diorama Hidup</button>
+      </div>
+
+      <div class="magic-book" id="magic-book" onclick="window.location.href='viewer.html?page=1'">
+        <div class="book-inside">
+          <h4>Babak Pertama</h4>
+          <p>"Pada zaman dahulu di Sabah, tinggal sepasang suami isteri warga emas yang penyayang bernama Aki dan Odu..."</p>
+          <span class="btn-luxe" style="padding:8px 16px; font-size:0.76rem;">Buka Cerita ›</span>
+        </div>
+        <div class="book-cover-leaf">
+          <img src="./images/cover.jpg" alt="Kulit Buku Asal Usul Sompoton" />
+        </div>
+      </div>
+      <div class="book-hover-tip" id="book-tip">✦ Halakan kursor pada buku untuk membukanya</div>
+
+      <div id="hero-3d-box">
+        <model-viewer
+          id="hero-mv"
+          data-src="./models/page10.glb"
+          camera-controls auto-rotate autoplay
+          shadow-intensity="0.8" exposure="1.15"
+          camera-orbit="35deg 68deg 108%">
+        </model-viewer>
+      </div>
+    </div>
+  </header>
+
+  <div class="linangkit-strip"></div>
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>✦ ASAL USUL SOMPOTON</span>
+      <span>✦ WARISAN KADAZANDUSUN SABAH</span>
+      <span>✦ GUNUNG KINABALU</span>
+      <span>✦ 12 HALAMAN WEBAR INTERAKTIF</span>
+      <span>✦ DIORAMA 3D ISOMETRIK</span>
+      <span>✦ BM • ENGLISH • KADAZANDUSUN</span>
+      <span>✦ ASAL USUL SOMPOTON</span>
+      <span>✦ WARISAN KADAZANDUSUN SABAH</span>
+      <span>✦ GUNUNG KINABALU</span>
+      <span>✦ 12 HALAMAN WEBAR INTERAKTIF</span>
+      <span>✦ DIORAMA 3D ISOMETRIK</span>
+      <span>✦ BM • ENGLISH • KADAZANDUSUN</span>
+    </div>
+  </div>
+  <div class="linangkit-strip"></div>
+
+  <!-- 01: PENTAS PAMERAN 3 DIORAMA 3D UTAMA (AUTO-PAUSE BILA DI LUAR SKRIN) -->
+  <section id="diorama" class="wrap reveal">
+    <div class="sec-head">
+      <div class="chapter-watermark">01</div>
+      <span class="sec-kicker" data-i18n="d3_kicker">PENTAS DIORAMA ISOMETRIK</span>
+      <h2 data-i18n="d3_title">Tiga Dunia 3D Hidup</h2>
+      <p data-i18n="d3_sub">Putar dan teroka ketiga-tiga diorama 3D utama daripada buku cerita ini secara langsung di skrin anda.</p>
+    </div>
+
+    <div class="pedestal-grid">
+      <div class="spot-card pedestal-card">
+        <div class="pedestal-stage">
+          <span class="pedestal-tag">Halaman 4 · 3D + SFX</span>
+          <model-viewer class="smart-mv" src="./models/page4.glb" loading="lazy" camera-controls autoplay shadow-intensity="0.7" exposure="1.15" camera-orbit="35deg 66deg 112%"></model-viewer>
+        </div>
+        <h3>Anak Sungai Tersekat</h3>
+        <p>Diorama sungai berbatu di tengah hutan tempat Aki dan Odu membantu anak rusa dan burung kecil.</p>
+        <a href="viewer.html?page=4" class="btn-ghost" style="justify-content:center; padding:9px;">Teroka Skrin Penuh ›</a>
+      </div>
+
+      <div class="spot-card pedestal-card">
+        <div class="pedestal-stage">
+          <span class="pedestal-tag">Halaman 6 · 3D + SFX</span>
+          <model-viewer class="smart-mv" src="./models/page6.glb" loading="lazy" camera-controls autoplay shadow-intensity="0.7" exposure="1.15" camera-orbit="35deg 66deg 112%"></model-viewer>
+        </div>
+        <h3>Hutan Buluh Magis</h3>
+        <p>Terowong buluh bercahaya yang menjadi laluan burung magis membimbing Aki dan Odu.</p>
+        <a href="viewer.html?page=6" class="btn-ghost" style="justify-content:center; padding:9px;">Teroka Skrin Penuh ›</a>
+      </div>
+
+      <div class="spot-card pedestal-card">
+        <div class="pedestal-stage">
+          <span class="pedestal-tag">Halaman 10 · 3D + SFX</span>
+          <model-viewer class="smart-mv" src="./models/page10.glb" loading="lazy" camera-controls autoplay shadow-intensity="0.7" exposure="1.15" camera-orbit="35deg 66deg 112%"></model-viewer>
+        </div>
+        <h3>Alunan Ajaib Sompoton</h3>
+        <p>Detik kemuncak di beranda rumah tradisi apabila alunan Sompoton memulihkan suara Odu.</p>
+        <a href="viewer.html?page=10" class="btn-ghost" style="justify-content:center; padding:9px;">Teroka Skrin Penuh ›</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02: STUDIO ALAT MUZIK SOMPOTON VISUAL SEBENAR -->
+  <section id="studio" class="wrap reveal">
+    <div class="sec-head">
+      <div class="chapter-watermark">02</div>
+      <span class="sec-kicker" data-i18n="st_kicker">PENGALAMAN BUNYI INTERAKTIF</span>
+      <h2 data-i18n="st_title">Mainkan Sompoton Maya</h2>
+    </div>
+
+    <div class="spot-card sompoton-studio">
+      <div>
+        <h3 style="font-family:'Cinzel Decorative',serif; font-size:1.6rem; color:var(--gold-bright); margin-bottom:12px;">Labu Korodu & Paip Sumbiling</h3>
+        <p style="color:var(--muted);" data-i18n="st_desc">
+          Sompoton diperbuat daripada buah labu kering dan susunan paip buluh (<em>sumbiling</em>). Ketik mana-mana paip, gunakan papan kekunci laptop, atau tekan <strong>Auto-Main</strong> untuk melihat paip menyala sendiri bersama gelombang bunyi.
+        </p>
+        <div class="kbd-hint">
+          Kekunci pantas: <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> <kbd>H</kbd>
+        </div>
+        <div class="studio-btns">
+          <button class="btn-luxe" id="auto-riff-btn" onclick="autoPlaySompoton()">✨ Auto-Main Melodi</button>
+          <button class="btn-ghost" id="melody-btn" onclick="toggleRealSompoton()">🎵 Rakaman Asli (Hal. 10)</button>
+        </div>
+      </div>
+
+      <div class="instrument-box">
+        <canvas id="wave-canvas"></canvas>
+        <div class="sompoton-body">
+          <div class="pipes-stage" id="pipes-stage">
+            <button class="pipe" data-key="a" style="height:185px;" onclick="playPipe(261.63, 'C4 — Lombohon', this)">C4<small>A</small></button>
+            <button class="pipe" data-key="s" style="height:164px;" onclick="playPipe(293.66, 'D4 — Monongkol', this)">D4<small>S</small></button>
+            <button class="pipe" data-key="d" style="height:144px;" onclick="playPipe(329.63, 'E4 — Suruk', this)">E4<small>D</small></button>
+            <button class="pipe" data-key="f" style="height:126px;" onclick="playPipe(392.00, 'G4 — Baranat', this)">G4<small>F</small></button>
+            <button class="pipe" data-key="g" style="height:110px;" onclick="playPipe(440.00, 'A4 — Randawi', this)">A4<small>G</small></button>
+            <button class="pipe" data-key="h" style="height:94px;" onclick="playPipe(523.25, 'C5 — Tuntuduk', this)">C5<small>H</small></button>
+          </div>
+          <div class="gourd-base">
+            <span class="gourd-label">SOMPOTON</span>
+          </div>
+        </div>
+        <div class="note-status" id="note-status">Ketik paip buluh atau tekan kekunci A–H 🎶</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03: SINOPSIS & WARISAN -->
+  <section id="kisah" class="wrap reveal">
+    <div class="sec-head">
+      <div class="chapter-watermark">03</div>
+      <span class="sec-kicker" data-i18n="h_kicker">SINOPSIS & WARISAN SABAH</span>
+      <h2 data-i18n="h_title">Lagenda Cinta di Kaki Gunung Kinabalu</h2>
+    </div>
+
+    <div class="heritage-grid">
+      <div class="spot-card story-box">
+        <p class="drop-cap" data-i18n="syn_1">
+          Di sebuah kampung di Sabah, Aki bertekad mencari penawar untuk memulihkan suara isterinya, Odu, yang hilang akibat demam panas. Kebaikan mereka menolong anak rusa dan burung kecil di sungai tersekat dibalas dengan petunjuk ke rimbunan buluh magis yang mengalunkan melodi menenangkan.
+        </p>
+        <p data-i18n="syn_2">
+          Terinspirasi daripada bunyi tiupan angin pada buluh, Aki dan Odu menggabungkan kepakaran mereka membina alat muzik menggunakan labu kering, paip buluh, rotan, dan lilin lebah sehingga terhasilnya Sompoton. Alunan ajaibnya memulihkan suara Odu dan kekal sebagai simbol cinta sejati serta warisan budaya Borneo.
+        </p>
+      </div>
+
+      <div>
+        <div class="tabs-bar">
+          <button class="tab-btn active" onclick="openTab('aki', this)">Aki & Odu</button>
+          <button class="tab-btn" onclick="openTab('sompoton', this)">Sompoton</button>
+          <button class="tab-btn" onclick="openTab('wakid', this)">Wakid</button>
+          <button class="tab-btn" onclick="openTab('haiwan', this)">Haiwan Rimba</button>
+        </div>
+        <div class="spot-card tab-panel" id="tab-panel">
+          <h3>Aki & Odu</h3>
+          <p>Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04: KAMUS MINI 3D FLIP -->
+  <section id="kamus" class="wrap reveal">
+    <div class="sec-head">
+      <div class="chapter-watermark">04</div>
+      <span class="sec-kicker" data-i18n="d_kicker">PEMELIHARAAN BAHASA IBUNDA</span>
+      <h2 data-i18n="d_title">Kamus Mini Kadazandusun</h2>
+      <p data-i18n="d_sub">Ketik mana-mana kad untuk membalikkannya secara 3D dan pelajari kosa kata warisan daripada cerita ini.</p>
+    </div>
+    <div class="dict-grid" id="dict-grid"></div>
+  </section>
+
+  <!-- 05: 3 BAHASA + GALERI 12 BABAK -->
+  <section id="halaman" class="wrap reveal">
+    <div class="sec-head">
+      <div class="chapter-watermark">05</div>
+      <span class="sec-kicker" data-i18n="l_kicker">PENCERITAAN 3 BAHASA & 12 BABAK</span>
+      <h2 data-i18n="p_title">Setiap Halaman, Satu Dunia Kecil</h2>
+      <p data-i18n="l_sub">Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau tapis 12 babak cerita di bawah.</p>
+    </div>
+
+    <div class="lang-grid" style="margin-bottom:54px;">
+      <div class="spot-card lang-card" id="card-bm">
+        <div>
+          <div class="lang-top"><span class="code-pill">BM</span><div class="eq"><span></span><span></span><span></span></div></div>
+          <h3>Bahasa Melayu</h3>
+          <p>Penceritaan lengkap 12 halaman dalam Bahasa Melayu yang mudah difahami kanak-kanak.</p>
+          <button class="sample-row" onclick="playSample('bm', 'card-bm')">▶ Dengar contoh suara</button>
+        </div>
+        <div class="card-actions">
+          <a href="ar.html?lang=bm" class="btn-luxe" style="justify-content:center;">Imbas AR</a>
+          <a href="viewer.html?lang=bm&page=4" class="btn-ghost" style="justify-content:center; padding:10px;">Lihat 3D</a>
+        </div>
+      </div>
+
+      <div class="spot-card lang-card" id="card-en">
+        <div>
+          <div class="lang-top"><span class="code-pill">EN</span><div class="eq"><span></span><span></span><span></span></div></div>
+          <h3>English</h3>
+          <p>Full 12-page English narration bringing Sabahan folklore to international readers.</p>
+          <button class="sample-row" onclick="playSample('en', 'card-en')">▶ Listen to voice sample</button>
+        </div>
+        <div class="card-actions">
+          <a href="ar.html?lang=en" class="btn-luxe" style="justify-content:center;">Scan AR</a>
+          <a href="viewer.html?lang=en&page=4" class="btn-ghost" style="justify-content:center; padding:10px;">View 3D</a>
+        </div>
+      </div>
+
+      <div class="spot-card lang-card" id="card-kdz">
+        <div>
+          <div class="lang-top"><span class="code-pill">KDZ</span><div class="eq"><span></span><span></span><span></span></div></div>
+          <h3>Kadazandusun</h3>
+          <p>Memartabatkan bahasa ibunda Sabah dengan sebutan asli penceritaan Kadazandusun.</p>
+          <button class="sample-row" onclick="playSample('kdz', 'card-kdz')">▶ Dengar contoh suara</button>
+        </div>
+        <div class="card-actions">
+          <a href="ar.html?lang=kdz" class="btn-luxe" style="justify-content:center;">Imbas AR</a>
+          <a href="viewer.html?lang=kdz&page=4" class="btn-ghost" style="justify-content:center; padding:10px;">Lihat 3D</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="renderPages('all', this)">Semua (12)</button>
+      <button class="filter-btn" onclick="renderPages('3d', this)">✨ Babak 3D AR (3)</button>
+      <button class="filter-btn" onclick="renderPages('sfx', this)">🎵 Ada Bunyi SFX (5)</button>
+    </div>
+    <div class="pages-grid" id="pages-grid"></div>
+  </section>
+
+  <!-- 06: KUIZ WARISAN & SIJIL DIGITAL PNG -->
+  <section id="kuiz" class="wrap reveal">
+    <div class="sec-head">
+      <div class="chapter-watermark">06</div>
+      <span class="sec-kicker" data-i18n="q_kicker">CABARAN INTERAKTIF & SIJIL</span>
+      <h2 data-i18n="q_title">Kuiz Warisan Sompoton</h2>
+      <p data-i18n="q_sub">Jawab 4 soalan ringkas dan muat turun Sijil Digital rasmi Duta Muda Sompoton dengan nama anda.</p>
+    </div>
+    <div class="spot-card quiz-box" id="quiz-box"></div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="soalan" class="wrap reveal" style="padding-top:16px;">
+    <div class="sec-head">
+      <span class="sec-kicker">PANDUAN & BANTUAN</span>
+      <h2>Soalan Lazim</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Apakah keperluan peranti untuk mengimbas AR? <span>+</span></button>
+        <div class="faq-a">Hanya perlukan telefon pintar atau tablet berkamera belakang menggunakan Chrome (Android) atau Safari (iOS) beserta sambungan internet. Tiada aplikasi perlu dipasang.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Bagaimanakah cara berinteraksi dengan diorama 3D? <span>+</span></button>
+        <div class="faq-a">Pada Halaman 4, 6, dan 10, seret 1 jari untuk memusingkan diorama 360°, cubit 2 jari untuk zum, dan tekan ikon kamera (📸) untuk menangkap gambar kenangan AR.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Mengapa bunyi SFX berhenti bila saya tekan butang bahasa? <span>+</span></button>
+        <div class="faq-a">Itu ialah sistem Smart SFX — bunyi latar dijeda secara automatik supaya suara pencerita (BM/EN/KDZ) dan sari kata jelas, lalu bersambung semula selepas penceritaan tamat.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Asal Usul Sompoton</strong> — Projek Kursus IT32603 Realiti Terimbuh (Augmented Reality)</p>
+    <p class="team-row">Kumpulan 13: Hendrick Garry Danny • Chronicles bin Thomas • Jericho Leon J Kundahal • Muhammad Ashraf Irfan bin Toha</p>
+    <p>Diselia oleh: Sir Ryan Macdonell Andrias • Fakulti Komputeran dan Informatik (FKI), Universiti Malaysia Sabah</p>
+  </footer>
+
+  <script>
+    // 1. Tirai Pembukaan Pameran
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('intro-curtain').classList.add('hide'), 1050);
+    });
+
+    // 2. Kursor Magnetik Emas (GPU translate3d - Sifar Lag)
+    const cDot = document.getElementById('c-dot'), cRing = document.getElementById('c-ring');
+    const isDesktop = window.matchMedia('(pointer: fine)').matches;
+    let rx = -100, ry = -100, mx = -100, my = -100;
+    if (isDesktop) {
+      window.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cDot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+      }, { passive: true });
+      (function followCursor() {
+        rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+        cRing.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+        requestAnimationFrame(followCursor);
+      })();
+      document.addEventListener('mouseover', e => {
+        if (e.target.closest('a, button, .flip-card, .magic-book')) cRing.classList.add('active');
+      });
+      document.addEventListener('mouseout', e => {
+        if (e.target.closest('a, button, .flip-card, .magic-book')) cRing.classList.remove('active');
+      });
+    }
+
+    // 3. Scroll Progress (GPU scaleX + Throttle rAF) & Kompas Bab (IntersectionObserver)
+    const progressEl = document.getElementById('scroll-progress');
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!scrollTicking) {
+        requestAnimationFrame(() => {
+          const h = document.documentElement;
+          const ratio = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+          progressEl.style.transform = `scaleX(${ratio})`;
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    }, { passive: true });
+
+    const compassDots = document.querySelectorAll('.compass-dot');
+    const compassObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          compassDots.forEach(d => d.classList.toggle('active', d.dataset.target === entry.target.id));
+        }
+      });
+    }, { rootMargin: '-40% 0px -45% 0px' });
+    ['top', 'diorama', 'studio', 'kisah', 'kamus', 'halaman', 'kuiz'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) compassObs.observe(el);
+    });
+
+    // 4. Auto-Pause Putaran 3D Bila Di Luar Skrin (Penjimatan GPU Besar)
+    const mvObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.setAttribute('auto-rotate', '');
+        else entry.target.removeAttribute('auto-rotate');
+      });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.smart-mv').forEach(el => mvObs.observe(el));
+
+    // 5. Suasana Rimba Borneo
+    let ambAudio = new Audio('./sfx/pg1_kampung.mp3');
+    ambAudio.loop = true; ambAudio.volume = 0.25;
+    function toggleAmbient() {
+      const fab = document.getElementById('ambient-fab'), lbl = document.getElementById('amb-label');
+      if (ambAudio.paused) {
+        ambAudio.play().then(() => {
+          fab.classList.add('on'); lbl.textContent = 'Suasana Rimba: HIDUP';
+        }).catch(() => alert('Pastikan fail ./sfx/pg1_kampung.mp3 ada dalam folder sfx.'));
+      } else {
+        ambAudio.pause(); fab.classList.remove('on'); lbl.textContent = 'Suasana Rimba: MATI';
+      }
+    }
+
+    // 6. Kanvas Kunang-Kunang Ultra-Ringan (Tanpa shadowBlur - 10x Lebih Laju)
+    const canvas = document.getElementById('magic-canvas'), ctx = canvas.getContext('2d');
+    let W, H;
+    function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+    const particles = Array.from({ length: 34 }, () => ({
+      x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2 + 0.9,
+      vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.5 + 0.3, pulse: Math.random() * Math.PI * 2
+    }));
+    (function animParticles() {
+      if (!document.hidden) {
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.x += p.vx; p.y += p.vy; p.pulse += 0.028;
+          if (p.x < 0) p.x = W; else if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H; else if (p.y > H) p.y = 0;
+
+          const dx = p.x - mx, dy = p.y - my;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 12100 && distSq > 1) {
+            const dist = Math.sqrt(distSq);
+            p.x += (dx / dist) * 1.4; p.y += (dy / dist) * 1.4;
+          }
+
+          const glow = p.alpha * (0.65 + 0.35 * Math.sin(p.pulse));
+          // Aura luar ringan (ganti shadowBlur)
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 3.2, 0, 6.283);
+          ctx.fillStyle = `rgba(242, 193, 78, ${glow * 0.22})`; ctx.fill();
+          // Teras cahaya
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283);
+          ctx.fillStyle = `rgba(255, 232, 163, ${glow})`; ctx.fill();
+        }
+      }
+      requestAnimationFrame(animParticles);
+    })();
+
+    // 7. Spotlight Hover pada .spot-card
+    if (isDesktop) {
+      document.querySelectorAll('.spot-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        }, { passive: true });
+      });
+    }
+
+    // 8. Hero Toggle (Buku 3D ⇄ Diorama Hidup - Lazy Load Model)
+    function switchHeroMode(mode) {
+      document.getElementById('tog-book').classList.toggle('active', mode === 'book');
+      document.getElementById('tog-3d').classList.toggle('active', mode === '3d');
+      document.getElementById('magic-book').style.display = mode === 'book' ? 'block' : 'none';
+      document.getElementById('book-tip').style.display = mode === 'book' ? 'block' : 'none';
+      document.getElementById('hero-3d-box').style.display = mode === '3d' ? 'block' : 'none';
+      if (mode === '3d') {
+        const heroMv = document.getElementById('hero-mv');
+        if (!heroMv.getAttribute('src')) heroMv.setAttribute('src', heroMv.dataset.src);
+      }
+    }
+
+    // 9. Studio Sompoton + Waveform (Hanya berjalan bila di skrin)
+    let audioCtx = null, waveEnergy = 0, isMelodyPlaying = false, studioVisible = false;
+    const waveCanvas = document.getElementById('wave-canvas'), wCtx = waveCanvas.getContext('2d');
+    function resizeWave() {
+      waveCanvas.width = waveCanvas.parentElement.clientWidth;
+      waveCanvas.height = waveCanvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeWave); setTimeout(resizeWave, 200);
+
+    const studioObs = new IntersectionObserver(entries => {
+      studioVisible = entries[0].isIntersecting;
+    }, { threshold: 0.05 });
+    studioObs.observe(document.getElementById('studio'));
+
+    let wavePhase = 0;
+    (function drawWave() {
+      if (studioVisible && !document.hidden) {
+        const w = waveCanvas.width, h = waveCanvas.height;
+        wCtx.clearRect(0, 0, w, h); wavePhase += 0.065;
+        waveEnergy += ((isMelodyPlaying ? 26 : 0) - waveEnergy) * 0.06;
+        for (let layer = 0; layer < 2; layer++) {
+          wCtx.beginPath();
+          const amp = Math.max(4, waveEnergy * (layer === 0 ? 1 : 0.6));
+          for (let x = 0; x <= w; x += 8) {
+            const y = h * 0.36 + Math.sin(x * 0.024 + wavePhase + layer * 1.5) * amp * Math.sin((x / w) * Math.PI);
+            if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y);
+          }
+          wCtx.strokeStyle = layer === 0 ? 'rgba(242, 193, 78, 0.6)' : 'rgba(74, 222, 128, 0.35)';
+          wCtx.lineWidth = layer === 0 ? 2.5 : 1.5; wCtx.stroke();
+        }
+      }
+      requestAnimationFrame(drawWave);
+    })();
+
+    function playPipe(freq, label, btn) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      const osc1 = audioCtx.createOscillator(), osc2 = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc1.type = 'triangle'; osc1.frequency.setValueAtTime(freq, now);
+      osc2.type = 'sine'; osc2.frequency.setValueAtTime(freq * 1.5, now);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.22, now + 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.05);
+      osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
+      osc1.start(now); osc2.start(now); osc1.stop(now + 1.1); osc2.stop(now + 1.1);
+
+      waveEnergy = 44;
+      btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), 240);
+      document.getElementById('note-status').textContent = `🎶 Memainkan nada: ${label}`;
+
+      const stage = document.getElementById('pipes-stage');
+      const note = document.createElement('span');
+      note.className = 'floating-note'; note.textContent = Math.random() > 0.5 ? '♪' : '♫';
+      note.style.left = (btn.offsetLeft + btn.offsetWidth / 2 - 8) + 'px';
+      note.style.top = (btn.offsetTop - 10) + 'px';
+      stage.appendChild(note); setTimeout(() => note.remove(), 1000);
+    }
+
+    window.addEventListener('keydown', e => {
+      if (document.activeElement.tagName === 'INPUT') return;
+      const btn = document.querySelector(`.pipe[data-key="${e.key.toLowerCase()}"]`);
+      if (btn) btn.click();
+    });
+
+    function autoPlaySompoton() {
+      const seq = [
+        ['a', 0], ['d', 360], ['f', 720], ['g', 1080],
+        ['f', 1500], ['d', 1860], ['s', 2220], ['a', 2640],
+        ['d', 3100], ['f', 3460], ['h', 3850], ['g', 4300], ['f', 4700]
+      ];
+      seq.forEach(([k, delay]) => {
+        setTimeout(() => {
+          const btn = document.querySelector(`.pipe[data-key="${k}"]`);
+          if (btn) btn.click();
+        }, delay);
+      });
+    }
+
+    let realSompoton = new Audio('./sfx/pg10_sompoton.mp3');
+    function toggleRealSompoton() {
+      const btn = document.getElementById('melody-btn');
+      if (!realSompoton.paused) {
+        realSompoton.pause(); realSompoton.currentTime = 0; isMelodyPlaying = false;
+        btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)';
+      } else {
+        realSompoton.play().then(() => { isMelodyPlaying = true; })
+          .catch(() => alert('Pastikan fail ./sfx/pg10_sompoton.mp3 ada dalam folder sfx.'));
+        btn.innerHTML = '⏹ Hentikan Rakaman';
+        realSompoton.onended = () => { isMelodyPlaying = false; btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)'; };
+      }
+    }
+
+    // 10. Tab Warisan
+    const heritageData = {
+      aki: { t: "Aki & Odu", d: "Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot)." },
+      sompoton: { t: "Alat Muzik Sompoton", d: "Alat muzik tiupan tradisional Sabah yang dihasilkan daripada buah labu kering (korodu), lapan paip buluh sumbiling pelbagai panjang, lilin lebah (sopinit), dan ikatan rotan." },
+      wakid: { t: "Bakul Wakid", d: "Bakul galas tradisional masyarakat Sabah yang dianyam daripada buluh dan rotan. Digunakan oleh Aki dan Odu untuk membawa bekalan dan hasil hutan sepanjang pengembaraan." },
+      haiwan: { t: "Anak Rusa (Payau) & Burung Magis", d: "Melambangkan keharmonian manusia dengan alam rimba Borneo. Kebaikan Aki dan Odu membersihkan sungai tersekat dibalas dengan petunjuk ke hutan buluh magis." }
+    };
+    function openTab(key, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-panel').innerHTML = `<h3>${heritageData[key].t}</h3><p>${heritageData[key].d}</p>`;
+    }
+
+    // 11. Kamus Mini 3D Flip
+    const vocab = [
+      { kdz: "Aki", bm: "Datuk / Warga Emas Lelaki", en: "Grandfather / Elderly Man" },
+      { kdz: "Odu", bm: "Nenek / Warga Emas Wanita", en: "Grandmother / Elderly Woman" },
+      { kdz: "Wakid", bm: "Bakul Galas Tradisional", en: "Traditional Woven Backpack" },
+      { kdz: "Poring", bm: "Buluh", en: "Bamboo" },
+      { kdz: "Tawadak", bm: "Buah Labu Kering", en: "Dried Gourd" },
+      { kdz: "Himpogot", bm: "Tali Pinggang Syiling Perak", en: "Silver Coin Belt" },
+      { kdz: "Payau", bm: "Rusa", en: "Deer" },
+      { kdz: "Sumbiling", bm: "Paip Buluh Sompoton", en: "Sompoton Bamboo Pipes" }
+    ];
+    const dictGrid = document.getElementById('dict-grid');
+    vocab.forEach(v => {
+      dictGrid.innerHTML += `
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-inner">
+            <div class="flip-front"><h3>${v.kdz}</h3><span>Ketik untuk terjemahan ↻</span></div>
+            <div class="flip-back"><strong>${v.bm}</strong><p>${v.en}</p></div>
+          </div>
+        </div>`;
+    });
+
+    // 12. Sampel Audio 3 Bahasa
+    let sampleAudio = new Audio(), playingCardId = null;
+    function playSample(lang, cardId) {
+      const card = document.getElementById(cardId);
+      if (playingCardId === cardId && !sampleAudio.paused) {
+        sampleAudio.pause(); card.classList.remove('playing'); playingCardId = null; return;
+      }
+      document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('playing'));
+      sampleAudio.src = `./audio/pg1_${lang}.mp3`;
+      sampleAudio.play().catch(() => alert(`Fail ./audio/pg1_${lang}.mp3 tidak ditemui.`));
+      card.classList.add('playing'); playingCardId = cardId;
+      sampleAudio.onended = () => { card.classList.remove('playing'); playingCardId = null; };
+    }
+
+    // 13. Galeri 12 Babak (Ilustrasi Pantas + Lencana 3D/SFX untuk Prestasi 60FPS)
+    const pages = [
+      { n: 1, t: "Kehidupan Harmoni Aki & Odu", d3: false, sfx: true, pos: "center 75%" },
+      { n: 2, t: "Dugaan Kehilangan Suara Odu", d3: false, sfx: false, pos: "center 85%" },
+      { n: 3, t: "Misi Mencari Penawar di Hutan", d3: false, sfx: false, pos: "center bottom" },
+      { n: 4, t: "Aliran Anak Sungai Tersekat", d3: true, sfx: true, pos: "center center" },
+      { n: 5, t: "Kebaikan Membawa Rahmat", d3: false, sfx: false, pos: "center 80%" },
+      { n: 6, t: "Petunjuk ke Hutan Magis", d3: true, sfx: true, pos: "center center" },
+      { n: 7, t: "Alunan Melodi Rimbunan Buluh", d3: false, sfx: true, pos: "center bottom" },
+      { n: 8, t: "Ilham Daripada Alam", d3: false, sfx: false, pos: "center 15%" },
+      { n: 9, t: "Kerjasama Menghasilkan Sompoton", d3: false, sfx: false, pos: "center 85%" },
+      { n: 10, t: "Melodi Ajaib Memulihkan Suara", d3: true, sfx: true, pos: "center center" },
+      { n: 11, t: "Nyanyian Odu Bergema", d3: false, sfx: false, pos: "center 85%" },
+      { n: 12, t: "Sompoton, Simbol Cinta Sejati", d3: false, sfx: false, pos: "center 85%" }
+    ];
+    function renderPages(filter, btn) {
+      if (btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      const grid = document.getElementById('pages-grid'); grid.innerHTML = '';
+      pages.filter(p => filter === 'all' || (filter === '3d' && p.d3) || (filter === 'sfx' && p.sfx)).forEach(p => {
+        grid.innerHTML += `
+          <a href="viewer.html?page=${p.n}" class="page-card">
+            <span class="p-num">${p.n}</span>
+            <div class="p-badges">
+              ${p.d3 ? '<span class="p-tag tag-3d">✨ 3D</span>' : ''}
+              ${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}
+            </div>
+            <img src="./images/page${p.n}.jpg" loading="lazy" alt="Halaman ${p.n}" style="object-position:${p.pos};" onerror="this.src='./images/cover.jpg'">
+            <div class="p-body"><h4>${p.t}</h4></div>
+          </a>`;
+      });
+    }
+    renderPages('all');
+
+    // 14. Kuiz Warisan + Muat Turun Sijil Digital PNG
+    const quizData = [
+      { q: "1. Mengapakah Odu kehilangan suaranya pada awal cerita?", opts: ["Terjatuh di hutan", "Akibat demam panas yang teruk", "Tersesat di sungai"], ans: 1 },
+      { q: "2. Haiwan apakah yang membimbing Aki dan Odu ke hutan buluh magis?", opts: ["Burung kecil", "Kancil", "Rama-rama"], ans: 0 },
+      { q: "3. Apakah bahan yang digunakan Odu untuk mengikat paip buluh pada labu?", opts: ["Tali plastik dan gam", "Bilah rotan dan lilin lebah", "Akar pokok dan tanah liat"], ans: 1 },
+      { q: "4. Apakah perkataan pertama yang disebut Odu apabila suaranya pulih?", opts: ["Sompoton!", "Terima kasih!", "Aki!"], ans: 2 }
+    ];
+    let qIdx = 0, score = 0, savedWinner = "Pembaca Hebat";
+
+    function renderQuiz() {
+      const box = document.getElementById('quiz-box');
+      if (qIdx >= quizData.length) {
+        box.innerHTML = `
+          <div style="text-align:center;">
+            <h3 style="font-family:'Cinzel Decorative',serif; color:var(--gold-bright); font-size:1.5rem;">Tahniah! Skor Anda: ${score} / ${quizData.length}</h3>
+            <p style="color:var(--muted); margin-top:6px;">Masukkan nama anda untuk menjana & memuat turun Sijil Digital:</p>
+            <input type="text" id="player-name" class="name-input" placeholder="Taip nama anda di sini..." />
+            <br/>
+            <button class="btn-luxe" onclick="showBadge()">🏅 Jana Sijil Digital</button>
+            <div id="badge-area"></div>
+            <button class="btn-ghost" style="margin-top:18px;" onclick="qIdx=0;score=0;renderQuiz()">↻ Cuba Semula</button>
+          </div>`;
+        return;
+      }
+      const item = quizData[qIdx];
+      box.innerHTML = `
+        <div style="color:var(--gold); font-size:0.78rem; font-weight:800; letter-spacing:1.5px; margin-bottom:8px;">SOALAN ${qIdx + 1} DARIPADA ${quizData.length}</div>
+        <div class="quiz-q">${item.q}</div>
+        <div class="quiz-opts">${item.opts.map((o, i) => `<button class="quiz-opt" onclick="checkAns(${i}, this)">${o}</button>`).join('')}</div>`;
+    }
+    function checkAns(choice, btn) {
+      const buttons = document.querySelectorAll('.quiz-opt');
+      buttons.forEach(b => b.disabled = true);
+      if (choice === quizData[qIdx].ans) { btn.classList.add('correct'); score++; }
+      else { btn.classList.add('wrong'); buttons[quizData[qIdx].ans].classList.add('correct'); }
+      setTimeout(() => { qIdx++; renderQuiz(); }, 850);
+    }
+    function launchConfetti() {
+      const colors = ['#F2C14E', '#D66926', '#4ADE80', '#FFE8A3', '#FFFFFF'];
+      for (let i = 0; i < 45; i++) {
+        const c = document.createElement('div'); c.className = 'confetti';
+        c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-10px';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        c.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+        document.body.appendChild(c); setTimeout(() => c.remove(), 3000);
+      }
+    }
+    function showBadge() {
+      savedWinner = document.getElementById('player-name').value.trim() || "Pembaca Hebat";
+      launchConfetti();
+      document.getElementById('badge-area').innerHTML = `
+        <div class="badge-card">
+          <div class="medal">🏆</div>
+          <h3>DUTA MUDA SOMPOTON</h3>
+          <p style="font-size:0.82rem; color:var(--muted);">Dianugerahkan kepada</p>
+          <div class="winner-name">${savedWinner}</div>
+          <p style="font-size:0.8rem; color:var(--gold); margin-bottom:16px;">Skor Kuiz Warisan: ${score}/${quizData.length} • Asal Usul Sompoton AR</p>
+          <button class="btn-luxe" onclick="downloadCertPNG()" style="padding:9px 18px; font-size:0.82rem;">⬇ Muat Turun Sijil (PNG)</button>
+        </div>`;
+    }
+    function downloadCertPNG() {
+      const c = document.createElement('canvas'); c.width = 1000; c.height = 650;
+      const g = c.getContext('2d');
+      const grad = g.createLinearGradient(0, 0, 1000, 650);
+      grad.addColorStop(0, '#0B2417'); grad.addColorStop(1, '#040C08');
+      g.fillStyle = grad; g.fillRect(0, 0, 1000, 650);
+      g.strokeStyle = '#F2C14E'; g.lineWidth = 8; g.strokeRect(28, 28, 944, 594);
+      g.strokeStyle = 'rgba(242,193,78,0.35)'; g.lineWidth = 2; g.strokeRect(46, 46, 908, 558);
+
+      g.fillStyle = '#F2C14E'; g.font = 'bold 22px sans-serif'; g.textAlign = 'center';
+      g.fillText('SIJIL PENGHARGAAN WARISAN BORNEO', 500, 130);
+      g.fillStyle = '#FFE8A3'; g.font = 'bold 48px Georgia, serif';
+      g.fillText('DUTA MUDA SOMPOTON', 500, 200);
+      g.fillStyle = '#93A89B'; g.font = '22px sans-serif';
+      g.fillText('Dengan sukacitanya dianugerahkan kepada', 500, 275);
+      g.fillStyle = '#FFFFFF'; g.font = 'bold 54px Georgia, serif';
+      g.fillText(savedWinner, 500, 355);
+      g.fillStyle = '#F2C14E'; g.fillRect(320, 380, 360, 2);
+      g.fillStyle = '#D2DFD7'; g.font = '22px sans-serif';
+      g.fillText(`Kerana berjaya menamatkan Kuiz Warisan Asal Usul Sompoton (Skor: ${score}/${quizData.length})`, 500, 445);
+      g.fillStyle = '#93A89B'; g.font = '18px sans-serif';
+      g.fillText('Projek WebAR IT32603 • Kumpulan 13 • Fakulti Komputeran & Informatik, UMS', 500, 545);
+
+      const a = document.createElement('a');
+      a.download = `Sijil_Sompoton_${savedWinner.replace(/\s+/g, '_')}.png`;
+      a.href = c.toDataURL('image/png'); a.click();
+    }
+    renderQuiz();
+
+    // 15. Dwi-bahasa UI
+    const dict = {
+      bm: {
+        nav_3d: "Pentas 3D", nav_studio: "Sompoton", nav_story: "Warisan", nav_dict: "Kamus", nav_pages: "12 Babak", nav_quiz: "Kuiz", nav_scan: "Imbas AR",
+        hero_tag: "Pameran Interaktif Borneo • UMS FKI",
+        hero_desc: "Hidupkan lagenda cinta sejati Aki dan Odu dari kaki Gunung Kinabalu. Imbas halaman buku menggunakan telefon pintar untuk meneroka diorama 3D isometrik, penceritaan 3 bahasa, sari kata langsung, dan alunan asli Sompoton tanpa aplikasi.",
+        btn_scan: "Mula Imbas Buku (AR)", btn_3d: "Mod 3D Tanpa Buku",
+        m_pages: "Halaman Target AR", m_3d: "Diorama + Smart SFX", m_lang: "BM · EN · KDZ",
+        d3_kicker: "PENTAS DIORAMA ISOMETRIK", d3_title: "Tiga Dunia 3D Hidup", d3_sub: "Putar dan teroka ketiga-tiga diorama 3D utama daripada buku cerita ini secara langsung di skrin anda.",
+        st_kicker: "PENGALAMAN BUNYI INTERAKTIF", st_title: "Mainkan Sompoton Maya",
+        h_kicker: "SINOPSIS & WARISAN SABAH", h_title: "Lagenda Cinta di Kaki Gunung Kinabalu",
+        d_kicker: "PEMELIHARAAN BAHASA IBUNDA", d_title: "Kamus Mini Kadazandusun", d_sub: "Ketik mana-mana kad untuk membalikkannya secara 3D dan pelajari kosa kata warisan daripada cerita ini.",
+        l_kicker: "PENCERITAAN 3 BAHASA & 12 BABAK", p_title: "Setiap Halaman, Satu Dunia Kecil", l_sub: "Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau tapis 12 babak cerita di bawah.",
+        q_kicker: "CABARAN INTERAKTIF & SIJIL", q_title: "Kuiz Warisan Sompoton", q_sub: "Jawab 4 soalan ringkas dan muat turun Sijil Digital rasmi Duta Muda Sompoton dengan nama anda."
+      },
+      en: {
+        nav_3d: "3D Stage", nav_studio: "Sompoton", nav_story: "Heritage", nav_dict: "Dictionary", nav_pages: "12 Scenes", nav_quiz: "Quiz", nav_scan: "Scan AR",
+        hero_tag: "Interactive Borneo Exhibition • UMS FKI",
+        hero_desc: "Bring the legend of Aki and Odu to life from the foothills of Mount Kinabalu. Scan any book page with your smartphone to explore 3D isometric dioramas, trilingual narration, live subtitles, and authentic Sompoton music with zero app installation.",
+        btn_scan: "Start Scanning (AR)", btn_3d: "3D Mode (No Book)",
+        m_pages: "AR Target Pages", m_3d: "Dioramas + Smart SFX", m_lang: "BM · EN · KDZ",
+        d3_kicker: "ISOMETRIC DIORAMA STAGE", d3_title: "Three Living 3D Worlds", d3_sub: "Rotate and inspect all three hero 3D dioramas from the storybook right on your screen.",
+        st_kicker: "INTERACTIVE SOUND EXPERIENCE", st_title: "Play the Virtual Sompoton",
+        h_kicker: "SYNOPSIS & SABAHAN HERITAGE", h_title: "A Legend of Love at Mount Kinabalu",
+        d_kicker: "HERITAGE LANGUAGE PRESERVATION", d_title: "Kadazandusun Mini Dictionary", d_sub: "Tap any card to flip it in 3D and learn traditional vocabulary featured in the story.",
+        l_kicker: "TRILINGUAL NARRATION & 12 SCENES", p_title: "Every Page, a Living Miniature World", l_sub: "Preview trilingual narration with Smart SFX, or filter all 12 story scenes below.",
+        q_kicker: "INTERACTIVE CHALLENGE & CERTIFICATE", q_title: "Sompoton Heritage Quiz", q_sub: "Answer 4 quick questions and download your personalized Sompoton Young Ambassador digital certificate."
+      }
+    };
+    function setLang(l) {
+      document.getElementById('btn-bm').classList.toggle('active', l === 'bm');
+      document.getElementById('btn-en').classList.toggle('active', l === 'en');
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (dict[l][k]) el.textContent = dict[l][k];
+      });
+    }
+
+    // 16. Scroll Reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
