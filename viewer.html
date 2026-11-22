@@ -7,33 +7,41 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-void: #030906;
-      --glass: rgba(6, 16, 11, 0.86);
-      --gold: #F2C14E;
-      --gold-bright: #FFE8A3;
-      --amber: #D66926;
-      --emerald-glow: #4ADE80;
-      --ivory: #FAF6EC;
-      --muted: #98AEA0;
-      --border-gold: rgba(242, 193, 78, 0.3);
+      --paper: #FAF5EB;
+      --paper-card: rgba(255, 253, 248, 0.88);
+      --forest: #1A3326;
+      --forest-mid: #2C543E;
+      --sage: #5A7A68;
+      --gold: #D99B26;
+      --gold-soft: #F6E6BF;
+      --gourd: #B85A28;
+      --line: rgba(26, 51, 38, 0.12);
+      --shadow-soft: 0 12px 30px rgba(26, 51, 38, 0.09);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: radial-gradient(circle at 50% 35%, #143624 0%, #06130C 60%, var(--bg-void) 100%);
-      color: var(--ivory);
+      background: linear-gradient(180deg, #CBE5EE 0%, #E7F2F1 38%, var(--paper) 100%);
+      color: var(--forest);
       height: 100vh; height: 100dvh; width: 100%;
       display: flex; flex-direction: column; overflow: hidden; position: relative;
     }
 
-    #viewer-fireflies { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-    .aurora { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-    .aura-1 { width: 520px; height: 520px; top: -160px; right: -120px; background: radial-gradient(circle, rgba(30,107,69,0.28) 0%, transparent 68%); }
-    .aura-2 { width: 480px; height: 480px; bottom: -140px; left: -140px; background: radial-gradient(circle, rgba(184,93,25,0.22) 0%, transparent 68%); }
+    /* TEKSTUR KERTAS HALUS */
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 900; opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* SILUET GUNUNG KINABALU CAT AIR DI LATAR */
+    .bg-mountains {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 34vh;
+      pointer-events: none; z-index: 0; opacity: 0.7;
+    }
 
     /* BAR ATAS */
     .top-bar {
@@ -45,38 +53,44 @@
 
     .icon-btn {
       width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-      background: var(--glass); color: var(--gold-bright); text-decoration: none;
-      border: 1px solid var(--border-gold); display: grid; place-items: center;
+      background: var(--paper-card); color: var(--forest); text-decoration: none;
+      border: 1px solid var(--line); display: grid; place-items: center;
       font-size: 1.15rem; cursor: pointer; transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(26, 51, 38, 0.07);
+      backdrop-filter: blur(10px);
     }
-    .icon-btn.muted { opacity: 0.45; color: #fff; border-color: rgba(255,255,255,0.2); }
+    .icon-btn:hover { border-color: var(--gold); background: #fff; }
+    .icon-btn.muted { opacity: 0.45; }
 
     .page-pill {
       display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
-      background: var(--glass); padding: 6px 13px; border-radius: 999px;
-      border: 1px solid var(--border-gold); font-size: 0.8rem; font-weight: 700;
+      background: var(--paper-card); padding: 6px 13px; border-radius: 999px;
+      border: 1px solid var(--line); font-size: 0.8rem; font-weight: 700;
+      color: var(--forest); box-shadow: 0 4px 12px rgba(26, 51, 38, 0.06);
+      backdrop-filter: blur(10px);
     }
-    .page-pill strong { color: var(--gold-bright); font-family: 'Cinzel Decorative', serif; font-size: 0.88rem; }
+    .page-pill strong { color: var(--gourd); font-family: 'Fraunces', serif; font-size: 0.94rem; }
     .badge-3d-live {
-      display: none; background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-      color: var(--bg-void); font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+      display: none; background: var(--gourd); color: #fff;
+      font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;
     }
 
     .lang-pills {
-      display: flex; background: var(--glass); border: 1px solid var(--border-gold);
-      border-radius: 999px; padding: 2px;
+      display: flex; background: rgba(255, 253, 248, 0.82); border: 1px solid var(--line);
+      border-radius: 999px; padding: 2px; backdrop-filter: blur(10px);
     }
     .lang-pill {
-      border: none; background: transparent; color: var(--muted);
+      border: none; background: transparent; color: var(--sage);
       padding: 5px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
     }
-    .lang-pill.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber)); color: var(--bg-void); }
+    .lang-pill.active { background: var(--forest); color: #FAF5EB; }
 
     .ar-jump {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber));
-      color: var(--bg-void); text-decoration: none; font-weight: 800; font-size: 0.76rem;
+      background: linear-gradient(135deg, var(--forest-mid), var(--forest));
+      color: #FAF5EB; text-decoration: none; font-weight: 700; font-size: 0.76rem;
       padding: 8px 13px; border-radius: 999px; white-space: nowrap;
+      box-shadow: 0 6px 16px rgba(26, 51, 38, 0.2);
     }
 
     /* PENTAS UTAMA */
@@ -86,12 +100,13 @@
       padding: 4px 14px 6px; gap: 8px;
     }
 
-    /* Bingkai Lalai untuk Diorama 3D (Hal. 4, 6 & 10) */
+    /* Bingkai Diorama 3D (Hal. 4, 6 & 10) */
     .exhibit-frame {
       position: relative; width: 100%; max-width: 760px; flex: 1; min-height: 0;
-      display: flex; align-items: center; justify-content: center; border-radius: 22px;
-      background: radial-gradient(circle at 50% 55%, rgba(28, 72, 49, 0.55) 0%, rgba(5, 14, 9, 0.88) 100%);
-      border: 1px solid rgba(242, 193, 78, 0.28); overflow: hidden;
+      display: flex; align-items: center; justify-content: center; border-radius: 24px;
+      background: radial-gradient(circle at 50% 55%, #234E38 0%, #0E2218 100%);
+      border: 3px solid #fff;
+      box-shadow: 0 20px 48px rgba(26, 51, 38, 0.2); overflow: hidden;
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
     .exhibit-frame.switching { opacity: 0.35; transform: scale(0.985); }
@@ -105,28 +120,21 @@
       max-height: 46dvh;
       border-radius: 18px;
       background: transparent;
-      border: 2px solid rgba(242, 193, 78, 0.55);
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.68), 0 0 24px rgba(242, 193, 78, 0.14);
-    }
-    .exhibit-frame.mode-2d .pedestal-glow { display: none; }
-
-    .pedestal-glow {
-      position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
-      width: 65%; height: 65px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(242, 193, 78, 0.26), transparent 70%);
-      pointer-events: none; z-index: 1;
+      border: 3px solid #fff;
+      box-shadow: 0 18px 42px rgba(26, 51, 38, 0.22);
     }
 
     model-viewer { width: 100%; height: 100%; display: none; position: relative; z-index: 2; --poster-color: transparent; }
     .tools-3d { position: absolute; top: 10px; right: 10px; z-index: 6; display: none; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
     .mini-3d-btn {
-      background: rgba(5, 14, 9, 0.88); color: var(--gold-bright);
-      border: 1px solid rgba(242, 193, 78, 0.35); border-radius: 999px;
-      padding: 5px 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
+      background: rgba(255, 253, 248, 0.9); color: var(--forest);
+      border: 1px solid rgba(26, 51, 38, 0.14); border-radius: 999px;
+      padding: 5px 11px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
-    .mini-3d-btn.active { background: var(--gold); color: var(--bg-void); }
+    .mini-3d-btn.active { background: var(--gold); color: var(--forest); border-color: var(--gold); }
     #anim-select { outline: none; max-width: 145px; }
-    #anim-select option { background: #07140D; color: #FAF6EC; }
+    #anim-select option { background: #FAF5EB; color: #1A3326; }
 
     .art-wrap {
       display: none; position: relative; z-index: 2;
@@ -137,22 +145,30 @@
       display: block; object-fit: contain;
     }
 
+    /* TAJUK & SARI KATA ESTETIK */
     .caption-area { width: 100%; max-width: 720px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .scene-caption { font-family: 'Cinzel Decorative', serif; font-size: clamp(0.92rem, 3.6vw, 1.24rem); color: var(--gold-bright); line-height: 1.2; }
+    .scene-caption {
+      font-family: 'Fraunces', serif; font-size: clamp(1rem, 3.8vw, 1.32rem);
+      color: var(--forest); font-weight: 800; line-height: 1.2;
+    }
     .subtitle-card {
-      width: 100%; background: var(--glass); border: 1px solid rgba(242, 193, 78, 0.35);
-      border-radius: 16px; padding: 9px 14px;
+      width: 100%; background: var(--paper-card); border: 1px solid var(--line);
+      border-radius: 18px; padding: 10px 15px;
+      box-shadow: var(--shadow-soft); backdrop-filter: blur(10px);
     }
     .sub-meta { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 3px; }
-    .sub-lang-tag { background: rgba(242,193,78,0.18); color: var(--gold-bright); border: 1px solid rgba(242,193,78,0.35); font-size: 0.64rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; }
-    .sub-eq { display: flex; gap: 2.5px; align-items: flex-end; height: 10px; opacity: 0.28; }
-    .sub-eq span { width: 2.5px; height: 4px; background: var(--emerald-glow); border-radius: 2px; }
+    .sub-lang-tag {
+      background: var(--gold-soft); color: var(--gourd);
+      font-size: 0.64rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+    }
+    .sub-eq { display: flex; gap: 2.5px; align-items: flex-end; height: 10px; opacity: 0.25; }
+    .sub-eq span { width: 2.5px; height: 4px; background: var(--forest-mid); border-radius: 2px; }
     .subtitle-card.playing .sub-eq { opacity: 1; }
     .subtitle-card.playing .sub-eq span { animation: eqBounce 0.55s ease-in-out infinite alternate; }
     .subtitle-card.playing .sub-eq span:nth-child(2) { animation-delay: 0.15s; }
     .subtitle-card.playing .sub-eq span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes eqBounce { from { height: 3px; } to { height: 10px; } }
-    #viewer-sub { font-family: 'Cormorant Garamond', serif; font-size: clamp(0.96rem, 3.4vw, 1.15rem); color: var(--ivory); line-height: 1.38; }
+    #viewer-sub { font-size: clamp(0.86rem, 3.1vw, 0.98rem); color: #364E41; line-height: 1.48; font-weight: 500; }
 
     /* DOK KAWALAN BAWAH */
     .bottom-dock {
@@ -161,41 +177,45 @@
       display: flex; flex-direction: column; align-items: center; gap: 8px;
     }
     .audio-bar-wrap { width: 100%; max-width: 520px; display: flex; align-items: center; gap: 8px; }
-    .time-txt { font-size: 0.68rem; color: var(--muted); font-weight: 700; min-width: 30px; text-align: center; }
-    .progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.12); border-radius: 999px; cursor: pointer; overflow: hidden; }
-    .progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--emerald-glow), var(--gold), var(--amber)); transition: width 0.1s linear; }
+    .time-txt { font-size: 0.68rem; color: var(--sage); font-weight: 700; min-width: 30px; text-align: center; }
+    .progress-track { flex: 1; height: 6px; background: rgba(26, 51, 38, 0.12); border-radius: 999px; cursor: pointer; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd)); transition: width 0.1s linear; }
 
     .num-bar {
       display: flex; gap: 6px; justify-content: center;
-      background: var(--glass); padding: 6px 10px; border-radius: 999px;
-      border: 1px solid rgba(242, 193, 78, 0.22);
+      background: var(--paper-card); padding: 6px 10px; border-radius: 999px;
+      border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(26, 51, 38, 0.06);
     }
     .num-btn {
-      width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.04); color: var(--muted);
+      width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line);
+      background: #fff; color: var(--sage);
       font-weight: 700; font-size: 0.76rem; cursor: pointer; position: relative; transition: 0.2s;
     }
-    .num-btn.has-3d { border-color: rgba(242, 193, 78, 0.65); color: var(--gold-bright); }
-    .num-btn.has-3d::after { content: ""; position: absolute; top: -2px; right: -1px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
-    .num-btn.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber)); color: var(--bg-void); border-color: var(--gold-bright); font-weight: 800; }
+    .num-btn.has-3d { border-color: var(--gold); color: var(--gourd); }
+    .num-btn.has-3d::after { content: ""; position: absolute; top: -2px; right: -1px; width: 6px; height: 6px; border-radius: 50%; background: var(--gourd); }
+    .num-btn.active { background: var(--forest); color: #FAF5EB; border-color: var(--forest); font-weight: 800; }
 
     .player-row { display: flex; align-items: center; gap: 12px; }
     .play-main {
       width: 50px; height: 50px; border-radius: 50%; border: none;
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--amber));
-      color: var(--bg-void); font-size: 1.2rem; font-weight: 800; cursor: pointer;
-      box-shadow: 0 6px 22px rgba(214, 105, 38, 0.5);
+      background: linear-gradient(135deg, var(--forest-mid), var(--forest));
+      color: #FAF5EB; font-size: 1.2rem; font-weight: 800; cursor: pointer;
+      box-shadow: 0 8px 22px rgba(26, 51, 38, 0.28);
     }
     .play-main.playing { animation: pulsePlay 1.8s infinite; }
-    @keyframes pulsePlay { 0%, 100% { box-shadow: 0 0 0 0 rgba(242,193,78,0.55); } 50% { box-shadow: 0 0 0 10px rgba(242,193,78,0); } }
-    .auto-btn { padding: 8px 13px; border-radius: 999px; background: var(--glass); border: 1px solid var(--border-gold); color: var(--muted); font-size: 0.74rem; font-weight: 700; cursor: pointer; }
-    .auto-btn.on { background: rgba(74,222,128,0.16); border-color: var(--emerald-glow); color: var(--emerald-glow); }
+    @keyframes pulsePlay { 0%, 100% { box-shadow: 0 0 0 0 rgba(217, 155, 38, 0.55); } 50% { box-shadow: 0 0 0 10px rgba(217, 155, 38, 0); } }
+    .auto-btn {
+      padding: 8px 13px; border-radius: 999px; background: var(--paper-card);
+      border: 1px solid var(--line); color: var(--forest); font-size: 0.74rem; font-weight: 700; cursor: pointer;
+    }
+    .auto-btn.on { background: var(--gold-soft); border-color: var(--gold); color: var(--gourd); }
 
     #toast {
       position: fixed; top: 60px; left: 50%; transform: translate(-50%, -10px);
       z-index: 1200; opacity: 0; pointer-events: none;
-      background: rgba(4, 14, 9, 0.94); color: var(--gold-bright);
-      border: 1px solid var(--gold); border-radius: 999px; padding: 6px 14px; font-size: 0.74rem; font-weight: 700;
+      background: var(--forest); color: #FAF5EB;
+      border-radius: 999px; padding: 7px 16px; font-size: 0.74rem; font-weight: 700;
+      box-shadow: 0 10px 24px rgba(26, 51, 38, 0.25);
       transition: 0.25s; white-space: nowrap;
     }
     #toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -217,16 +237,18 @@
 </head>
 <body>
 
-  <canvas id="viewer-fireflies"></canvas>
-  <div class="aurora aura-1"></div>
-  <div class="aurora aura-2"></div>
+  <svg class="bg-mountains" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <path fill="#D2E4E4" d="M0,320 L0,210 L180,165 L340,195 L520,95 L640,125 L740,55 L830,90 L940,130 L1180,105 L1440,175 L1440,320 Z"/>
+    <path fill="#EAE5D3" d="M0,320 L0,245 Q360,190 720,235 T1440,220 L1440,320 Z"/>
+  </svg>
+
   <div id="toast"></div>
 
   <div class="top-bar">
     <div class="left-tools">
       <a href="index.html" class="icon-btn" title="Kembali ke Pameran">‹</a>
       <div class="page-pill">
-        <span>Hal.</span> <strong id="curr-num">4</strong> <span style="opacity:0.6">/ 12</span>
+        <span>Hal.</span> <strong id="curr-num">4</strong> <span style="opacity:0.55">/ 12</span>
         <span class="badge-3d-live" id="badge-3d">3D</span>
       </div>
     </div>
@@ -244,7 +266,6 @@
 
   <div class="stage">
     <div class="exhibit-frame" id="exhibit-frame">
-      <div class="pedestal-glow"></div>
       <div class="tools-3d" id="tools-3d">
         <button class="mini-3d-btn active" id="rot-btn" onclick="toggleRotate()">↻ Putar</button>
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
@@ -286,28 +307,6 @@
   </div>
 
   <script>
-    const ffCanvas = document.getElementById('viewer-fireflies'), ffCtx = ffCanvas.getContext('2d');
-    function resizeFF() { ffCanvas.width = window.innerWidth; ffCanvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeFF); resizeFF();
-    const flies = Array.from({ length: 22 }, () => ({
-      x: Math.random() * ffCanvas.width, y: Math.random() * ffCanvas.height,
-      r: Math.random() * 1.7 + 0.7, vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35, p: Math.random() * Math.PI * 2
-    }));
-    (function animFlies() {
-      if (!document.hidden) {
-        ffCtx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
-        for (let i = 0; i < flies.length; i++) {
-          const f = flies[i]; f.x += f.vx; f.y += f.vy; f.p += 0.025;
-          if (f.x < 0) f.x = ffCanvas.width; else if (f.x > ffCanvas.width) f.x = 0;
-          if (f.y < 0) f.y = ffCanvas.height; else if (f.y > ffCanvas.height) f.y = 0;
-          const a = 0.22 + 0.45 * (0.5 + 0.5 * Math.sin(f.p));
-          ffCtx.beginPath(); ffCtx.arc(f.x, f.y, f.r * 2.8, 0, 6.283); ffCtx.fillStyle = `rgba(242,193,78,${a * 0.22})`; ffCtx.fill();
-          ffCtx.beginPath(); ffCtx.arc(f.x, f.y, f.r, 0, 6.283); ffCtx.fillStyle = `rgba(255,232,163,${a})`; ffCtx.fill();
-        }
-      }
-      requestAnimationFrame(animFlies);
-    })();
-
     const subtitles = {
       pg1: { bm: "Pada zaman dahulu di Sabah, tinggal sepasang suami isteri warga emas yang penyayang bernama Aki dan Odu.", en: "Long ago in Sabah, lived a loving elderly couple named Aki and Odu.", kdz: "Di gulu po id Sabah, poingion o misawa tongotuo roitan do Aki om Odu." },
       pg2: { bm: "Dahulu, Odu mempunyai suara nyanyian yang sangat merdu, namun akibat demam panas yang teruk, dia telah kehilangan keupayaan bercakap dan bernyanyi.", en: "Odu used to have a beautiful singing voice, but a severe fever took away her ability to speak and sing.", kdz: "Kivaa rolou di tosonong i Odu do sinding, nga sabab do ruminit di topuod, naawi o koonuon disido do moboros om sinding." },
