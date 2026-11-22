@@ -30,9 +30,60 @@
     }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-void);
+      background: linear-gradient(180deg, #061318 0%, #09211B 35%, #071912 70%, #030A07 100%);
+      background-attachment: fixed;
       color: var(--ivory);
       line-height: 1.65;
+    }
+
+    /* TEKSTUR TENUNAN LINANGKIT HALUS DI LATAR */
+    .linangkit-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='%23F2C14E' stroke-width='0.8'/%3E%3Cpath d='M30 12L48 30L30 48L12 30Z' fill='none' stroke='%234ADE80' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='2' fill='%23F2C14E'/%3E%3C/svg%3E");
+      background-size: 56px 56px;
+    }
+
+    /* PANCARAN CAHAYA RIMBA (GOD RAYS) */
+    .sunbeams {
+      position: fixed; inset: -20% -10% 0; pointer-events: none; z-index: 0;
+      background:
+        conic-gradient(from 165deg at 50% -10%, transparent 0deg, rgba(242, 193, 78, 0.08) 14deg, transparent 28deg, rgba(74, 222, 128, 0.06) 44deg, transparent 62deg);
+      animation: swayLight 14s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    @keyframes swayLight {
+      from { transform: rotate(-3deg) scale(1); }
+      to { transform: rotate(3deg) scale(1.06); }
+    }
+
+    /* PENTAS SILUET GUNUNG KINABALU & BULUH (PARALLAX) */
+    .kinabalu-scene {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .k-layer {
+      position: absolute; bottom: 0; left: -5%; width: 110%;
+      will-change: transform;
+    }
+    .k-moon {
+      position: absolute; top: 10%; right: 14%; width: min(240px, 45vw); height: min(240px, 45vw);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 232, 163, 0.16) 0%, rgba(242, 193, 78, 0.04) 48%, transparent 72%);
+      filter: blur(2px);
+    }
+    .k-mist {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 42vh;
+      background: linear-gradient(0deg, rgba(3, 10, 7, 0.95) 0%, rgba(7, 25, 18, 0.45) 55%, transparent 100%);
+    }
+    .bamboo-left, .bamboo-right {
+      position: absolute; bottom: 0; height: 78vh; opacity: 0.22;
+      transform-origin: bottom center;
+      animation: bambooSway 9s ease-in-out infinite alternate;
+    }
+    .bamboo-left { left: -12px; }
+    .bamboo-right { right: -12px; transform: scaleX(-1); animation-delay: -4s; }
+    @keyframes bambooSway {
+      from { transform: rotate(-1.4deg); }
+      to { transform: rotate(1.6deg); }
     }
 
     /* KURSOR MAGNETIK (DESKTOP SAHAJA) */
@@ -93,13 +144,6 @@
     }
 
     #magic-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-    .aurora {
-      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-      will-change: transform; animation: driftAura 18s ease-in-out infinite alternate;
-    }
-    .aura-1 { width: min(680px, 120vw); height: min(680px, 120vw); top: -180px; right: -140px; background: radial-gradient(circle, rgba(27,107,66,0.28) 0%, transparent 68%); }
-    .aura-2 { width: min(620px, 120vw); height: min(620px, 120vw); bottom: -100px; left: -180px; animation-delay: -6s; background: radial-gradient(circle, rgba(184,93,25,0.22) 0%, transparent 68%); }
-    @keyframes driftAura { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(35px, 25px, 0) scale(1.08); } }
 
     /* KOMPAS BAB TERAPUNG */
     .chapter-compass {
@@ -527,9 +571,42 @@
   </div>
 
   <div id="scroll-progress"></div>
+
+  <!-- LATAR BELAKANG EKSKLUSIF: LEMBAH MAGIS KINABALU & LINANGKIT -->
+  <div class="linangkit-bg"></div>
+  <div class="sunbeams"></div>
+  <div class="kinabalu-scene">
+    <div class="k-moon"></div>
+
+    <!-- Lapisan 1: Puncak Gunung Kinabalu -->
+    <svg id="k-peaks" class="k-layer" viewBox="0 0 1440 420" preserveAspectRatio="none" style="height: 54vh; opacity: 0.42;">
+      <defs>
+        <linearGradient id="mtnGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1E4D40"/>
+          <stop offset="100%" stop-color="#05120D"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#mtnGrad)" d="M0,420 L0,295 L130,245 L240,275 L390,175 L470,195 L575,92 L620,115 L675,62 L735,98 L790,54 L855,112 L945,102 L1065,198 L1190,168 L1315,245 L1440,210 L1440,420 Z"/>
+    </svg>
+
+    <!-- Lapisan 2: Banjaran Hutan Borneo -->
+    <svg id="k-hills" class="k-layer" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height: 36vh; opacity: 0.72;">
+      <path fill="#071C14" d="M0,320 L0,185 Q180,110 380,165 T760,145 T1140,175 T1440,130 L1440,320 Z"/>
+    </svg>
+
+    <!-- Bayang Rimbunan Buluh Kiri & Kanan -->
+    <svg class="bamboo-left" viewBox="0 0 140 500" fill="none">
+      <path d="M24 500 L30 0 M56 500 L48 40 M82 500 L92 120" stroke="#1E523B" stroke-width="6" stroke-linecap="round"/>
+      <path d="M28 180 Q60 155 88 165 M52 240 Q85 215 115 228 M30 95 Q68 72 95 85" stroke="#2B7252" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+    <svg class="bamboo-right" viewBox="0 0 140 500" fill="none">
+      <path d="M24 500 L30 0 M56 500 L48 40 M82 500 L92 120" stroke="#1E523B" stroke-width="6" stroke-linecap="round"/>
+      <path d="M28 180 Q60 155 88 165 M52 240 Q85 215 115 228 M30 95 Q68 72 95 85" stroke="#2B7252" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+
+    <div class="k-mist"></div>
+  </div>
   <canvas id="magic-canvas"></canvas>
-  <div class="aurora aura-1"></div>
-  <div class="aurora aura-2"></div>
 
   <div class="chapter-compass">
     <a href="#top" class="compass-dot active" data-target="top" data-label="Utama"></a>
@@ -881,12 +958,17 @@
     }
 
     const progressEl = document.getElementById('scroll-progress');
+    const kPeaks = document.getElementById('k-peaks');
+    const kHills = document.getElementById('k-hills');
     let scrollTicking = false;
     window.addEventListener('scroll', () => {
       if (!scrollTicking) {
         requestAnimationFrame(() => {
           const h = document.documentElement;
-          progressEl.style.transform = `scaleX(${h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)})`;
+          const y = h.scrollTop;
+          progressEl.style.transform = `scaleX(${y / Math.max(1, h.scrollHeight - h.clientHeight)})`;
+          if (kPeaks) kPeaks.style.transform = `translate3d(0, ${Math.min(y * 0.08, 90)}px, 0)`;
+          if (kHills) kHills.style.transform = `translate3d(0, ${Math.min(y * 0.14, 130)}px, 0)`;
           scrollTicking = false;
         });
         scrollTicking = true;
