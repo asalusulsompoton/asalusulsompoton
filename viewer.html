@@ -85,6 +85,8 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 4px 14px 6px; gap: 8px;
     }
+
+    /* Bingkai Lalai untuk Diorama 3D (Hal. 4, 6 & 10) */
     .exhibit-frame {
       position: relative; width: 100%; max-width: 760px; flex: 1; min-height: 0;
       display: flex; align-items: center; justify-content: center; border-radius: 22px;
@@ -93,6 +95,21 @@
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
     .exhibit-frame.switching { opacity: 0.35; transform: scale(0.985); }
+
+    /* Bingkai Fit Ngam-Ngam untuk Gambar 2D (Hal. 1,2,3,5,7,8,9,11,12) */
+    .exhibit-frame.mode-2d {
+      flex: 0 1 auto;
+      width: fit-content;
+      height: fit-content;
+      max-width: 94%;
+      max-height: 46dvh;
+      border-radius: 18px;
+      background: transparent;
+      border: 2px solid rgba(242, 193, 78, 0.55);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.68), 0 0 24px rgba(242, 193, 78, 0.14);
+    }
+    .exhibit-frame.mode-2d .pedestal-glow { display: none; }
+
     .pedestal-glow {
       position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
       width: 65%; height: 65px; border-radius: 50%;
@@ -111,12 +128,13 @@
     #anim-select { outline: none; max-width: 145px; }
     #anim-select option { background: #07140D; color: #FAF6EC; }
 
-    .art-wrap { display: none; position: relative; z-index: 2; max-height: 92%; max-width: 92%; }
+    .art-wrap {
+      display: none; position: relative; z-index: 2;
+      max-height: 100%; max-width: 100%;
+    }
     #img-stage {
-      max-height: 40vh; max-width: 100%; height: auto; width: auto;
-      border-radius: 14px; display: block; object-fit: contain;
-      border: 2px solid rgba(242, 193, 78, 0.45);
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.65); transition: transform 0.2s ease-out;
+      max-height: 45dvh; max-width: 100%; height: auto; width: auto;
+      display: block; object-fit: contain;
     }
 
     .caption-area { width: 100%; max-width: 720px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -392,11 +410,15 @@
         viewerSub.textContent = subtitles[`pg${num}`][currentLang];
         updateLangUI();
         document.querySelectorAll('.num-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === num));
+
         if (data.glb) {
-          mv.src = data.glb; mv.poster = `./images/page${num}.jpg`;
+          exhibitFrame.classList.remove('mode-2d');
+          mv.removeAttribute('poster');
+          mv.src = data.glb;
           mv.style.display = 'block'; artWrap.style.display = 'none';
           tools3D.style.display = 'flex'; badge3D.style.display = 'inline-block';
         } else {
+          exhibitFrame.classList.add('mode-2d');
           mv.style.display = 'none'; tools3D.style.display = 'none'; badge3D.style.display = 'none';
           imgStage.src = `./images/page${num}.jpg`; imgStage.onerror = () => { imgStage.src = './images/cover.jpg'; };
           artWrap.style.display = 'block';
