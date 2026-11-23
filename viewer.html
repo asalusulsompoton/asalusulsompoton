@@ -18,15 +18,22 @@
       --gold-soft: #F7E8C2;
       --gourd: #BA5A28;
 
-      /* iOS Tinted Glass & Material 3 Expressive */
-      --glass-tint: rgba(255, 253, 248, 0.66);
-      --glass-strong: rgba(255, 253, 248, 0.82);
-      --glass-border: rgba(255, 255, 255, 0.78);
+      --glass-tint: rgba(255, 253, 248, 0.68);
+      --glass-strong: rgba(255, 253, 248, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.82);
       --glass-stroke: rgba(23, 51, 37, 0.11);
-      --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.88), inset 0 -1px 2px rgba(23, 51, 37, 0.05);
+      --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(23, 51, 37, 0.05);
       --shadow-glass: 0 14px 34px -8px rgba(23, 51, 37, 0.14), 0 4px 12px rgba(23, 51, 37, 0.05);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      /* Warna Suasana Dinamik (berubah mengikut babak) */
+      --orb-a: rgba(247, 224, 168, 0.56);
+      --orb-b: rgba(169, 214, 229, 0.5);
     }
+
+    body.mood-forest { --orb-a: rgba(145, 206, 170, 0.52); --orb-b: rgba(190, 226, 204, 0.5); }
+    body.mood-magic  { --orb-a: rgba(116, 218, 179, 0.52); --orb-b: rgba(244, 214, 134, 0.52); }
+    body.mood-climax { --orb-a: rgba(247, 202, 114, 0.62); --orb-b: rgba(232, 166, 128, 0.42); }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -35,14 +42,29 @@
       color: var(--forest);
       height: 100vh; height: 100dvh; width: 100%;
       display: flex; flex-direction: column; overflow: hidden; position: relative;
+      user-select: none; -webkit-user-select: none;
     }
 
-    /* LATAR AMBIENT ORBS & TENUNAN LINANGKIT HALUS */
+    /* BAR KEMAJUAN CERITA (1-12) DI PALING ATAS */
+    #story-progress {
+      position: fixed; top: 0; left: 0; height: 3.5px; width: 100%; z-index: 1500;
+      background: rgba(23, 51, 37, 0.08);
+    }
+    #story-progress-fill {
+      height: 100%; width: 8.33%;
+      background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
+      transition: width 0.4s var(--spring);
+    }
+
+    /* LATAR AMBIENT DINAMIK & TENUNAN LINANGKIT */
     .v-orb {
       position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      transition: background 0.8s ease; will-change: transform;
+      animation: orbDrift 18s ease-in-out infinite alternate;
     }
-    .vo-1 { width: 420px; height: 420px; top: -120px; right: -120px; background: radial-gradient(circle, rgba(247, 224, 168, 0.52) 0%, transparent 70%); }
-    .vo-2 { width: 380px; height: 380px; bottom: -100px; left: -110px; background: radial-gradient(circle, rgba(173, 212, 185, 0.45) 0%, transparent 70%); }
+    .vo-1 { width: 440px; height: 440px; top: -120px; right: -120px; background: radial-gradient(circle, var(--orb-a) 0%, transparent 70%); }
+    .vo-2 { width: 400px; height: 400px; bottom: -100px; left: -110px; background: radial-gradient(circle, var(--orb-b) 0%, transparent 70%); animation-delay: -6s; }
+    @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(20px, 16px, 0); } }
 
     .viewer-linangkit {
       position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.045;
@@ -50,7 +72,6 @@
       background-size: 56px 56px;
     }
 
-    /* SILUET GUNUNG KINABALU CAT AIR DI LATAR */
     .bg-mountains {
       position: fixed; bottom: 0; left: 0; width: 100%; height: 34vh;
       pointer-events: none; z-index: 0; opacity: 0.78;
@@ -60,7 +81,7 @@
     .top-bar {
       position: relative; z-index: 20;
       display: flex; justify-content: space-between; align-items: center; gap: 6px;
-      padding: max(10px, env(safe-area-inset-top)) 14px 8px;
+      padding: max(12px, env(safe-area-inset-top)) 14px 6px;
     }
     .left-tools, .right-tools { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
@@ -72,9 +93,10 @@
       backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
       box-shadow: var(--shadow-glass), var(--specular);
       transition: transform 0.22s var(--spring), border-color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .icon-btn:hover { border-color: var(--gold); background: rgba(255, 255, 255, 0.95); }
-    .icon-btn:active { transform: scale(0.9); }
+    .icon-btn:hover { border-color: var(--gold); background: rgba(255, 255, 255, 0.96); }
+    .icon-btn:active { transform: scale(0.88); }
     .icon-btn.muted { opacity: 0.45; }
 
     .page-pill {
@@ -85,10 +107,10 @@
       backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
-    .page-pill strong { color: var(--gourd); font-family: 'Fraunces', serif; font-size: 0.94rem; }
+    .page-pill strong { color: var(--gourd); font-family: 'Fraunces', serif; font-size: 0.96rem; }
     .badge-3d-live {
-      display: none; background: var(--gourd); color: #fff;
-      font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+      display: none; background: linear-gradient(135deg, var(--gourd), var(--gold));
+      color: #fff; font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;
     }
 
     /* iOS SEGMENTED CONTROL BAHASA */
@@ -103,7 +125,7 @@
       cursor: pointer; transition: 0.2s;
     }
     .lang-pill.active {
-      background: rgba(255, 255, 255, 0.96); color: var(--forest);
+      background: #fff; color: var(--forest);
       box-shadow: 0 2px 8px rgba(23, 51, 37, 0.14);
     }
 
@@ -115,7 +137,7 @@
       box-shadow: 0 8px 20px rgba(23, 51, 37, 0.24), inset 0 1px 1px rgba(255,255,255,0.26);
       transition: transform 0.22s var(--spring);
     }
-    .ar-jump:active { transform: scale(0.94); }
+    .ar-jump:active { transform: scale(0.92); }
 
     /* PENTAS UTAMA */
     .stage {
@@ -126,66 +148,104 @@
 
     /* Bingkai Diorama 3D (Hal. 4, 6 & 10) */
     .exhibit-frame {
-      position: relative; width: 100%; max-width: 760px; flex: 1; min-height: 0;
+      position: relative; width: 100%; max-width: 780px; flex: 1; min-height: 0;
       display: flex; align-items: center; justify-content: center; border-radius: 28px;
-      background: radial-gradient(circle at 50% 55%, #234E38 0%, #0E2218 100%);
-      border: 2.5px solid rgba(255, 255, 255, 0.85);
-      box-shadow: 0 22px 50px -10px rgba(23, 51, 37, 0.24), inset 0 1px 1px rgba(255,255,255,0.25);
+      background: radial-gradient(circle at 50% 56%, #285C42 0%, #0E2218 100%);
+      border: 2.5px solid rgba(255, 255, 255, 0.88);
+      box-shadow: 0 24px 54px -12px rgba(23, 51, 37, 0.26), inset 0 1px 1px rgba(255,255,255,0.25);
       overflow: hidden;
-      transition: opacity 0.2s ease, transform 0.24s var(--spring);
+      transition: opacity 0.22s ease, transform 0.26s var(--spring), background 0.5s ease;
     }
-    .exhibit-frame.switching { opacity: 0.35; transform: scale(0.985); }
+    .exhibit-frame.night-stage {
+      background: radial-gradient(circle at 50% 52%, #1B3945 0%, #07131A 100%);
+    }
+    .exhibit-frame::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 8;
+      background: repeating-linear-gradient(135deg, var(--forest) 0 8px, var(--gold) 8px 13px, var(--gourd) 13px 18px, var(--forest) 18px 24px);
+    }
+    .exhibit-frame::after {
+      content: ""; position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
+      width: 68%; height: 68px; border-radius: 50%; pointer-events: none; z-index: 1;
+      background: radial-gradient(circle, rgba(244, 196, 83, 0.34), transparent 72%);
+    }
+    .exhibit-frame.switching { opacity: 0.28; transform: scale(0.975); }
 
     /* Bingkai Fit Ngam-Ngam untuk Gambar 2D (Hal. 1,2,3,5,7,8,9,11,12) */
     .exhibit-frame.mode-2d {
       flex: 0 1 auto;
-      width: fit-content;
-      height: fit-content;
-      max-width: 94%;
-      max-height: 46dvh;
-      border-radius: 20px;
-      background: transparent;
-      border: 3px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 20px 44px -8px rgba(23, 51, 37, 0.24);
+      width: fit-content; height: fit-content;
+      max-width: 94%; max-height: 45dvh;
+      border-radius: 22px; background: transparent;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 46px -8px rgba(23, 51, 37, 0.24);
     }
+    .exhibit-frame.mode-2d::before,
+    .exhibit-frame.mode-2d::after { display: none; }
 
     model-viewer { width: 100%; height: 100%; display: none; position: relative; z-index: 2; --poster-color: transparent; }
-    .tools-3d { position: absolute; top: 10px; right: 10px; z-index: 6; display: none; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .tools-3d {
+      position: absolute; top: 12px; right: 12px; z-index: 6;
+      display: none; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 90%;
+    }
     .mini-3d-btn {
       background: var(--glass-strong); color: var(--forest);
       backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
       border: 1px solid var(--glass-border); border-radius: 999px;
-      padding: 6px 12px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), var(--specular);
-      transition: transform 0.2s var(--spring);
+      padding: 6px 11px; font-size: 0.69rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22), var(--specular);
+      transition: transform 0.2s var(--spring), background 0.2s;
     }
-    .mini-3d-btn:active { transform: scale(0.92); }
+    .mini-3d-btn:active { transform: scale(0.9); }
     .mini-3d-btn.active { background: var(--gold); color: var(--forest); border-color: var(--gold-soft); }
-    #anim-select { outline: none; max-width: 145px; }
+    #anim-select { outline: none; max-width: 135px; }
     #anim-select option { background: #F8F4EA; color: #173325; }
+
+    .stage-3d-hint {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 5;
+      display: none; pointer-events: none;
+      background: rgba(13, 34, 24, 0.72); color: var(--gold-soft);
+      border: 1px solid rgba(247, 232, 194, 0.26); backdrop-filter: blur(8px);
+      font-size: 0.68rem; font-weight: 700; padding: 5px 13px; border-radius: 999px;
+      white-space: nowrap; transition: opacity 0.4s ease;
+    }
+    .stage-3d-hint.faded { opacity: 0; }
 
     .art-wrap {
       display: none; position: relative; z-index: 2;
-      max-height: 100%; max-width: 100%;
+      max-height: 100%; max-width: 100%; overflow: hidden;
     }
+    /* Kilauan Holographic Halus pada Halaman 2D */
+    .art-wrap::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.28) 50%, transparent 65%);
+      transform: translateX(-140%); animation: pageSheen 6s ease-in-out infinite;
+    }
+    @keyframes pageSheen { 0%, 72% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
     #img-stage {
-      max-height: 45dvh; max-width: 100%; height: auto; width: auto;
+      max-height: 44dvh; max-width: 100%; height: auto; width: auto;
       display: block; object-fit: contain;
     }
 
     /* TAJUK & KAD SARI KATA TINTED GLASS */
-    .caption-area { width: 100%; max-width: 720px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .caption-area { width: 100%; max-width: 720px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .chapter-kicker {
+      font-size: 0.66rem; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase;
+      color: var(--gourd);
+    }
     .scene-caption {
-      font-family: 'Fraunces', serif; font-size: clamp(1rem, 3.8vw, 1.34rem);
-      color: var(--forest); font-weight: 800; line-height: 1.2; letter-spacing: -0.015em;
+      font-family: 'Fraunces', serif; font-size: clamp(1.02rem, 3.8vw, 1.38rem);
+      color: var(--forest); font-weight: 800; line-height: 1.18; letter-spacing: -0.015em;
     }
     .subtitle-card {
       width: 100%; background: var(--glass-tint); border: 1px solid var(--glass-border);
       border-radius: 22px; padding: 10px 16px;
       backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
       box-shadow: var(--shadow-glass), var(--specular);
+      transition: border-color 0.25s ease;
     }
-    .sub-meta { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 3px; }
+    .subtitle-card.playing { border-color: rgba(220, 160, 40, 0.65); }
+    .sub-meta { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
     .sub-lang-tag {
       background: var(--gold-soft); color: var(--gourd);
       font-size: 0.64rem; font-weight: 800; padding: 2px 9px; border-radius: 999px;
@@ -197,7 +257,21 @@
     .subtitle-card.playing .sub-eq span:nth-child(2) { animation-delay: 0.15s; }
     .subtitle-card.playing .sub-eq span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes eqBounce { from { height: 3px; } to { height: 10px; } }
-    #viewer-sub { font-size: clamp(0.85rem, 3.1vw, 0.98rem); color: #2B4537; line-height: 1.48; font-weight: 600; }
+    #viewer-sub {
+      font-size: clamp(0.84rem, 3vw, 0.98rem); color: #2B4537; line-height: 1.48; font-weight: 600;
+      animation: subFade 0.28s ease;
+    }
+    @keyframes subFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .quiz-cta-pill {
+      display: none; margin-top: 8px;
+      background: linear-gradient(135deg, var(--gold), var(--gourd));
+      color: #fff; text-decoration: none; font-size: 0.76rem; font-weight: 800;
+      padding: 7px 16px; border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(186, 90, 40, 0.3);
+      animation: popUp 0.4s var(--spring);
+    }
+    @keyframes popUp { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
 
     /* DOK KAWALAN BAWAH */
     .bottom-dock {
@@ -219,17 +293,17 @@
     }
     .num-btn {
       width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--glass-stroke);
-      background: rgba(255, 255, 255, 0.78); color: var(--sage);
+      background: rgba(255, 255, 255, 0.8); color: var(--sage);
       font-weight: 700; font-size: 0.76rem; cursor: pointer; position: relative;
       transition: transform 0.2s var(--spring), background 0.2s, color 0.2s;
     }
-    .num-btn:active { transform: scale(0.88); }
-    .num-btn.has-3d { border-color: rgba(220, 160, 40, 0.65); color: var(--gourd); }
+    .num-btn:active { transform: scale(0.86); }
+    .num-btn.has-3d { border-color: rgba(220, 160, 40, 0.7); color: var(--gourd); }
     .num-btn.has-3d::after { content: ""; position: absolute; top: -2px; right: -1px; width: 6px; height: 6px; border-radius: 50%; background: var(--gourd); }
     .num-btn.active {
       background: linear-gradient(135deg, #2A5840, #173325); color: #FAF5EB;
-      border-color: var(--forest); font-weight: 800;
-      box-shadow: 0 4px 12px rgba(23, 51, 37, 0.26);
+      border-color: var(--forest); font-weight: 800; transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(23, 51, 37, 0.28);
     }
 
     .player-row { display: flex; align-items: center; gap: 12px; }
@@ -240,7 +314,7 @@
       box-shadow: 0 10px 24px rgba(23, 51, 37, 0.28), inset 0 1px 1px rgba(255,255,255,0.28);
       transition: transform 0.22s var(--spring);
     }
-    .play-main:active { transform: scale(0.92); }
+    .play-main:active { transform: scale(0.9); }
     .play-main.playing { animation: pulsePlay 1.8s infinite; }
     @keyframes pulsePlay { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 160, 40, 0.55); } 50% { box-shadow: 0 0 0 10px rgba(220, 160, 40, 0); } }
     .auto-btn {
@@ -251,13 +325,13 @@
       box-shadow: var(--shadow-glass), var(--specular);
       transition: transform 0.2s var(--spring), background 0.2s;
     }
-    .auto-btn:active { transform: scale(0.94); }
+    .auto-btn:active { transform: scale(0.92); }
     .auto-btn.on { background: var(--gold-soft); border-color: var(--gold); color: var(--gourd); }
 
     #toast {
       position: fixed; top: 62px; left: 50%; transform: translate(-50%, -10px);
-      z-index: 1200; opacity: 0; pointer-events: none;
-      background: rgba(23, 51, 37, 0.92); color: #FAF5EB;
+      z-index: 1600; opacity: 0; pointer-events: none;
+      background: rgba(23, 51, 37, 0.94); color: #FAF5EB;
       backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.22);
       border-radius: 999px; padding: 7px 16px; font-size: 0.74rem; font-weight: 700;
@@ -266,6 +340,10 @@
     }
     #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
+    .confetti { position: fixed; width: 9px; height: 9px; z-index: 2500; pointer-events: none; will-change: transform; animation: confettiDrop 2.4s ease-out forwards; }
+    @keyframes confettiDrop { 0% { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0,100vh,0) rotate(720deg); opacity: 0; } }
+
     /* TELEFON: GRID 6x2 KEMAS & BUTANG KOMPAK */
     @media (max-width: 600px) {
       .ar-jump span { display: none; }
@@ -273,6 +351,7 @@
       .icon-btn { width: 36px; height: 36px; font-size: 1.05rem; }
       .page-pill { padding: 5px 11px; font-size: 0.74rem; }
       .lang-pill { padding: 4px 7px; font-size: 0.68rem; }
+      .mini-3d-btn { padding: 5px 9px; font-size: 0.65rem; }
       .num-bar {
         display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
         border-radius: 22px; padding: 8px 12px; width: 100%; max-width: 305px; justify-items: center;
@@ -282,6 +361,9 @@
   </style>
 </head>
 <body>
+
+  <div id="story-progress"><div id="story-progress-fill"></div></div>
+  <div id="flash-overlay"></div>
 
   <div class="v-orb vo-1"></div>
   <div class="v-orb vo-2"></div>
@@ -317,14 +399,18 @@
     <div class="exhibit-frame" id="exhibit-frame">
       <div class="tools-3d" id="tools-3d">
         <button class="mini-3d-btn active" id="rot-btn" onclick="toggleRotate()">↻ Putar</button>
+        <button class="mini-3d-btn" id="mood-btn" onclick="toggleStageMood()">🌙 Magis</button>
+        <button class="mini-3d-btn" onclick="snap3D()">📸 Foto</button>
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
         <select id="anim-select" class="mini-3d-btn" style="display:none;" onchange="changeAnim(this.value)"></select>
       </div>
-      <model-viewer id="mv" camera-controls auto-rotate autoplay shadow-intensity="0.8" exposure="1.15" camera-orbit="35deg 68deg 108%"></model-viewer>
+      <model-viewer id="mv" camera-controls auto-rotate autoplay shadow-intensity="0.85" exposure="1.15" camera-orbit="35deg 68deg 108%"></model-viewer>
+      <span class="stage-3d-hint" id="stage-3d-hint">👆 Seret 360° · Cubit Zum</span>
       <div class="art-wrap" id="art-wrap"><img id="img-stage" alt="Ilustrasi Halaman" /></div>
     </div>
 
     <div class="caption-area">
+      <div class="chapter-kicker" id="chapter-kicker">BABAK 04 · DUNIA 3D</div>
       <div class="scene-caption" id="caption"></div>
       <div class="subtitle-card" id="subtitle-card">
         <div class="sub-meta">
@@ -332,6 +418,7 @@
           <div class="sub-eq"><span></span><span></span><span></span></div>
         </div>
         <div id="viewer-sub"></div>
+        <a href="index.html#kuiz" id="quiz-cta-pill" class="quiz-cta-pill">🏆 Tamat Cerita! Jawab Kuiz & Jana Sijil ›</a>
       </div>
     </div>
   </div>
@@ -356,6 +443,34 @@
   </div>
 
   <script>
+    /* ================= ENJIN BUNYI UI HALUS (WEB AUDIO API) ================= */
+    let uiCtx = null;
+    function playChime(type = 'flip') {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!uiCtx && AC) uiCtx = new AC();
+        if (!uiCtx) return;
+        const run = () => {
+          const now = uiCtx.currentTime;
+          if (type === 'flip') {
+            const o = uiCtx.createOscillator(), g = uiCtx.createGain();
+            o.type = 'sine'; o.frequency.setValueAtTime(520, now); o.frequency.exponentialRampToValueAtTime(760, now + 0.07);
+            g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.1, now + 0.015); g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+            o.connect(g); g.connect(uiCtx.destination); o.start(now); o.stop(now + 0.15);
+          } else if (type === 'fanfare') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+              const o = uiCtx.createOscillator(), g = uiCtx.createGain();
+              o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i * 0.1);
+              g.gain.setValueAtTime(0.001, now + i * 0.1); g.gain.exponentialRampToValueAtTime(0.16, now + i * 0.1 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.5);
+              o.connect(g); g.connect(uiCtx.destination); o.start(now + i * 0.1); o.stop(now + i * 0.1 + 0.55);
+            });
+          }
+        };
+        if (uiCtx.state === 'suspended') uiCtx.resume().then(run).catch(() => {});
+        else run();
+      } catch (e) {}
+    }
+
     const subtitles = {
       pg1: { bm: "Pada zaman dahulu di Sabah, tinggal sepasang suami isteri warga emas yang penyayang bernama Aki dan Odu.", en: "Long ago in Sabah, lived a loving elderly couple named Aki and Odu.", kdz: "Di gulu po id Sabah, poingion o misawa tongotuo roitan do Aki om Odu." },
       pg2: { bm: "Dahulu, Odu mempunyai suara nyanyian yang sangat merdu, namun akibat demam panas yang teruk, dia telah kehilangan keupayaan bercakap dan bernyanyi.", en: "Odu used to have a beautiful singing voice, but a severe fever took away her ability to speak and sing.", kdz: "Kivaa rolou di tosonong i Odu do sinding, nga sabab do ruminit di topuod, naawi o koonuon disido do moboros om sinding." },
@@ -373,18 +488,18 @@
 
     const sfxList = { 1: "./sfx/pg1_kampung.mp3", 4: "./sfx/pg4_sungai.mp3", 6: "./sfx/pg6_burung.mp3", 7: "./sfx/pg7_angin_buluh.mp3", 10: "./sfx/pg10_sompoton.mp3" };
     const pages = [
-      { n: 1, t: "Kehidupan Harmoni Aki & Odu", glb: null },
-      { n: 2, t: "Dugaan Kehilangan Suara Odu", glb: null },
-      { n: 3, t: "Misi Mencari Penawar di Hutan", glb: null },
-      { n: 4, t: "Aliran Anak Sungai Tersekat", glb: "./models/page4.glb" },
-      { n: 5, t: "Kebaikan Membawa Rahmat", glb: null },
-      { n: 6, t: "Petunjuk ke Hutan Magis", glb: "./models/page6.glb" },
-      { n: 7, t: "Alunan Melodi Rimbunan Buluh", glb: null },
-      { n: 8, t: "Ilham Daripada Alam", glb: null },
-      { n: 9, t: "Kerjasama Menghasilkan Sompoton", glb: null },
-      { n: 10, t: "Melodi Ajaib Memulihkan Suara", glb: "./models/page10.glb" },
-      { n: 11, t: "Nyanyian Odu Bergema", glb: null },
-      { n: 12, t: "Sompoton, Simbol Cinta Sejati", glb: null }
+      { n: 1, tag: "BABAK 01 · KAMPUNG DAMAI", mood: "", t: "Kehidupan Harmoni Aki & Odu", glb: null },
+      { n: 2, tag: "BABAK 02 · DUGAAN", mood: "", t: "Dugaan Kehilangan Suara Odu", glb: null },
+      { n: 3, tag: "BABAK 03 · PENGEMBARAAN", mood: "mood-forest", t: "Misi Mencari Penawar di Hutan", glb: null },
+      { n: 4, tag: "BABAK 04 · DIORAMA 3D", mood: "mood-forest", t: "Aliran Anak Sungai Tersekat", glb: "./models/page4.glb" },
+      { n: 5, tag: "BABAK 05 · KEBAIKAN", mood: "mood-forest", t: "Kebaikan Membawa Rahmat", glb: null },
+      { n: 6, tag: "BABAK 06 · DIORAMA 3D", mood: "mood-magic", t: "Petunjuk ke Hutan Magis", glb: "./models/page6.glb" },
+      { n: 7, tag: "BABAK 07 · ALUNAN BULUH", mood: "mood-magic", t: "Alunan Melodi Rimbunan Buluh", glb: null },
+      { n: 8, tag: "BABAK 08 · ILHAM ALAM", mood: "mood-magic", t: "Ilham Daripada Alam", glb: null },
+      { n: 9, tag: "BABAK 09 · CIPTAAN BERSAMA", mood: "mood-climax", t: "Kerjasama Menghasilkan Sompoton", glb: null },
+      { n: 10, tag: "BABAK 10 · KEMUNCAK 3D", mood: "mood-climax", t: "Melodi Ajaib Memulihkan Suara", glb: "./models/page10.glb" },
+      { n: 11, tag: "BABAK 11 · KEGEMBIRAAN", mood: "mood-climax", t: "Nyanyian Odu Bergema", glb: null },
+      { n: 12, tag: "BABAK 12 · WARISAN ABADI", mood: "mood-climax", t: "Sompoton, Simbol Cinta Sejati", glb: null }
     ];
 
     const params = new URLSearchParams(window.location.search);
@@ -399,11 +514,12 @@
     const viewerSub = document.getElementById('viewer-sub'), subCard = document.getElementById('subtitle-card');
     const subLangTag = document.getElementById('sub-lang-tag'), arJumpLink = document.getElementById('ar-jump-link');
     const progressFill = document.getElementById('progress-fill'), timeCurr = document.getElementById('time-curr'), timeDur = document.getElementById('time-dur');
+    const storyProgFill = document.getElementById('story-progress-fill'), chapterKicker = document.getElementById('chapter-kicker');
+    const stage3dHint = document.getElementById('stage-3d-hint'), quizCtaPill = document.getElementById('quiz-cta-pill');
     const toastEl = document.getElementById('toast');
 
-    let audio = new Audio(), sfxAudio = new Audio(), sfxEnabled = true, autoStory = false, toastTimer = null;
+    let audio = new Audio(), sfxAudio = new Audio(), sfxEnabled = true, autoStory = false, toastTimer = null, isNightStage = false;
 
-    // Buka kunci saluran audio mudah alih secara senyap pada ketikan pertama
     ['touchstart', 'pointerdown'].forEach(evt => {
       window.addEventListener(evt, () => {
         if (sfxEnabled && sfxList[currentPage] && sfxAudio.paused && audio.paused) {
@@ -412,13 +528,16 @@
       }, { once: true, passive: true });
     });
 
+    mv.addEventListener('pointerdown', () => stage3dHint.classList.add('faded'));
+
     function showToast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400); }
     function fmtTime(sec) { if (!sec || isNaN(sec)) return "0:00"; return `${Math.floor(sec / 60)}:${Math.floor(sec % 60).toString().padStart(2, '0')}`; }
 
     pages.forEach(p => {
       const b = document.createElement('button');
       b.className = 'num-btn' + (p.glb ? ' has-3d' : '');
-      b.textContent = p.n; b.onclick = () => loadPage(p.n, false);
+      b.textContent = p.n;
+      b.onclick = () => { playChime('flip'); loadPage(p.n, false); };
       numBar.appendChild(b);
     });
 
@@ -444,7 +563,46 @@
       if (mv.hasAttribute('auto-rotate')) { mv.removeAttribute('auto-rotate'); btn.classList.remove('active'); }
       else { mv.setAttribute('auto-rotate', ''); btn.classList.add('active'); }
     }
-    function resetCamera() { mv.cameraOrbit = '35deg 68deg 108%'; mv.fieldOfView = 'auto'; showToast("🎯 Kamera 3D ditetapkan semula"); }
+    function toggleStageMood() {
+      isNightStage = !isNightStage;
+      const btn = document.getElementById('mood-btn');
+      exhibitFrame.classList.toggle('night-stage', isNightStage);
+      mv.exposure = isNightStage ? 0.9 : 1.15;
+      btn.classList.toggle('active', isNightStage);
+      btn.textContent = isNightStage ? '☀️ Pagi' : '🌙 Magis';
+      playChime('flip');
+      showToast(isNightStage ? "🌙 Pencahayaan Magis aktif" : "☀️ Pencahayaan Pagi aktif");
+    }
+    function resetCamera() { mv.cameraOrbit = '35deg 68deg 108%'; mv.fieldOfView = 'auto'; playChime('flip'); showToast("🎯 Kamera 3D ditetapkan semula"); }
+
+    function snap3D() {
+      try {
+        const flash = document.getElementById('flash-overlay');
+        flash.style.opacity = '0.85'; setTimeout(() => flash.style.opacity = '0', 180);
+        const dataUrl = mv.toDataURL('image/png');
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+          const ctx = c.getContext('2d');
+          const bg = ctx.createRadialGradient(c.width/2, c.height/2, 40, c.width/2, c.height/2, c.width*0.7);
+          bg.addColorStop(0, isNightStage ? '#1B3945' : '#285C42');
+          bg.addColorStop(1, isNightStage ? '#07131A' : '#0E2218');
+          ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, 0, 0);
+          ctx.strokeStyle = '#DCA028'; ctx.lineWidth = Math.max(4, c.width * 0.008);
+          ctx.strokeRect(12, 12, c.width - 24, c.height - 24);
+          ctx.fillStyle = 'rgba(23, 51, 37, 0.88)'; ctx.fillRect(0, c.height - 54, c.width, 54);
+          ctx.fillStyle = '#F7E8C2'; ctx.font = `bold ${Math.max(14, Math.round(c.width * 0.022))}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillText(`✦ Asal Usul Sompoton · Halaman ${currentPage} (3D Diorama)`, c.width / 2, c.height - 20);
+          const a = document.createElement('a');
+          a.download = `Diorama3D_Sompoton_Hal${currentPage}.png`;
+          a.href = c.toDataURL('image/png'); a.click();
+          showToast("📸 Foto 3D berjaya disimpan!");
+        };
+        img.src = dataUrl;
+      } catch (e) { showToast("⚠ Tangkapan foto tidak disokong pelayar ini"); }
+    }
 
     mv.addEventListener('load', () => {
       const anims = mv.availableAnimations || [];
@@ -457,14 +615,30 @@
     });
     function changeAnim(name) { mv.animationName = name; mv.play(); showToast(`🎬 Animasi: ${name}`); }
 
+    function launchConfetti() {
+      const colors = ['#DCA028', '#BA5A28', '#28523C', '#F7E8C2', '#4ADE80'];
+      for (let i = 0; i < 38; i++) {
+        const c = document.createElement('div'); c.className = 'confetti';
+        c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-12px';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        c.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+        document.body.appendChild(c); setTimeout(() => c.remove(), 3000);
+      }
+    }
+
     function loadPage(num, autoPlayNow = false) {
       currentPage = num; stopAudio(); animSelect.style.display = 'none';
       exhibitFrame.classList.add('switching');
       setTimeout(() => {
         const data = pages[num - 1];
+        document.body.className = data.mood;
+        storyProgFill.style.width = `${(num / 12) * 100}%`;
         document.getElementById('curr-num').textContent = num;
+        chapterKicker.textContent = data.tag;
         document.getElementById('caption').textContent = data.t;
         viewerSub.textContent = subtitles[`pg${num}`][currentLang];
+        quizCtaPill.style.display = num === 12 ? 'inline-block' : 'none';
         updateLangUI();
         document.querySelectorAll('.num-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === num));
 
@@ -474,9 +648,11 @@
           mv.src = data.glb;
           mv.style.display = 'block'; artWrap.style.display = 'none';
           tools3D.style.display = 'flex'; badge3D.style.display = 'inline-block';
+          stage3dHint.style.display = 'block'; stage3dHint.classList.remove('faded');
         } else {
           exhibitFrame.classList.add('mode-2d');
           mv.style.display = 'none'; tools3D.style.display = 'none'; badge3D.style.display = 'none';
+          stage3dHint.style.display = 'none';
           imgStage.src = `./images/page${num}.jpg`; imgStage.onerror = () => { imgStage.src = './images/cover.jpg'; };
           artWrap.style.display = 'block';
         }
@@ -486,8 +662,20 @@
       }, 150);
     }
 
-    function stepPage(delta) { let next = currentPage + delta; if (next < 1) next = 12; if (next > 12) next = 1; loadPage(next, autoStory); }
-    function changeLang(lang) { currentLang = lang; updateLangUI(); viewerSub.textContent = subtitles[`pg${currentPage}`][lang]; if (!audio.paused) { stopAudio(); startAudioPlayback(); } }
+    function stepPage(delta) {
+      playChime('flip');
+      let next = currentPage + delta;
+      if (next < 1) next = 12;
+      if (next > 12) next = 1;
+      loadPage(next, autoStory);
+    }
+
+    function changeLang(lang) {
+      playChime('flip');
+      currentLang = lang; updateLangUI();
+      viewerSub.textContent = subtitles[`pg${currentPage}`][lang];
+      if (!audio.paused) { stopAudio(); startAudioPlayback(); }
+    }
 
     function startAudioPlayback() {
       if (!sfxAudio.paused) sfxAudio.pause();
@@ -507,6 +695,7 @@
       progressFill.style.width = '0%'; timeCurr.textContent = '0:00'; timeDur.textContent = '0:00';
     }
     function toggleAutoStory() {
+      playChime('flip');
       autoStory = !autoStory;
       const btn = document.getElementById('auto-story-btn');
       btn.classList.toggle('on', autoStory); btn.textContent = autoStory ? '✨ Auto: ON' : '✨ Auto-Cerita';
@@ -522,14 +711,32 @@
     });
     audio.addEventListener('ended', () => {
       playBtn.textContent = '▶'; playBtn.classList.remove('playing'); subCard.classList.remove('playing');
-      if (autoStory && currentPage < 12) setTimeout(() => loadPage(currentPage + 1, true), 900);
-      else {
-        if (autoStory && currentPage === 12) { autoStory = false; document.getElementById('auto-story-btn').classList.remove('on'); document.getElementById('auto-story-btn').textContent = '✨ Auto-Cerita'; }
-        if (sfxEnabled && sfxList[currentPage]) sfxAudio.play().catch(() => {});
+      if (currentPage === 12) {
+        launchConfetti(); playChime('fanfare');
+        showToast("🎉 Tahniah! Anda selesai meneroka kisah Sompoton");
+        if (autoStory) { autoStory = false; document.getElementById('auto-story-btn').classList.remove('on'); document.getElementById('auto-story-btn').textContent = '✨ Auto-Cerita'; }
+      } else if (autoStory && currentPage < 12) {
+        setTimeout(() => loadPage(currentPage + 1, true), 900);
+      } else if (sfxEnabled && sfxList[currentPage]) {
+        sfxAudio.play().catch(() => {});
       }
     });
+
     function seekAudio(e) { if (!audio.duration) return; const r = e.currentTarget.getBoundingClientRect(); audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration; }
-    window.addEventListener('keydown', e => { if (e.key === 'ArrowRight') stepPage(1); else if (e.key === 'ArrowLeft') stepPage(-1); else if (e.code === 'Space') { e.preventDefault(); toggleAudio(); } });
+
+    /* LERET JARI (SWIPE) UNTUK SELA HALAMAN 2D DI TELEFON */
+    let touchStartX = 0;
+    artWrap.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    artWrap.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 48) stepPage(diff < 0 ? 1 : -1);
+    }, { passive: true });
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') stepPage(1);
+      else if (e.key === 'ArrowLeft') stepPage(-1);
+      else if (e.code === 'Space') { e.preventDefault(); toggleAudio(); }
+    });
 
     updateLangUI();
     loadPage(currentPage, false);
