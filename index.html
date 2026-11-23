@@ -27,6 +27,10 @@
       --shadow-glass: 0 16px 38px -10px rgba(23, 51, 37, 0.12), 0 4px 12px rgba(23, 51, 37, 0.05);
       --shadow-lift: 0 24px 52px -12px rgba(23, 51, 37, 0.18), 0 8px 18px rgba(220, 160, 40, 0.12);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      /* Pemboleh Ubah Enjin Spatial 3D */
+      --sx: 0;
+      --sy: 0;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,6 +102,21 @@
     .ambient-fab.on .amb-bars span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes eqMini { from { height: 3px; } to { height: 12px; } }
 
+    /* BUTANG SENSOR SPATIAL KHAS UNTUK iOS (iPHONE) */
+    #spatial-ios-btn {
+      display: none; position: fixed;
+      bottom: max(16px, env(safe-area-inset-bottom)); left: 16px; z-index: 950;
+      align-items: center; gap: 7px;
+      background: rgba(255, 253, 248, 0.85);
+      backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border: 1px solid var(--glass-border); color: var(--forest);
+      padding: 10px 15px; border-radius: 999px; font-size: 0.74rem; font-weight: 800;
+      cursor: pointer; box-shadow: var(--shadow-glass), var(--specular);
+      transition: transform 0.22s var(--spring), background 0.2s, color 0.2s;
+    }
+    #spatial-ios-btn:active { transform: scale(0.92); }
+    #spatial-ios-btn.active { background: var(--forest); color: var(--gold-soft); border-color: var(--gold); }
+
     /* NAVBAR TINTED GLASS */
     .nav-wrap { position: fixed; top: max(10px, env(safe-area-inset-top)); left: 0; right: 0; z-index: 1000; display: flex; justify-content: center; padding: 0 12px; }
     .navbar {
@@ -145,7 +164,7 @@
       position: relative; overflow: hidden; z-index: 2;
       background: linear-gradient(180deg, rgba(199, 227, 237, 0.84) 0%, rgba(234, 244, 241, 0.65) 48%, rgba(248, 244, 234, 0) 100%);
     }
-    .hero-mountains { position: absolute; bottom: 0; left: 0; width: 100%; height: 44%; pointer-events: none; z-index: 0; opacity: 0.88; }
+    .hero-mountains { position: absolute; bottom: 0; left: 0; width: 100%; height: 44%; pointer-events: none; z-index: 0; opacity: 0.88; will-change: transform; }
 
     .hero {
       min-height: 94vh; position: relative; z-index: 2;
@@ -198,11 +217,13 @@
       backdrop-filter: blur(18px) saturate(165%); -webkit-backdrop-filter: blur(18px) saturate(165%);
       border: 1.5px solid var(--glass-border);
       box-shadow: var(--shadow-glass), var(--specular);
+      transform-style: preserve-3d;
     }
     .book-glow-ring {
       position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);
       width: 240px; height: 240px; border-radius: 50%; pointer-events: none; z-index: 0;
       background: radial-gradient(circle, rgba(220, 160, 40, 0.26) 0%, rgba(169, 214, 229, 0.18) 50%, transparent 72%);
+      will-change: transform;
     }
 
     .genz-sticker {
@@ -260,7 +281,7 @@
       width: 100%; height: 100%; object-fit: cover; display: block;
       box-shadow: -10px 20px 40px rgba(23, 51, 37, 0.24), 0 0 0 2px #fff;
     }
-    .book-shadow { width: 190px; height: 16px; margin-top: 14px; border-radius: 50%; background: radial-gradient(ellipse, rgba(23, 51, 37, 0.22) 0%, transparent 72%); }
+    .book-shadow { width: 190px; height: 16px; margin-top: 14px; border-radius: 50%; background: radial-gradient(ellipse, rgba(23, 51, 37, 0.22) 0%, transparent 72%); will-change: transform; }
     .book-hover-tip {
       margin-top: 8px; display: inline-flex; align-items: center; gap: 6px;
       background: rgba(23, 51, 37, 0.08); color: var(--forest);
@@ -273,6 +294,40 @@
       border: 3px solid rgba(255, 255, 255, 0.85); box-shadow: var(--shadow-lift); overflow: hidden;
     }
     #hero-3d-box model-viewer { width: 100%; height: 100%; }
+
+    /* ================= ENJIN SPATIAL 3D (GYRO & TETIKUS) ================= */
+    .spatial-active .book-pedestal-wrap {
+      transform: rotateY(calc(var(--sx) * 4deg)) rotateX(calc(var(--sy) * -3deg));
+    }
+    .spatial-active .magic-book {
+      animation: none;
+      transform:
+        rotateY(calc(-10deg + (var(--sx) * 18deg)))
+        rotateX(calc(4deg + (var(--sy) * -14deg)))
+        translate3d(calc(var(--sx) * 10px), calc(var(--sy) * 8px), 24px);
+      transition: transform 0.08s linear;
+    }
+    .spatial-active .book-shadow {
+      transform: translate3d(calc(var(--sx) * -10px), calc(var(--sy) * -4px), 0);
+    }
+    .spatial-active .st-1 {
+      animation: none;
+      transform: translate3d(calc(var(--sx) * -22px), calc(var(--sy) * -16px), 45px) rotate(calc(var(--sx) * 4deg));
+    }
+    .spatial-active .st-2 {
+      animation: none;
+      transform: translate3d(calc(var(--sx) * -15px), calc(var(--sy) * -12px), 35px) rotate(calc(var(--sx) * -3deg));
+    }
+    .spatial-active .st-3 {
+      animation: none;
+      transform: translate3d(calc(var(--sx) * -26px), calc(var(--sy) * -18px), 55px) rotate(calc(var(--sx) * 3deg));
+    }
+    .spatial-active .hero-mountains {
+      transform: translate3d(calc(var(--sx) * -14px), calc(var(--sy) * -6px), 0) scale(1.04);
+    }
+    .spatial-active .book-glow-ring {
+      transform: translate(calc(-50% + var(--sx) * 26px), calc(-50% + var(--sy) * 20px));
+    }
 
     /* JALUR TENUNAN LINANGKIT */
     .linangkit-strip { height: 6px; width: 100%; position: relative; z-index: 3; background: repeating-linear-gradient(135deg, var(--forest) 0 10px, var(--gold) 10px 15px, var(--gourd) 15px 20px, var(--forest) 20px 28px); }
@@ -621,6 +676,7 @@
       .dict-grid, .pages-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .faq-a { padding: 0 18px 18px 18px; }
       .ambient-fab { bottom: max(12px, env(safe-area-inset-bottom)); right: 12px; padding: 8px 13px; font-size: 0.72rem; }
+      #spatial-ios-btn { bottom: max(12px, env(safe-area-inset-bottom)); left: 12px; padding: 8px 13px; font-size: 0.72rem; }
     }
   </style>
 </head>
@@ -645,6 +701,7 @@
     <div class="amb-bars"><span></span><span></span><span></span></div>
     <span id="amb-label">Rimba: MATI</span>
   </button>
+  <button id="spatial-ios-btn" onclick="enableIosSpatial()">🧭 Mod Spatial 3D</button>
 
   <div class="nav-wrap">
     <nav class="navbar">
@@ -1646,6 +1703,63 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ================= ENJIN SPATIAL 3D (GYROSCOPE + TETIKUS) ================= */
+    let targetSX = 0, targetSY = 0, currSX = 0, currSY = 0;
+    let spatialRunning = false;
+
+    function startSpatialLoop() {
+      if (spatialRunning) return;
+      spatialRunning = true;
+      document.body.classList.add('spatial-active');
+
+      (function updateSpatial() {
+        if (!document.hidden) {
+          currSX += (targetSX - currSX) * 0.1;
+          currSY += (targetSY - currSY) * 0.1;
+          document.documentElement.style.setProperty('--sx', currSX.toFixed(4));
+          document.documentElement.style.setProperty('--sy', currSY.toFixed(4));
+        }
+        requestAnimationFrame(updateSpatial);
+      })();
+    }
+
+    function handleGyro(e) {
+      if (e.gamma === null || e.beta === null) return;
+      const gx = Math.max(-30, Math.min(30, e.gamma)) / 30;
+      const gy = Math.max(-30, Math.min(30, e.beta - 45)) / 30;
+      targetSX = gx;
+      targetSY = gy;
+      startSpatialLoop();
+    }
+
+    if (window.matchMedia('(pointer: fine)').matches) {
+      window.addEventListener('mousemove', e => {
+        targetSX = (e.clientX / window.innerWidth - 0.5) * 1.4;
+        targetSY = (e.clientY / window.innerHeight - 0.5) * 1.4;
+        startSpatialLoop();
+      }, { passive: true });
+    }
+
+    const iosSpatialBtn = document.getElementById('spatial-ios-btn');
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      iosSpatialBtn.style.display = 'inline-flex';
+    } else if ('DeviceOrientationEvent' in window) {
+      window.addEventListener('deviceorientation', handleGyro, { passive: true });
+    }
+
+    async function enableIosSpatial() {
+      try {
+        const res = await DeviceOrientationEvent.requestPermission();
+        if (res === 'granted') {
+          playUiChime('flip');
+          window.addEventListener('deviceorientation', handleGyro, { passive: true });
+          iosSpatialBtn.classList.add('active');
+          iosSpatialBtn.textContent = '✨ Spatial: AKTIF';
+          setTimeout(() => { iosSpatialBtn.style.display = 'none'; }, 1800);
+        }
+      } catch (err) {}
+    }
   </script>
 </body>
 </html>
