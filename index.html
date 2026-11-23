@@ -10,18 +10,26 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <style>
     :root {
-      --paper: #FAF5EB;
-      --paper-card: rgba(255, 253, 248, 0.88);
-      --sky-top: #DCEEF4;
-      --forest: #1A3326;
-      --forest-mid: #2C543E;
-      --sage: #5A7A68;
-      --gold: #D99B26;
-      --gold-soft: #F6E6BF;
-      --gourd: #B85A28;
-      --line: rgba(26, 51, 38, 0.11);
-      --shadow-soft: 0 18px 42px rgba(26, 51, 38, 0.08);
-      --shadow-hover: 0 24px 52px rgba(26, 51, 38, 0.14);
+      /* Palet Sebati Buku Cerita Asal Usul Sompoton */
+      --paper: #F8F4EA;
+      --sky-top: #C7E3ED;
+      --forest: #173325;
+      --forest-mid: #28523C;
+      --sage: #516E5E;
+      --gold: #DCA028;
+      --gold-soft: #F7E8C2;
+      --gourd: #BA5A28;
+
+      /* iOS Tinted Glass & Material 3 Tonal Surfaces */
+      --glass-tint: rgba(255, 253, 248, 0.62);
+      --glass-strong: rgba(255, 253, 248, 0.78);
+      --glass-sage: rgba(232, 242, 235, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.72);
+      --glass-stroke: rgba(23, 51, 37, 0.1);
+      --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.85), inset 0 -1px 2px rgba(23, 51, 37, 0.05);
+      --shadow-glass: 0 18px 40px -10px rgba(23, 51, 37, 0.12), 0 4px 12px rgba(23, 51, 37, 0.05);
+      --shadow-lift: 0 26px 56px -12px rgba(23, 51, 37, 0.18), 0 8px 18px rgba(220, 160, 40, 0.12);
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,12 +43,41 @@
       background: var(--paper);
       color: var(--forest);
       line-height: 1.65;
+      position: relative;
     }
 
-    /* TEKSTUR KERTAS BUKU CERITA HALUS */
-    body::before {
-      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9990; opacity: 0.025;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    /* LATAR AMBIENT TINTED GLASS (WARNA LEMBUT BERGERAK DI BELAKANG KACA) */
+    .ambient-backdrop {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%;
+      will-change: transform; animation: orbFloat 20s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: min(650px, 110vw); height: min(650px, 110vw); top: -18%; left: -12%;
+      background: radial-gradient(circle, rgba(169, 214, 229, 0.55) 0%, transparent 70%);
+    }
+    .orb-2 {
+      width: min(560px, 100vw); height: min(560px, 100vw); top: 32%; right: -16%;
+      background: radial-gradient(circle, rgba(247, 224, 168, 0.48) 0%, transparent 70%);
+      animation-delay: -7s;
+    }
+    .orb-3 {
+      width: min(580px, 105vw); height: min(580px, 105vw); bottom: -14%; left: 10%;
+      background: radial-gradient(circle, rgba(173, 212, 185, 0.42) 0%, transparent 70%);
+      animation-delay: -13s;
+    }
+    @keyframes orbFloat {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(28px, 22px, 0) scale(1.06); }
+    }
+
+    /* TEKSTUR TENUNAN LINANGKIT SABAH HALUS */
+    .linangkit-pattern {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0L56 28L28 56L0 28Z' fill='none' stroke='%23173325' stroke-width='0.9'/%3E%3Cpath d='M28 12L44 28L28 44L12 28Z' fill='none' stroke='%23BA5A28' stroke-width='0.7'/%3E%3Ccircle cx='28' cy='28' r='2' fill='%23DCA028'/%3E%3C/svg%3E");
+      background-size: 56px 56px;
     }
 
     /* BAR KEMAJUAN SCROLL */
@@ -50,10 +87,10 @@
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
     }
 
-    /* TIRAI PEMBUKAAN ESTETIK (WARNA KERTAS & EMAS) */
+    /* TIRAI PEMBUKAAN ESTETIK */
     #intro-curtain {
       position: fixed; inset: 0; z-index: 10000; padding: 24px; text-align: center;
-      background: linear-gradient(180deg, var(--sky-top) 0%, var(--paper) 100%);
+      background: linear-gradient(180deg, #CBE6F0 0%, #F8F4EA 100%);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
       will-change: transform, opacity;
       transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.65s ease;
@@ -64,29 +101,35 @@
       text-transform: uppercase; opacity: 0; animation: fadeInUp 0.5s ease forwards;
     }
     .curtain-title {
-      font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 6.5vw, 3.4rem); font-weight: 800;
-      color: var(--forest); line-height: 1.15; opacity: 0; animation: fadeInUp 0.65s 0.12s ease forwards;
+      font-family: 'Fraunces', serif; font-size: clamp(1.85rem, 6.5vw, 3.4rem); font-weight: 800;
+      color: var(--forest); line-height: 1.12; opacity: 0; animation: fadeInUp 0.65s 0.1s ease forwards;
     }
     .curtain-bar {
-      width: min(180px, 50vw); height: 3px; border-radius: 99px; transform: scaleX(0);
+      width: min(170px, 48vw); height: 3px; border-radius: 99px; transform: scaleX(0);
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
-      animation: barGrow 0.85s 0.18s ease forwards;
+      animation: barGrow 0.8s 0.16s ease forwards;
     }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes barGrow { to { transform: scaleX(1); } }
 
-    /* BUTANG SUASANA RIMBA TERAPUNG */
+    /* BUTANG SUASANA RIMBA (FLOATING TINTED PILL) */
     .ambient-fab {
       position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); right: 16px; z-index: 950;
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255, 253, 248, 0.94); border: 1px solid rgba(26, 51, 38, 0.16);
-      color: var(--forest); padding: 9px 15px; border-radius: 999px;
+      background: rgba(255, 253, 248, 0.76);
+      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      color: var(--forest); padding: 10px 16px; border-radius: 999px;
       font-size: 0.76rem; font-weight: 700; cursor: pointer;
-      box-shadow: 0 10px 26px rgba(26, 51, 38, 0.14); transition: transform 0.2s, background 0.2s;
-      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-glass), var(--specular);
+      transition: transform 0.25s var(--spring), background 0.25s;
     }
     .ambient-fab:hover { transform: translateY(-2px); }
-    .ambient-fab.on { background: var(--forest); color: #FAF5EB; border-color: var(--forest); }
+    .ambient-fab:active { transform: scale(0.94); }
+    .ambient-fab.on {
+      background: rgba(23, 51, 37, 0.88); color: #FAF5EB;
+      border-color: rgba(220, 160, 40, 0.55);
+    }
     .amb-bars { display: flex; gap: 2.5px; align-items: flex-end; height: 12px; }
     .amb-bars span { width: 2.5px; height: 4px; background: var(--gourd); border-radius: 2px; }
     .ambient-fab.on .amb-bars span { background: var(--gold); animation: eqMini 0.6s ease-in-out infinite alternate; }
@@ -94,17 +137,18 @@
     .ambient-fab.on .amb-bars span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes eqMini { from { height: 3px; } to { height: 12px; } }
 
-    /* NAVBAR KACA CERAH (ESTETIK & 1 BARIS) */
+    /* NAVBAR TINTED GLASS iOS (DYNAMIC PILL) */
     .nav-wrap {
       position: fixed; top: max(10px, env(safe-area-inset-top)); left: 0; right: 0; z-index: 1000;
       display: flex; justify-content: center; padding: 0 12px;
     }
     .navbar {
       width: 100%; max-width: 1180px;
-      background: rgba(255, 253, 248, 0.84); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(26, 51, 38, 0.1); border-radius: 999px;
-      padding: 7px 9px 7px 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      box-shadow: 0 12px 32px rgba(26, 51, 38, 0.08);
+      background: rgba(255, 253, 248, 0.68);
+      backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--glass-border); border-radius: 999px;
+      padding: 7px 9px 7px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      box-shadow: 0 12px 32px rgba(23, 51, 37, 0.09), var(--specular);
     }
     .brand {
       display: flex; align-items: center; gap: 8px; text-decoration: none;
@@ -112,104 +156,117 @@
       font-weight: 800; font-size: 1rem; white-space: nowrap; flex-shrink: 0;
     }
     .brand-emblem {
-      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, #2C543E, #1A3326);
+      width: 31px; height: 31px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #2D5D44, #173325);
       display: grid; place-items: center; font-size: 0.9rem;
+      box-shadow: 0 4px 10px rgba(23, 51, 37, 0.22);
     }
-    .nav-links { display: flex; gap: 20px; }
-    .nav-links a { color: var(--sage); text-decoration: none; font-size: 0.84rem; font-weight: 600; white-space: nowrap; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--forest); }
+    .nav-links { display: flex; gap: 6px; }
+    .nav-links a {
+      color: var(--sage); text-decoration: none; font-size: 0.83rem; font-weight: 600;
+      white-space: nowrap; padding: 6px 12px; border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { background: rgba(23, 51, 37, 0.07); color: var(--forest); }
     .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
+    /* iOS SEGMENTED CONTROL */
     .lang-switch {
-      display: flex; background: rgba(26, 51, 38, 0.07);
-      border-radius: 999px; padding: 2px;
+      display: flex; background: rgba(23, 51, 37, 0.07);
+      border-radius: 999px; padding: 3px;
+      box-shadow: inset 0 1px 3px rgba(23, 51, 37, 0.08);
     }
     .lang-switch button {
       border: none; background: transparent; color: var(--sage);
-      padding: 5px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
+      padding: 5px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 800;
+      cursor: pointer; transition: 0.2s;
     }
-    .lang-switch button.active { background: #fff; color: var(--forest); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .lang-switch button.active {
+      background: rgba(255, 255, 255, 0.95); color: var(--forest);
+      box-shadow: 0 2px 8px rgba(23, 51, 37, 0.12);
+    }
 
-    /* BUTANG UTAMA & SEKUNDER */
+    /* BUTANG MATERIAL 3 EXPRESSIVE + TINTED GLASS */
     .btn-primary {
       white-space: nowrap; text-decoration: none; border: none; cursor: pointer;
-      background: linear-gradient(135deg, #2C543E 0%, #1A3326 100%);
+      background: linear-gradient(135deg, #2A5840 0%, #173325 100%);
       color: #FAF5EB; padding: 11px 22px; border-radius: 999px;
       font-weight: 700; font-size: 0.86rem;
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 10px 24px rgba(26, 51, 38, 0.22); transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 10px 24px rgba(23, 51, 37, 0.24), inset 0 1px 1px rgba(255,255,255,0.28);
+      transition: transform 0.25s var(--spring), box-shadow 0.25s;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(26, 51, 38, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23, 51, 37, 0.32); }
+    .btn-primary:active { transform: scale(0.95); }
 
-    .btn-warm {
+    .btn-glass {
       white-space: nowrap; text-decoration: none; cursor: pointer;
-      background: #fff; color: var(--forest);
-      padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: 0.86rem;
-      border: 1.5px solid rgba(26, 51, 38, 0.16);
+      background: var(--glass-strong);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      color: var(--forest); padding: 11px 22px; border-radius: 999px;
+      font-weight: 700; font-size: 0.86rem;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 6px 18px rgba(23, 51, 37, 0.08), var(--specular);
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      transition: transform 0.25s var(--spring), border-color 0.2s, background 0.2s;
     }
-    .btn-warm:hover { transform: translateY(-2px); border-color: var(--gold); background: #FFFDF8; }
+    .btn-glass:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.92); border-color: var(--gold); }
+    .btn-glass:active { transform: scale(0.95); }
 
-    /* ================= HERO: KINABALU MORNING MEADOW ================= */
+    /* ================= HERO: KINABALU MORNING TINTED GLASS ================= */
     .hero-wrapper {
-      position: relative; overflow: hidden;
-      background: linear-gradient(180deg, #CBE5EE 0%, #E7F2F1 44%, #FAF5EB 100%);
+      position: relative; overflow: hidden; z-index: 2;
+      background: linear-gradient(180deg, rgba(199, 227, 237, 0.82) 0%, rgba(234, 244, 241, 0.65) 48%, rgba(248, 244, 234, 0) 100%);
     }
-    /* Siluet Gunung Kinabalu cat air lembut di latar belakang Hero */
     .hero-mountains {
-      position: absolute; bottom: 0; left: 0; width: 100%; height: 42%;
-      pointer-events: none; z-index: 0; opacity: 0.85;
+      position: absolute; bottom: 0; left: 0; width: 100%; height: 44%;
+      pointer-events: none; z-index: 0; opacity: 0.88;
     }
-    .cloud {
-      position: absolute; border-radius: 999px; background: rgba(255, 255, 255, 0.65);
-      filter: blur(18px); pointer-events: none; z-index: 0;
-      animation: driftCloud 26s ease-in-out infinite alternate;
-    }
-    .c1 { width: 280px; height: 70px; top: 14%; left: 6%; }
-    .c2 { width: 340px; height: 85px; top: 20%; right: 8%; animation-delay: -10s; }
-    @keyframes driftCloud { from { transform: translateX(-18px); } to { transform: translateX(24px); } }
 
     .hero {
       min-height: 94vh; position: relative; z-index: 2;
-      padding: 118px 6% 74px; max-width: 1280px; margin: 0 auto;
-      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center;
+      padding: 116px 6% 74px; max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 46px; align-items: center;
     }
     .hero > div, .sompoton-studio > div, .heritage-grid > div { min-width: 0; }
 
     .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
-      background: rgba(255, 253, 248, 0.82); border: 1px solid rgba(26, 51, 38, 0.12);
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 15px; border-radius: 999px;
+      background: var(--glass-strong);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
       color: var(--forest-mid); font-size: 0.7rem; font-weight: 800;
-      letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 16px;
-      box-shadow: 0 4px 14px rgba(26, 51, 38, 0.05);
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(23, 51, 37, 0.06), var(--specular);
     }
-    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #2D9D62; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22A55B; box-shadow: 0 0 0 3px rgba(34, 165, 91, 0.22); }
 
     .hero h1 {
-      font-family: 'Fraunces', serif; font-size: clamp(2.35rem, 5.4vw, 4.6rem);
-      line-height: 1.04; color: var(--forest); font-weight: 800; margin-bottom: 16px;
-      letter-spacing: -0.02em;
+      font-family: 'Fraunces', serif; font-size: clamp(2.4rem, 5.4vw, 4.65rem);
+      line-height: 1.03; color: var(--forest); font-weight: 800; margin-bottom: 16px;
+      letter-spacing: -0.025em;
     }
     .hero h1 span {
       display: block; color: var(--gourd); font-style: italic; font-weight: 700;
     }
     .hero-lead {
-      font-size: clamp(0.98rem, 1.8vw, 1.08rem); line-height: 1.7;
-      color: #3D5648; max-width: 530px; margin-bottom: 26px;
+      font-size: clamp(0.98rem, 1.8vw, 1.06rem); line-height: 1.72;
+      color: #365042; max-width: 530px; margin-bottom: 26px;
     }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
     .hero-actions .btn-primary { padding: 14px 26px; font-size: 0.94rem; }
+    .hero-actions .btn-glass { padding: 14px 24px; font-size: 0.92rem; }
 
-    /* BAR STATISTIK 3-KOLUM ESTETIK */
+    /* BAR STATISTIK 3-KOLUM TINTED GLASS */
     .hero-metrics {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-      background: rgba(255, 253, 248, 0.84); border: 1px solid var(--line);
-      border-radius: 20px; padding: 14px 10px;
-      box-shadow: var(--shadow-soft); backdrop-filter: blur(10px);
+      background: var(--glass-tint);
+      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 26px; padding: 15px 10px;
+      box-shadow: var(--shadow-glass), var(--specular);
     }
-    .metric { text-align: center; border-right: 1px solid var(--line); padding: 0 6px; }
+    .metric { text-align: center; border-right: 1px solid rgba(23, 51, 37, 0.1); padding: 0 6px; }
     .metric:last-child { border-right: none; }
     .metric strong {
       display: block; font-family: 'Fraunces', serif;
@@ -217,48 +274,61 @@
     }
     .metric span { font-size: clamp(0.66rem, 2.2vw, 0.76rem); color: var(--sage); font-weight: 600; display: block; margin-top: 2px; }
 
-    /* PENTAS BUKU 3D TERAPUNG */
+    /* PENTAS BUKU 3D DALAM BINGKAI TINTED GLASS */
     .hero-stage {
       position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px;
       perspective: 1400px; width: 100%;
     }
     .hero-toggle {
-      display: inline-flex; background: rgba(255, 253, 248, 0.88);
-      border: 1px solid var(--line); border-radius: 999px; padding: 4px; z-index: 5;
-      box-shadow: 0 8px 20px rgba(26, 51, 38, 0.08);
+      display: inline-flex;
+      background: rgba(255, 253, 248, 0.74);
+      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-border); border-radius: 999px; padding: 4px; z-index: 5;
+      box-shadow: 0 8px 22px rgba(23, 51, 37, 0.08), var(--specular);
     }
     .hero-toggle button {
       border: none; background: transparent; color: var(--sage);
-      padding: 7px 15px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+      padding: 8px 16px; border-radius: 999px; font-size: 0.76rem; font-weight: 700;
+      cursor: pointer; transition: 0.25s;
     }
-    .hero-toggle button.active { background: var(--forest); color: #FAF5EB; }
+    .hero-toggle button.active {
+      background: var(--forest); color: #FAF5EB;
+      box-shadow: 0 4px 12px rgba(23, 51, 37, 0.22);
+    }
 
-    .book-pedestal-wrap { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 3; }
+    .book-pedestal-wrap {
+      position: relative; display: flex; flex-direction: column; align-items: center; z-index: 3;
+      padding: 24px 32px 18px; border-radius: 36px;
+      background: rgba(255, 253, 248, 0.42);
+      backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-glass), var(--specular);
+    }
     .magic-book {
-      position: relative; width: min(68vw, 280px); aspect-ratio: 295 / 415; z-index: 3;
+      position: relative; width: min(62vw, 260px); aspect-ratio: 295 / 415; z-index: 3;
       transform-style: preserve-3d; transform: rotateY(-12deg) rotateX(4deg);
       transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1); cursor: pointer;
       animation: bookFloat 5.2s ease-in-out infinite;
     }
     @keyframes bookFloat {
       0%, 100% { transform: rotateY(-12deg) rotateX(4deg) translateY(0); }
-      50% { transform: rotateY(-8deg) rotateX(2deg) translateY(-8px); }
+      50% { transform: rotateY(-8deg) rotateX(2deg) translateY(-7px); }
     }
     .magic-book:hover { animation-play-state: paused; transform: rotateY(-4deg) rotateX(1deg) scale(1.03); }
     .magic-book::before {
       content: ""; position: absolute; top: 3px; bottom: 3px; left: -12px; width: 14px;
-      background: linear-gradient(90deg, #1E3B2B, #3A6B4F, #1A3326);
+      background: linear-gradient(90deg, #1A3627, #38684D, #173325);
       transform: rotateY(-78deg); transform-origin: right center; border-radius: 4px 0 0 4px;
     }
     .book-inside {
       position: absolute; inset: 4px 4px 4px 10px; border-radius: 6px 16px 16px 6px;
       background: linear-gradient(135deg, #FFFDF7 0%, #F2E7D0 100%);
-      color: var(--forest); padding: 20px 18px; display: flex; flex-direction: column;
+      color: var(--forest); padding: 20px 16px; display: flex; flex-direction: column;
       justify-content: center; align-items: center; text-align: center;
-      box-shadow: inset 12px 0 22px rgba(26,51,38,0.1), 0 24px 48px rgba(26, 51, 38, 0.24);
+      box-shadow: inset 12px 0 22px rgba(23,51,37,0.1), 0 22px 44px rgba(23, 51, 37, 0.24);
     }
     .book-inside h4 { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--gourd); margin-bottom: 8px; }
-    .book-inside p { font-size: 0.88rem; line-height: 1.5; margin-bottom: 14px; color: #3D5648; }
+    .book-inside p { font-size: 0.84rem; line-height: 1.5; margin-bottom: 14px; color: #365042; }
     .book-cover-leaf {
       position: absolute; inset: 0; transform-origin: left center;
       transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1); transform-style: preserve-3d;
@@ -266,95 +336,113 @@
     .magic-book:hover .book-cover-leaf { transform: rotateY(-38deg); }
     .book-cover-leaf img {
       width: 100%; height: 100%; object-fit: cover; border-radius: 6px 18px 18px 6px;
-      box-shadow: -10px 22px 44px rgba(26, 51, 38, 0.26), 0 0 0 2px #fff; display: block;
+      box-shadow: -10px 20px 40px rgba(23, 51, 37, 0.24), 0 0 0 2px #fff; display: block;
     }
     .book-shadow {
-      width: 210px; height: 18px; margin-top: 14px; border-radius: 50%;
-      background: radial-gradient(ellipse, rgba(26, 51, 38, 0.22) 0%, transparent 72%);
+      width: 190px; height: 16px; margin-top: 14px; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(23, 51, 37, 0.22) 0%, transparent 72%);
     }
-    .book-hover-tip { font-size: 0.74rem; color: var(--forest-mid); font-weight: 600; margin-top: 4px; }
+    .book-hover-tip { font-size: 0.74rem; color: var(--forest-mid); font-weight: 700; margin-top: 6px; }
 
     #hero-3d-box {
       display: none; width: min(88vw, 360px); height: min(88vw, 390px); z-index: 3;
-      border-radius: 26px; background: radial-gradient(circle at center, #224B36, #0E2318);
-      border: 3px solid #fff; box-shadow: 0 24px 50px rgba(26, 51, 38, 0.24); overflow: hidden;
+      border-radius: 32px; background: radial-gradient(circle at center, #224B36, #0E2318);
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      box-shadow: var(--shadow-lift); overflow: hidden;
     }
     #hero-3d-box model-viewer { width: 100%; height: 100%; }
 
-    /* JALUR TENUNAN WARISAN */
+    /* JALUR TENUNAN LINANGKIT SABAH */
     .linangkit-strip {
-      height: 5px; width: 100%;
+      height: 6px; width: 100%; position: relative; z-index: 3;
       background: repeating-linear-gradient(135deg, var(--forest) 0 10px, var(--gold) 10px 15px, var(--gourd) 15px 20px, var(--forest) 20px 28px);
     }
-    .marquee-wrap { overflow: hidden; background: var(--forest); padding: 13px 0; }
+    .marquee-wrap { position: relative; z-index: 3; overflow: hidden; background: var(--forest); padding: 13px 0; }
     .marquee-track { display: flex; gap: 36px; width: max-content; will-change: transform; animation: marquee 30s linear infinite; }
     .marquee-track span { font-family: 'Fraunces', serif; font-size: 0.86rem; color: var(--gold-soft); letter-spacing: 1.5px; white-space: nowrap; }
     @keyframes marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 
-    /* SEKSYEN EDITORIAL */
-    section.wrap { padding: 84px 6%; max-width: 1240px; margin: 0 auto; position: relative; }
-    .sec-head { text-align: center; max-width: 680px; margin: 0 auto 44px; }
+    /* SEKSYEN UMUM */
+    section.wrap { padding: 84px 6%; max-width: 1240px; margin: 0 auto; position: relative; z-index: 2; }
+    .sec-head { text-align: center; max-width: 680px; margin: 0 auto 42px; }
     .sec-kicker {
-      display: inline-block; background: var(--gold-soft); color: var(--gourd);
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-      padding: 4px 14px; border-radius: 999px; margin-bottom: 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(247, 232, 194, 0.78); backdrop-filter: blur(10px);
+      border: 1px solid rgba(220, 160, 40, 0.32);
+      color: var(--gourd); font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+      text-transform: uppercase; padding: 5px 15px; border-radius: 999px; margin-bottom: 12px;
     }
     .sec-head h2 {
-      font-family: 'Fraunces', serif; font-size: clamp(1.7rem, 4.2vw, 2.75rem);
-      color: var(--forest); line-height: 1.15; margin-bottom: 10px; letter-spacing: -0.02em;
+      font-family: 'Fraunces', serif; font-size: clamp(1.72rem, 4.2vw, 2.75rem);
+      color: var(--forest); line-height: 1.14; margin-bottom: 10px; letter-spacing: -0.02em;
     }
     .sec-head p { color: var(--sage); font-size: 0.96rem; }
 
-    /* KAD ESTETIK KERTAS */
-    .card {
-      background: var(--paper-card); border: 1px solid var(--line);
-      border-radius: 26px; box-shadow: var(--shadow-soft);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    /* KAD TINTED GLASS (SQUIRCLE iOS + ELEVATION MATERIAL 3) */
+    .glass-card {
+      background: var(--glass-tint);
+      backdrop-filter: blur(22px) saturate(175%); -webkit-backdrop-filter: blur(22px) saturate(175%);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      box-shadow: var(--shadow-glass), var(--specular);
+      transition: transform 0.3s var(--spring), box-shadow 0.3s ease, border-color 0.25s ease;
     }
-    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: rgba(217, 155, 38, 0.5); }
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lift), var(--specular);
+      border-color: rgba(255, 255, 255, 0.95);
+    }
 
-    /* 01: PENTAS 3 DIORAMA */
+    /* 01: PENTAS 3 DIORAMA 3D */
     .pedestal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
     .pedestal-card { padding: 16px; display: flex; flex-direction: column; }
     .pedestal-stage {
-      height: 245px; border-radius: 18px; overflow: hidden; position: relative;
+      height: 245px; border-radius: 22px; overflow: hidden; position: relative;
       background: radial-gradient(circle at 50% 60%, #234E38 0%, #0E2218 100%);
       margin-bottom: 14px;
+      box-shadow: inset 0 0 24px rgba(0,0,0,0.3);
     }
     .pedestal-stage model-viewer { width: 100%; height: 100%; }
     .pedestal-tag {
       position: absolute; top: 10px; left: 10px; z-index: 4;
-      background: rgba(250, 245, 235, 0.92); color: var(--forest);
-      font-size: 0.7rem; font-weight: 800; padding: 4px 11px; border-radius: 999px;
+      background: rgba(255, 253, 248, 0.84); backdrop-filter: blur(12px);
+      color: var(--forest); border: 1px solid rgba(255,255,255,0.8);
+      font-size: 0.7rem; font-weight: 800; padding: 5px 12px; border-radius: 999px;
     }
     .pedestal-card h3 { font-family: 'Fraunces', serif; font-size: 1.18rem; color: var(--forest); margin-bottom: 6px; }
     .pedestal-card p { font-size: 0.86rem; color: var(--sage); margin-bottom: 16px; flex: 1; }
 
-    /* 02: STUDIO SOMPOTON */
-    .sompoton-studio { padding: 38px 34px; display: grid; grid-template-columns: 0.95fr 1.15fr; gap: 36px; align-items: center; }
+    /* 02: STUDIO SOMPOTON MAYA */
+    .sompoton-studio { padding: 36px 32px; display: grid; grid-template-columns: 0.95fr 1.15fr; gap: 34px; align-items: center; }
     .kbd-hint { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 14px 0 20px; font-size: 0.8rem; color: var(--sage); }
-    .kbd-hint kbd { background: var(--gold-soft); color: var(--forest); padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.74rem; }
+    .kbd-hint kbd {
+      background: var(--glass-strong); border: 1px solid var(--glass-stroke);
+      color: var(--forest); padding: 3px 8px; border-radius: 8px; font-weight: 800; font-size: 0.74rem;
+    }
     .studio-btns { display: flex; flex-wrap: wrap; gap: 10px; }
 
     .instrument-box {
-      position: relative; width: 100%; border-radius: 22px; overflow: hidden;
-      background: linear-gradient(180deg, #163325 0%, #0C1F16 100%);
+      position: relative; width: 100%; border-radius: 26px; overflow: hidden;
+      background: linear-gradient(180deg, #193A2A 0%, #0C2016 100%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
       padding: 24px 12px 20px; display: flex; flex-direction: column; align-items: center;
-      box-shadow: inset 0 0 36px rgba(0,0,0,0.35);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 16px 36px rgba(23, 51, 37, 0.22);
     }
-    #wave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.85; }
+    #wave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.88; }
     .sompoton-body { position: relative; z-index: 2; width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; }
     .pipes-stage { display: flex; align-items: flex-end; justify-content: center; gap: 8px; width: 100%; height: 185px; padding: 0 6px; position: relative; z-index: 3; }
     .pipe {
-      flex: 1; max-width: 44px; min-width: 30px; border-radius: 10px 10px 2px 2px; border: none; cursor: pointer;
+      flex: 1; max-width: 44px; min-width: 30px; border-radius: 12px 12px 3px 3px; border: none; cursor: pointer;
       background: linear-gradient(90deg, #C48B2E 0%, #FCE5A2 42%, #DDA13B 78%, #825214 100%);
-      color: #1A3326; font-weight: 800; font-size: 0.7rem;
+      color: #173325; font-weight: 800; font-size: 0.7rem;
       display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-      padding-bottom: 8px; transition: transform 0.1s; box-shadow: 0 8px 16px rgba(0,0,0,0.4); position: relative;
+      padding-bottom: 8px; transition: transform 0.14s var(--spring), box-shadow 0.14s;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4); position: relative;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
     .pipe::before { content: ""; position: absolute; top: 32%; left: -1px; right: -1px; height: 5px; background: linear-gradient(90deg, #5A2C0A, #9C571F, #4A2308); }
-    .pipe:hover { transform: translateY(-6px); }
-    .pipe.active { transform: scaleY(0.96); background: #FFF8DB; box-shadow: 0 0 26px #FFE8A3; }
+    .pipe:hover { transform: translateY(-5px); }
+    .pipe.active { transform: scaleY(0.95); background: #FFF8DB; box-shadow: 0 0 28px #FFE8A3; }
     .pipe small { font-size: 0.6rem; opacity: 0.75; margin-top: 2px; }
 
     .gourd-base {
@@ -368,15 +456,20 @@
     .gourd-label { font-family: 'Fraunces', serif; font-size: 0.76rem; letter-spacing: 2.5px; color: #FFE8A3; margin-top: 8px; font-weight: 700; }
     .floating-note { position: absolute; pointer-events: none; font-size: 1.4rem; color: #FFE8A3; font-weight: 800; animation: noteRise 1s ease-out forwards; z-index: 10; }
     @keyframes noteRise { 0% { transform: translate3d(0,0,0) scale(0.8); opacity: 1; } 100% { transform: translate3d(12px,-85px,0) scale(1.35); opacity: 0; } }
-    .note-status { position: relative; z-index: 3; margin-top: 14px; text-align: center; font-size: 0.82rem; color: #F6E6BF; font-weight: 600; min-height: 22px; }
+    .note-status { position: relative; z-index: 3; margin-top: 14px; text-align: center; font-size: 0.82rem; color: #F7E8C2; font-weight: 600; min-height: 22px; }
 
     /* 03: SINOPSIS & WARISAN */
     .heritage-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 26px; align-items: start; }
     .story-box { padding: 32px; }
-    .story-box p { font-size: 1.02rem; color: #364E41; margin-bottom: 16px; line-height: 1.75; }
+    .story-box p { font-size: 1.02rem; color: #314A3C; margin-bottom: 16px; line-height: 1.76; }
     .drop-cap::first-letter { font-family: 'Fraunces', serif; float: left; font-size: 3.5rem; line-height: 0.8; padding-right: 12px; color: var(--gourd); font-weight: 800; }
     .tabs-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-    .tab-btn { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--sage); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: 0.2s; }
+    .tab-btn {
+      padding: 9px 16px; border-radius: 999px; border: 1px solid var(--glass-border);
+      background: var(--glass-strong); backdrop-filter: blur(12px);
+      color: var(--sage); font-weight: 700; font-size: 0.82rem; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(23, 51, 37, 0.06); transition: 0.2s;
+    }
     .tab-btn.active { background: var(--forest); color: #FAF5EB; border-color: var(--forest); }
     .tab-panel { padding: 28px; min-height: 205px; }
     .tab-panel h3 { font-family: 'Fraunces', serif; color: var(--forest); font-size: 1.32rem; margin-bottom: 8px; }
@@ -385,21 +478,24 @@
     /* 04: KAMUS MINI 3D FLIP */
     .dict-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 14px; }
     .flip-card { background: transparent; height: 158px; perspective: 1000px; cursor: pointer; }
-    .flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); transform-style: preserve-3d; }
+    .flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s var(--spring); transform-style: preserve-3d; }
     .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
-    .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 22px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .flip-front { background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-soft); }
+    .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .flip-front {
+      background: var(--glass-strong); backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border); box-shadow: var(--shadow-glass), var(--specular);
+    }
     .flip-front h3 { font-family: 'Fraunces', serif; color: var(--forest); font-size: 1.35rem; margin-bottom: 5px; }
     .flip-front span { font-size: 0.72rem; color: var(--gourd); font-weight: 700; }
-    .flip-back { background: linear-gradient(135deg, #2C543E, #1A3326); color: #FAF5EB; transform: rotateY(180deg); }
+    .flip-back { background: linear-gradient(135deg, #2A5840, #173325); color: #FAF5EB; transform: rotateY(180deg); box-shadow: var(--shadow-lift); }
     .flip-back strong { font-size: 1rem; margin-bottom: 4px; color: var(--gold-soft); }
-    .flip-back p { font-size: 0.82rem; opacity: 0.9; }
+    .flip-back p { font-size: 0.82rem; opacity: 0.92; }
 
     /* 05: 3 BAHASA + GALERI 12 BABAK */
     .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .lang-card { padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
     .lang-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .code-pill { padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 0.78rem; background: var(--gold-soft); color: var(--gourd); }
+    .code-pill { padding: 5px 12px; border-radius: 12px; font-weight: 800; font-size: 0.78rem; background: var(--gold-soft); color: var(--gourd); }
     .eq { display: flex; gap: 3px; align-items: flex-end; height: 18px; opacity: 0.25; }
     .eq span { width: 3.5px; height: 6px; background: var(--forest-mid); border-radius: 2px; }
     .lang-card.playing .eq { opacity: 1; }
@@ -410,31 +506,39 @@
     .lang-card h3 { font-family: 'Fraunces', serif; font-size: 1.24rem; margin-bottom: 6px; color: var(--forest); }
     .lang-card p { font-size: 0.88rem; color: var(--sage); margin-bottom: 18px; }
     .sample-row {
-      display: flex; align-items: center; gap: 8px; background: var(--paper);
-      border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px 14px;
       color: var(--forest); font-weight: 700; font-size: 0.84rem; cursor: pointer; margin-bottom: 14px; width: 100%;
+      transition: 0.2s;
     }
-    .sample-row:hover { border-color: var(--gold); }
+    .sample-row:hover { border-color: var(--gold); background: #fff; }
     .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     .filter-bar { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
-    .filter-btn { padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--sage); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: 0.2s; }
+    .filter-btn {
+      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--glass-border);
+      background: var(--glass-strong); backdrop-filter: blur(12px);
+      color: var(--sage); font-weight: 700; font-size: 0.82rem; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(23, 51, 37, 0.05); transition: 0.2s;
+    }
     .filter-btn.active, .filter-btn:hover { background: var(--forest); color: #FAF5EB; border-color: var(--forest); }
 
     .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 16px; }
     .page-card {
-      position: relative; border-radius: 20px; overflow: hidden; background: #fff;
-      border: 1px solid var(--line); text-decoration: none; color: var(--forest);
-      box-shadow: var(--shadow-soft); transition: transform 0.25s, box-shadow 0.25s;
+      position: relative; border-radius: 24px; overflow: hidden;
+      background: var(--glass-strong); backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border); text-decoration: none; color: var(--forest);
+      box-shadow: var(--shadow-glass), var(--specular);
+      transition: transform 0.28s var(--spring), box-shadow 0.28s;
     }
-    .page-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+    .page-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); }
     .page-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #EFE7D6; }
-    .p-num { position: absolute; top: 8px; left: 8px; z-index: 5; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,253,248,0.92); color: var(--forest); font-weight: 800; font-size: 0.74rem; display: grid; place-items: center; }
-    .p-badges { position: absolute; top: 8px; right: 8px; z-index: 5; display: flex; gap: 4px; }
-    .p-tag { padding: 2px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; }
+    .p-num { position: absolute; top: 9px; left: 9px; z-index: 5; width: 27px; height: 27px; border-radius: 50%; background: rgba(255,253,248,0.88); backdrop-filter: blur(8px); color: var(--forest); font-weight: 800; font-size: 0.74rem; display: grid; place-items: center; }
+    .p-badges { position: absolute; top: 9px; right: 9px; z-index: 5; display: flex; gap: 4px; }
+    .p-tag { padding: 3px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; }
     .tag-3d { background: var(--gourd); color: #fff; }
     .tag-sfx { background: var(--forest); color: var(--gold-soft); }
-    .p-body { padding: 12px; }
+    .p-body { padding: 13px; }
     .p-body h4 { font-size: 0.84rem; font-weight: 700; line-height: 1.35; }
 
     /* 06: KUIZ & SIJIL */
@@ -442,21 +546,22 @@
     .quiz-q { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: var(--forest); margin-bottom: 18px; }
     .quiz-opts { display: grid; gap: 10px; }
     .quiz-opt {
-      background: var(--paper); border: 1.5px solid var(--line); color: var(--forest);
-      padding: 13px 16px; border-radius: 14px; text-align: left; font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+      background: rgba(255, 255, 255, 0.72); border: 1.5px solid var(--glass-stroke); color: var(--forest);
+      padding: 14px 16px; border-radius: 16px; text-align: left; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: 0.2s;
     }
     .quiz-opt:hover { border-color: var(--gold); background: #fff; }
     .quiz-opt.correct { background: #DCFCE7; border-color: #22C55E; color: #14532D; }
     .quiz-opt.wrong { background: #FEE2E2; border-color: #EF4444; color: #7F1D1D; }
     .name-input {
-      width: 100%; max-width: 320px; padding: 12px 16px; border-radius: 999px;
-      border: 1.5px solid var(--forest-mid); background: #fff; color: var(--forest);
+      width: 100%; max-width: 320px; padding: 13px 18px; border-radius: 999px;
+      border: 1.5px solid var(--forest-mid); background: rgba(255,255,255,0.9); color: var(--forest);
       font-size: 0.94rem; text-align: center; margin: 14px 0; outline: none;
     }
     .badge-card {
-      margin: 22px auto 0; max-width: 420px; padding: 28px 22px; border-radius: 24px;
+      margin: 22px auto 0; max-width: 420px; padding: 28px 22px; border-radius: 26px;
       background: linear-gradient(145deg, #FFFDF7, #F4E8CE);
-      border: 2px solid var(--gold); text-align: center; box-shadow: var(--shadow-soft);
+      border: 2px solid var(--gold); text-align: center; box-shadow: var(--shadow-glass);
     }
     .badge-card .medal { font-size: 2.8rem; margin-bottom: 6px; }
     .badge-card h3 { font-family: 'Fraunces', serif; color: var(--gourd); font-size: 1.3rem; margin-bottom: 4px; }
@@ -467,7 +572,11 @@
 
     /* FAQ & FOOTER */
     .faq-list { max-width: 780px; margin: 0 auto; }
-    .faq-item { background: #fff; border: 1px solid var(--line); border-radius: 18px; margin-bottom: 10px; overflow: hidden; }
+    .faq-item {
+      background: var(--glass-strong); backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border); border-radius: 22px; margin-bottom: 10px;
+      overflow: hidden; box-shadow: 0 6px 18px rgba(23, 51, 37, 0.05);
+    }
     .faq-q { width: 100%; background: transparent; border: none; color: var(--forest); padding: 17px 22px; font-size: 0.94rem; font-weight: 700; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: pointer; }
     .faq-q span { color: var(--gourd); font-size: 1.35rem; flex-shrink: 0; transition: transform 0.25s; }
     .faq-item.open .faq-q span { transform: rotate(45deg); }
@@ -478,7 +587,8 @@
     .reveal.show { opacity: 1; transform: translate3d(0, 0, 0); }
 
     footer {
-      background: var(--forest); color: rgba(250, 245, 235, 0.78);
+      position: relative; z-index: 2;
+      background: var(--forest); color: rgba(250, 245, 235, 0.8);
       padding: 50px 6% 74px; text-align: center; font-size: 0.86rem;
     }
     footer strong { color: var(--gold-soft); }
@@ -503,16 +613,25 @@
       .brand-emblem { width: 26px; height: 26px; font-size: 0.8rem; }
       .navbar .btn-primary { padding: 7px 12px; font-size: 0.74rem; }
       .lang-switch button { padding: 4px 7px; font-size: 0.68rem; }
+      .book-pedestal-wrap { padding: 20px 24px 14px; border-radius: 30px; }
       .pedestal-grid, .lang-grid { grid-template-columns: 1fr; }
       .sompoton-studio { padding: 24px 16px; gap: 24px; }
       .story-box, .tab-panel, .quiz-box { padding: 22px 18px; }
       .kbd-hint { display: none; }
       .dict-grid, .pages-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .ambient-fab { bottom: max(12px, env(safe-area-inset-bottom)); right: 12px; padding: 7px 12px; font-size: 0.72rem; }
+      .ambient-fab { bottom: max(12px, env(safe-area-inset-bottom)); right: 12px; padding: 8px 13px; font-size: 0.72rem; }
     }
   </style>
 </head>
 <body>
+
+  <!-- LATAR AMBIENT TINTED GLASS & TENUNAN LINANGKIT -->
+  <div class="ambient-backdrop">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="linangkit-pattern"></div>
 
   <div id="intro-curtain">
     <div class="curtain-kicker">PAMERAN WEBAR WARISAN SABAH</div>
@@ -551,14 +670,12 @@
     </nav>
   </div>
 
-  <!-- HERO: KINABALU MORNING (SYNC 100% DENGAN KULIT BUKU) -->
+  <!-- HERO: KINABALU MORNING × TINTED GLASS -->
   <div class="hero-wrapper">
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
     <svg class="hero-mountains" viewBox="0 0 1440 360" preserveAspectRatio="none">
-      <path fill="#C3DDE0" d="M0,360 L0,235 L160,185 L320,220 L490,115 L580,140 L675,55 L745,92 L810,48 L890,112 L1020,165 L1220,135 L1440,205 L1440,360 Z"/>
-      <path fill="#DDE8D6" d="M0,360 L0,255 Q240,185 520,235 T1040,220 T1440,245 L1440,360 Z"/>
-      <path fill="#FAF5EB" d="M0,360 L0,310 Q360,265 720,305 T1440,290 L1440,360 Z"/>
+      <path fill="#C1DCE0" d="M0,360 L0,235 L160,185 L320,220 L490,115 L580,140 L675,55 L745,92 L810,48 L890,112 L1020,165 L1220,135 L1440,205 L1440,360 Z"/>
+      <path fill="#DCE8D5" d="M0,360 L0,255 Q240,185 520,235 T1040,220 T1440,245 L1440,360 Z"/>
+      <path fill="#F8F4EA" d="M0,360 L0,312 Q360,268 720,308 T1440,292 L1440,360 Z"/>
     </svg>
 
     <header id="top" class="hero">
@@ -573,7 +690,7 @@
         </p>
         <div class="hero-actions">
           <a href="ar.html" class="btn-primary">📷 <span data-i18n="btn_scan">Mula Imbas Buku (AR)</span></a>
-          <a href="viewer.html?page=4" class="btn-warm">🧊 <span data-i18n="btn_3d">Mod 3D Tanpa Buku</span></a>
+          <a href="viewer.html?page=4" class="btn-glass">🧊 <span data-i18n="btn_3d">Mod 3D Tanpa Buku</span></a>
         </div>
         <div class="hero-metrics">
           <div class="metric"><strong>12</strong><span data-i18n="m_pages">Halaman AR</span></div>
@@ -645,34 +762,34 @@
     </div>
 
     <div class="pedestal-grid">
-      <div class="card pedestal-card">
+      <div class="glass-card pedestal-card">
         <div class="pedestal-stage">
           <span class="pedestal-tag">Halaman 4 · 3D + SFX</span>
           <model-viewer class="smart-mv" src="./models/page4.glb" loading="lazy" camera-controls autoplay shadow-intensity="0.7" exposure="1.15" camera-orbit="35deg 66deg 112%"></model-viewer>
         </div>
         <h3>Anak Sungai Tersekat</h3>
         <p>Diorama sungai berbatu di tengah hutan tempat Aki dan Odu membantu anak rusa dan burung kecil.</p>
-        <a href="viewer.html?page=4" class="btn-warm" style="padding:9px;">Teroka Skrin Penuh ›</a>
+        <a href="viewer.html?page=4" class="btn-glass" style="padding:10px;">Teroka Skrin Penuh ›</a>
       </div>
 
-      <div class="card pedestal-card">
+      <div class="glass-card pedestal-card">
         <div class="pedestal-stage">
           <span class="pedestal-tag">Halaman 6 · 3D + SFX</span>
           <model-viewer class="smart-mv" src="./models/page6.glb" loading="lazy" camera-controls autoplay shadow-intensity="0.7" exposure="1.15" camera-orbit="35deg 66deg 112%"></model-viewer>
         </div>
         <h3>Hutan Buluh Magis</h3>
         <p>Terowong buluh bercahaya yang menjadi laluan burung magis membimbing Aki dan Odu.</p>
-        <a href="viewer.html?page=6" class="btn-warm" style="padding:9px;">Teroka Skrin Penuh ›</a>
+        <a href="viewer.html?page=6" class="btn-glass" style="padding:10px;">Teroka Skrin Penuh ›</a>
       </div>
 
-      <div class="card pedestal-card">
+      <div class="glass-card pedestal-card">
         <div class="pedestal-stage">
           <span class="pedestal-tag">Halaman 10 · 3D + SFX</span>
           <model-viewer class="smart-mv" src="./models/page10.glb" loading="lazy" camera-controls autoplay shadow-intensity="0.7" exposure="1.15" camera-orbit="35deg 66deg 112%"></model-viewer>
         </div>
         <h3>Alunan Ajaib Sompoton</h3>
         <p>Detik kemuncak di beranda rumah tradisi apabila alunan Sompoton memulihkan suara Odu.</p>
-        <a href="viewer.html?page=10" class="btn-warm" style="padding:9px;">Teroka Skrin Penuh ›</a>
+        <a href="viewer.html?page=10" class="btn-glass" style="padding:10px;">Teroka Skrin Penuh ›</a>
       </div>
     </div>
   </section>
@@ -684,7 +801,7 @@
       <h2 data-i18n="st_title">Mainkan Sompoton Maya</h2>
     </div>
 
-    <div class="card sompoton-studio">
+    <div class="glass-card sompoton-studio">
       <div>
         <h3 style="font-family:'Fraunces',serif; font-size:clamp(1.3rem, 4vw, 1.7rem); color:var(--forest); margin-bottom:10px;">Labu Korodu & Paip Sumbiling</h3>
         <p style="color:var(--sage); font-size:0.94rem; margin-bottom:16px;" data-i18n="st_desc">
@@ -695,7 +812,7 @@
         </div>
         <div class="studio-btns">
           <button class="btn-primary" id="auto-riff-btn" onclick="autoPlaySompoton()">✨ Auto-Main Melodi</button>
-          <button class="btn-warm" id="melody-btn" onclick="toggleRealSompoton()">🎵 Rakaman Asli (Hal. 10)</button>
+          <button class="btn-glass" id="melody-btn" onclick="toggleRealSompoton()">🎵 Rakaman Asli (Hal. 10)</button>
         </div>
       </div>
 
@@ -725,7 +842,7 @@
     </div>
 
     <div class="heritage-grid">
-      <div class="card story-box">
+      <div class="glass-card story-box">
         <p class="drop-cap" data-i18n="syn_1">
           Di sebuah kampung di Sabah, Aki bertekad mencari penawar untuk memulihkan suara isterinya, Odu, yang hilang akibat demam panas. Kebaikan mereka menolong anak rusa dan burung kecil di sungai tersekat dibalas dengan petunjuk ke rimbunan buluh magis yang mengalunkan melodi menenangkan.
         </p>
@@ -741,7 +858,7 @@
           <button class="tab-btn" onclick="openTab('wakid', this)">Wakid</button>
           <button class="tab-btn" onclick="openTab('haiwan', this)">Haiwan Rimba</button>
         </div>
-        <div class="card tab-panel" id="tab-panel">
+        <div class="glass-card tab-panel" id="tab-panel">
           <h3>Aki & Odu</h3>
           <p>Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot).</p>
         </div>
@@ -768,7 +885,7 @@
     </div>
 
     <div class="lang-grid" style="margin-bottom:44px;">
-      <div class="card lang-card" id="card-bm">
+      <div class="glass-card lang-card" id="card-bm">
         <div>
           <div class="lang-top"><span class="code-pill">BM</span><div class="eq"><span></span><span></span><span></span></div></div>
           <h3>Bahasa Melayu</h3>
@@ -777,11 +894,11 @@
         </div>
         <div class="card-actions">
           <a href="ar.html?lang=bm" class="btn-primary">Imbas AR</a>
-          <a href="viewer.html?lang=bm&page=4" class="btn-warm" style="padding:9px;">Lihat 3D</a>
+          <a href="viewer.html?lang=bm&page=4" class="btn-glass" style="padding:9px;">Lihat 3D</a>
         </div>
       </div>
 
-      <div class="card lang-card" id="card-en">
+      <div class="glass-card lang-card" id="card-en">
         <div>
           <div class="lang-top"><span class="code-pill">EN</span><div class="eq"><span></span><span></span><span></span></div></div>
           <h3>English</h3>
@@ -790,11 +907,11 @@
         </div>
         <div class="card-actions">
           <a href="ar.html?lang=en" class="btn-primary">Scan AR</a>
-          <a href="viewer.html?lang=en&page=4" class="btn-warm" style="padding:9px;">View 3D</a>
+          <a href="viewer.html?lang=en&page=4" class="btn-glass" style="padding:9px;">View 3D</a>
         </div>
       </div>
 
-      <div class="card lang-card" id="card-kdz">
+      <div class="glass-card lang-card" id="card-kdz">
         <div>
           <div class="lang-top"><span class="code-pill">KDZ</span><div class="eq"><span></span><span></span><span></span></div></div>
           <h3>Kadazandusun</h3>
@@ -803,7 +920,7 @@
         </div>
         <div class="card-actions">
           <a href="ar.html?lang=kdz" class="btn-primary">Imbas AR</a>
-          <a href="viewer.html?lang=kdz&page=4" class="btn-warm" style="padding:9px;">Lihat 3D</a>
+          <a href="viewer.html?lang=kdz&page=4" class="btn-glass" style="padding:9px;">Lihat 3D</a>
         </div>
       </div>
     </div>
@@ -823,7 +940,7 @@
       <h2 data-i18n="q_title">Kuiz Warisan Sompoton</h2>
       <p data-i18n="q_sub">Jawab 4 soalan ringkas dan muat turun Sijil Digital rasmi Duta Muda Sompoton dengan nama anda.</p>
     </div>
-    <div class="card quiz-box" id="quiz-box"></div>
+    <div class="glass-card quiz-box" id="quiz-box"></div>
   </section>
 
   <!-- FAQ -->
@@ -848,6 +965,7 @@
     </div>
   </section>
 
+  <div class="linangkit-strip"></div>
   <footer>
     <p><strong>Asal Usul Sompoton</strong> — Projek Kursus IT32603 Realiti Terimbuh (Augmented Reality)</p>
     <p class="team-row">Kumpulan 13: Hendrick Garry Danny • Chronicles bin Thomas • Jericho Leon J Kundahal • Muhammad Ashraf Irfan bin Toha</p>
@@ -856,7 +974,7 @@
 
   <script>
     window.addEventListener('load', () => {
-      setTimeout(() => document.getElementById('intro-curtain').classList.add('hide'), 900);
+      setTimeout(() => document.getElementById('intro-curtain').classList.add('hide'), 850);
     });
 
     const progressEl = document.getElementById('scroll-progress');
@@ -901,7 +1019,42 @@
       }
     }
 
-    let audioCtx = null, waveEnergy = 0, isMelodyPlaying = false, studioVisible = false;
+    /* ================= ENJIN AUDIO SOMPOTON MAYA (FIX iOS & ANDROID) ================= */
+    let audioCtx = null;
+    let audioUnlocked = false;
+    let waveEnergy = 0, isMelodyPlaying = false, studioVisible = false;
+    let autoRiffTimers = [], isAutoRiffRunning = false;
+
+    function ensureAudioUnlocked() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!audioCtx && AudioContextClass) {
+        audioCtx = new AudioContextClass();
+      }
+      if (!audioCtx) return null;
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+
+      if (!audioUnlocked) {
+        try {
+          // Mainkan 1 sampel senyap untuk buka sekatan audio iOS/Android serta-merta
+          const buffer = audioCtx.createBuffer(1, 1, 22050);
+          const src = audioCtx.createBufferSource();
+          src.buffer = buffer;
+          src.connect(audioCtx.destination);
+          src.start(0);
+          audioUnlocked = true;
+        } catch (e) {}
+      }
+      return audioCtx;
+    }
+
+    // Buka kunci audio secara senyap pada sentuhan pertama pengguna di mana-mana skrin
+    ['touchstart', 'pointerdown', 'click'].forEach(evt => {
+      window.addEventListener(evt, () => ensureAudioUnlocked(), { once: true, passive: true });
+    });
+
     const waveCanvas = document.getElementById('wave-canvas'), wCtx = waveCanvas.getContext('2d');
     function resizeWave() { waveCanvas.width = waveCanvas.parentElement.clientWidth; waveCanvas.height = waveCanvas.parentElement.clientHeight; }
     window.addEventListener('resize', resizeWave); setTimeout(resizeWave, 200);
@@ -920,35 +1073,50 @@
             const y = h * 0.36 + Math.sin(x * 0.024 + wavePhase + layer * 1.5) * amp * Math.sin((x / w) * Math.PI);
             if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y);
           }
-          wCtx.strokeStyle = layer === 0 ? 'rgba(246, 230, 191, 0.65)' : 'rgba(74, 222, 128, 0.38)';
+          wCtx.strokeStyle = layer === 0 ? 'rgba(247, 232, 194, 0.68)' : 'rgba(74, 222, 128, 0.38)';
           wCtx.lineWidth = layer === 0 ? 2.5 : 1.5; wCtx.stroke();
         }
       }
       requestAnimationFrame(drawWave);
     })();
 
-    function playPipe(freq, label, btn) {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const now = audioCtx.currentTime;
-      const osc1 = audioCtx.createOscillator(), osc2 = audioCtx.createOscillator(), gain = audioCtx.createGain();
-      osc1.type = 'triangle'; osc1.frequency.setValueAtTime(freq, now);
-      osc2.type = 'sine'; osc2.frequency.setValueAtTime(freq * 1.5, now);
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.exponentialRampToValueAtTime(0.22, now + 0.07);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.05);
-      osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
-      osc1.start(now); osc2.start(now); osc1.stop(now + 1.1); osc2.stop(now + 1.1);
+    function triggerPipeSound(freq, label, btn) {
+      const ctx = ensureAudioUnlocked();
+      if (!ctx) return;
+
+      const startTone = () => {
+        const now = ctx.currentTime;
+        const osc1 = ctx.createOscillator(), osc2 = ctx.createOscillator(), gain = ctx.createGain();
+        osc1.type = 'triangle'; osc1.frequency.setValueAtTime(freq, now);
+        osc2.type = 'sine'; osc2.frequency.setValueAtTime(freq * 1.5, now);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.26, now + 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.05);
+        osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
+        osc1.start(now); osc2.start(now); osc1.stop(now + 1.1); osc2.stop(now + 1.1);
+      };
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().then(startTone).catch(() => {});
+      } else {
+        startTone();
+      }
 
       waveEnergy = 44;
-      btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), 240);
+      if (btn) {
+        btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), 240);
+        const stage = document.getElementById('pipes-stage');
+        const note = document.createElement('span');
+        note.className = 'floating-note'; note.textContent = Math.random() > 0.5 ? '♪' : '♫';
+        note.style.left = (btn.offsetLeft + btn.offsetWidth / 2 - 8) + 'px';
+        note.style.top = (btn.offsetTop - 10) + 'px';
+        stage.appendChild(note); setTimeout(() => note.remove(), 1000);
+      }
       document.getElementById('note-status').textContent = `🎶 Nada: ${label}`;
+    }
 
-      const stage = document.getElementById('pipes-stage');
-      const note = document.createElement('span');
-      note.className = 'floating-note'; note.textContent = Math.random() > 0.5 ? '♪' : '♫';
-      note.style.left = (btn.offsetLeft + btn.offsetWidth / 2 - 8) + 'px';
-      note.style.top = (btn.offsetTop - 10) + 'px';
-      stage.appendChild(note); setTimeout(() => note.remove(), 1000);
+    function playPipe(freq, label, btn) {
+      triggerPipeSound(freq, label, btn);
     }
 
     window.addEventListener('keydown', e => {
@@ -957,19 +1125,63 @@
       if (btn) btn.click();
     });
 
+    function stopAutoRiff() {
+      autoRiffTimers.forEach(t => clearTimeout(t));
+      autoRiffTimers = [];
+      isAutoRiffRunning = false;
+      document.getElementById('auto-riff-btn').innerHTML = '✨ Auto-Main Melodi';
+    }
+
     function autoPlaySompoton() {
-      [['a',0],['d',360],['f',720],['g',1080],['f',1500],['d',1860],['s',2220],['a',2640],['d',3100],['f',3460],['h',3850],['g',4300],['f',4700]].forEach(([k, delay]) => {
-        setTimeout(() => { const btn = document.querySelector(`.pipe[data-key="${k}"]`); if (btn) btn.click(); }, delay);
-      });
+      // Buka kunci audio secara langsung semasa klik butang ini
+      const ctx = ensureAudioUnlocked();
+      const btnEl = document.getElementById('auto-riff-btn');
+
+      if (isAutoRiffRunning) {
+        stopAutoRiff();
+        return;
+      }
+
+      const pipeMap = {
+        a: [261.63, 'C4 — Lombohon'],
+        s: [293.66, 'D4 — Monongkol'],
+        d: [329.63, 'E4 — Suruk'],
+        f: [392.00, 'G4 — Baranat'],
+        g: [440.00, 'A4 — Randawi'],
+        h: [523.25, 'C5 — Tuntuduk']
+      };
+      const seq = [['a',0],['d',360],['f',720],['g',1080],['f',1500],['d',1860],['s',2220],['a',2640],['d',3100],['f',3460],['h',3850],['g',4300],['f',4700]];
+
+      const runSequence = () => {
+        isAutoRiffRunning = true;
+        btnEl.innerHTML = '⏹ Hentikan Melodi';
+        seq.forEach(([k, delay]) => {
+          const timer = setTimeout(() => {
+            const btn = document.querySelector(`.pipe[data-key="${k}"]`);
+            const [freq, label] = pipeMap[k];
+            triggerPipeSound(freq, label, btn);
+          }, delay);
+          autoRiffTimers.push(timer);
+        });
+        autoRiffTimers.push(setTimeout(() => stopAutoRiff(), 5600));
+      };
+
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().then(runSequence).catch(runSequence);
+      } else {
+        runSequence();
+      }
     }
 
     let realSompoton = new Audio('./sfx/pg10_sompoton.mp3');
     function toggleRealSompoton() {
+      ensureAudioUnlocked();
       const btn = document.getElementById('melody-btn');
       if (!realSompoton.paused) {
         realSompoton.pause(); realSompoton.currentTime = 0; isMelodyPlaying = false;
         btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)';
       } else {
+        stopAutoRiff();
         realSompoton.play().then(() => { isMelodyPlaying = true; }).catch(() => {});
         btn.innerHTML = '⏹ Hentikan Rakaman';
         realSompoton.onended = () => { isMelodyPlaying = false; btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)'; };
@@ -1047,7 +1259,7 @@
     function renderQuiz() {
       const box = document.getElementById('quiz-box');
       if (qIdx >= quizData.length) {
-        box.innerHTML = `<div style="text-align:center;"><h3 style="font-family:'Fraunces',serif; color:var(--forest); font-size:1.45rem;">Tahniah! Skor Anda: ${score} / ${quizData.length}</h3><p style="color:var(--sage); margin-top:6px; font-size:0.92rem;">Masukkan nama anda untuk menjana & memuat turun Sijil Digital:</p><input type="text" id="player-name" class="name-input" placeholder="Taip nama anda di sini..." /><br/><button class="btn-primary" onclick="showBadge()">🏅 Jana Sijil Digital</button><div id="badge-area"></div><button class="btn-warm" style="margin-top:16px;" onclick="qIdx=0;score=0;renderQuiz()">↻ Cuba Semula</button></div>`;
+        box.innerHTML = `<div style="text-align:center;"><h3 style="font-family:'Fraunces',serif; color:var(--forest); font-size:1.45rem;">Tahniah! Skor Anda: ${score} / ${quizData.length}</h3><p style="color:var(--sage); margin-top:6px; font-size:0.92rem;">Masukkan nama anda untuk menjana & memuat turun Sijil Digital:</p><input type="text" id="player-name" class="name-input" placeholder="Taip nama anda di sini..." /><br/><button class="btn-primary" onclick="showBadge()">🏅 Jana Sijil Digital</button><div id="badge-area"></div><button class="btn-glass" style="margin-top:16px;" onclick="qIdx=0;score=0;renderQuiz()">↻ Cuba Semula</button></div>`;
         return;
       }
       const item = quizData[qIdx];
@@ -1060,7 +1272,7 @@
       setTimeout(() => { qIdx++; renderQuiz(); }, 850);
     }
     function launchConfetti() {
-      const colors = ['#D99B26', '#B85A28', '#2C543E', '#F6E6BF', '#4ADE80'];
+      const colors = ['#DCA028', '#BA5A28', '#28523C', '#F7E8C2', '#4ADE80'];
       for (let i = 0; i < 45; i++) {
         const c = document.createElement('div'); c.className = 'confetti';
         c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-10px';
@@ -1078,21 +1290,21 @@
     function downloadCertPNG() {
       const c = document.createElement('canvas'); c.width = 1000; c.height = 650;
       const g = c.getContext('2d');
-      g.fillStyle = '#FAF5EB'; g.fillRect(0, 0, 1000, 650);
-      g.strokeStyle = '#1A3326'; g.lineWidth = 10; g.strokeRect(26, 26, 948, 598);
-      g.strokeStyle = '#D99B26'; g.lineWidth = 3; g.strokeRect(44, 44, 912, 562);
-      g.fillStyle = '#B85A28'; g.font = 'bold 22px sans-serif'; g.textAlign = 'center';
+      g.fillStyle = '#F8F4EA'; g.fillRect(0, 0, 1000, 650);
+      g.strokeStyle = '#173325'; g.lineWidth = 10; g.strokeRect(26, 26, 948, 598);
+      g.strokeStyle = '#DCA028'; g.lineWidth = 3; g.strokeRect(44, 44, 912, 562);
+      g.fillStyle = '#BA5A28'; g.font = 'bold 22px sans-serif'; g.textAlign = 'center';
       g.fillText('SIJIL PENGHARGAAN WARISAN BORNEO', 500, 130);
-      g.fillStyle = '#1A3326'; g.font = 'bold 48px Georgia, serif';
+      g.fillStyle = '#173325'; g.font = 'bold 48px Georgia, serif';
       g.fillText('DUTA MUDA SOMPOTON', 500, 200);
-      g.fillStyle = '#5A7A68'; g.font = '22px sans-serif';
+      g.fillStyle = '#516E5E'; g.font = '22px sans-serif';
       g.fillText('Dengan sukacitanya dianugerahkan kepada', 500, 275);
-      g.fillStyle = '#1A3326'; g.font = 'bold 54px Georgia, serif';
+      g.fillStyle = '#173325'; g.font = 'bold 54px Georgia, serif';
       g.fillText(savedWinner, 500, 355);
-      g.fillStyle = '#D99B26'; g.fillRect(320, 380, 360, 3);
-      g.fillStyle = '#364E41'; g.font = '22px sans-serif';
+      g.fillStyle = '#DCA028'; g.fillRect(320, 380, 360, 3);
+      g.fillStyle = '#314A3C'; g.font = '22px sans-serif';
       g.fillText(`Kerana berjaya menamatkan Kuiz Warisan Asal Usul Sompoton (Skor: ${score}/${quizData.length})`, 500, 445);
-      g.fillStyle = '#5A7A68'; g.font = '18px sans-serif';
+      g.fillStyle = '#516E5E'; g.font = '18px sans-serif';
       g.fillText('Projek WebAR IT32603 • Kumpulan 13 • Fakulti Komputeran & Informatik, UMS', 500, 545);
       const a = document.createElement('a');
       a.download = `Sijil_Sompoton_${savedWinner.replace(/\s+/g, '_')}.png`;
