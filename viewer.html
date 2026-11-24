@@ -56,15 +56,30 @@
       transition: width 0.4s var(--spring);
     }
 
-    /* LATAR AMBIENT DINAMIK & TENUNAN LINANGKIT */
+    /* LATAR AMBIENT DINAMIK, NOT MUZIK TERAPUNG & TENUNAN LINANGKIT */
     .v-orb {
       position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-      transition: background 0.8s ease; will-change: transform;
+      transition: background 0.8s ease; will-change: transform; backface-visibility: hidden;
       animation: orbDrift 18s ease-in-out infinite alternate;
     }
     .vo-1 { width: 440px; height: 440px; top: -120px; right: -120px; background: radial-gradient(circle, var(--orb-a) 0%, transparent 70%); }
     .vo-2 { width: 400px; height: 400px; bottom: -100px; left: -110px; background: radial-gradient(circle, var(--orb-b) 0%, transparent 70%); animation-delay: -6s; }
     @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(20px, 16px, 0); } }
+
+    .music-notes-bg { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .bg-note {
+      position: absolute; bottom: -40px; left: var(--x);
+      font-size: var(--sz); color: rgba(23, 51, 37, 0.085); font-weight: 700;
+      will-change: transform, opacity; backface-visibility: hidden;
+      animation: bgNoteDrift var(--dur) linear var(--del) infinite;
+    }
+    .bg-note.gold { color: rgba(220, 160, 40, 0.15); }
+    @keyframes bgNoteDrift {
+      0% { transform: translate3d(0, 0, 0) rotate(-10deg); opacity: 0; }
+      14% { opacity: 1; }
+      85% { opacity: 0.9; }
+      100% { transform: translate3d(24px, -110vh, 0) rotate(14deg); opacity: 0; }
+    }
 
     .viewer-linangkit {
       position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.045;
@@ -90,7 +105,7 @@
       background: var(--glass-strong); color: var(--forest); text-decoration: none;
       border: 1px solid var(--glass-border); display: grid; place-items: center;
       font-size: 1.15rem; cursor: pointer;
-      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
       transition: transform 0.22s var(--spring), border-color 0.2s, background 0.2s;
       -webkit-tap-highlight-color: transparent;
@@ -104,7 +119,7 @@
       background: var(--glass-strong); padding: 6px 14px; border-radius: 999px;
       border: 1px solid var(--glass-border); font-size: 0.8rem; font-weight: 700;
       color: var(--forest);
-      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
     .page-pill strong { color: var(--gourd); font-family: 'Fraunces', serif; font-size: 0.96rem; }
@@ -190,7 +205,7 @@
     }
     .mini-3d-btn {
       background: var(--glass-strong); color: var(--forest);
-      backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
+      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       border: 1px solid var(--glass-border); border-radius: 999px;
       padding: 6px 11px; font-size: 0.69rem; font-weight: 700; cursor: pointer;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22), var(--specular);
@@ -215,11 +230,11 @@
       display: none; position: relative; z-index: 2;
       max-height: 100%; max-width: 100%; overflow: hidden;
     }
-    /* Kilauan Holographic Halus pada Halaman 2D */
     .art-wrap::after {
       content: ""; position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.28) 50%, transparent 65%);
-      transform: translateX(-140%); animation: pageSheen 6s ease-in-out infinite;
+      transform: translateX(-140%); will-change: transform;
+      animation: pageSheen 6s ease-in-out infinite;
     }
     @keyframes pageSheen { 0%, 72% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
     #img-stage {
@@ -227,7 +242,7 @@
       display: block; object-fit: contain;
     }
 
-    /* TAJUK & KAD SARI KATA TINTED GLASS */
+    /* TAJUK & KAD SARI KATA TINTED GLASS BERJALUR LINANGKIT */
     .caption-area { width: 100%; max-width: 720px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
     .chapter-kicker {
       font-size: 0.66rem; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase;
@@ -238,13 +253,18 @@
       color: var(--forest); font-weight: 800; line-height: 1.18; letter-spacing: -0.015em;
     }
     .subtitle-card {
-      width: 100%; background: var(--glass-tint); border: 1px solid var(--glass-border);
-      border-radius: 22px; padding: 10px 16px;
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      position: relative; overflow: hidden;
+      width: 100%; background: var(--glass-tint); border: 1.5px solid var(--glass-border);
+      border-radius: 22px; padding: 12px 16px 10px;
+      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
       transition: border-color 0.25s ease;
     }
-    .subtitle-card.playing { border-color: rgba(220, 160, 40, 0.65); }
+    .subtitle-card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3.5px;
+      background: repeating-linear-gradient(135deg, var(--forest) 0 8px, var(--gold) 8px 13px, var(--gourd) 13px 18px, var(--forest) 18px 24px);
+    }
+    .subtitle-card.playing { border-color: rgba(220, 160, 40, 0.72); }
     .sub-meta { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
     .sub-lang-tag {
       background: var(--gold-soft); color: var(--gourd);
@@ -288,7 +308,7 @@
       display: flex; gap: 6px; justify-content: center;
       background: var(--glass-tint); padding: 6px 11px; border-radius: 999px;
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
     .num-btn {
@@ -319,7 +339,7 @@
     @keyframes pulsePlay { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 160, 40, 0.55); } 50% { box-shadow: 0 0 0 10px rgba(220, 160, 40, 0); } }
     .auto-btn {
       padding: 9px 14px; border-radius: 999px; background: var(--glass-strong);
-      backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%);
+      backdrop-filter: blur(16px) saturate(165%); -webkit-backdrop-filter: blur(16px) saturate(165%);
       border: 1px solid var(--glass-border); color: var(--forest);
       font-size: 0.74rem; font-weight: 700; cursor: pointer;
       box-shadow: var(--shadow-glass), var(--specular);
@@ -331,9 +351,8 @@
     #toast {
       position: fixed; top: 62px; left: 50%; transform: translate(-50%, -10px);
       z-index: 1600; opacity: 0; pointer-events: none;
-      background: rgba(23, 51, 37, 0.94); color: #FAF5EB;
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: linear-gradient(135deg, #173325, #28523C); color: #FAF5EB;
+      border: 1.5px solid var(--gold);
       border-radius: 999px; padding: 7px 16px; font-size: 0.74rem; font-weight: 700;
       box-shadow: 0 10px 24px rgba(23, 51, 37, 0.25);
       transition: opacity 0.25s ease, transform 0.25s var(--spring); white-space: nowrap;
@@ -344,7 +363,13 @@
     .confetti { position: fixed; width: 9px; height: 9px; z-index: 2500; pointer-events: none; will-change: transform; animation: confettiDrop 2.4s ease-out forwards; }
     @keyframes confettiDrop { 0% { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0,100vh,0) rotate(720deg); opacity: 0; } }
 
-    /* TELEFON: GRID 6x2 KEMAS & BUTANG KOMPAK */
+    /* TELEFON & PENGOPTIMUMAN PRESTASI 60 FPS */
+    @media (max-width: 768px) {
+      .icon-btn, .page-pill, .subtitle-card, .num-bar, .auto-btn, .mini-3d-btn {
+        backdrop-filter: blur(10px) saturate(145%);
+        -webkit-backdrop-filter: blur(10px) saturate(145%);
+      }
+    }
     @media (max-width: 600px) {
       .ar-jump span { display: none; }
       .ar-jump { width: 36px; height: 36px; padding: 0; }
@@ -367,6 +392,13 @@
 
   <div class="v-orb vo-1"></div>
   <div class="v-orb vo-2"></div>
+  <div class="music-notes-bg" aria-hidden="true">
+    <span class="bg-note" style="--x:9%; --dur:21s; --del:0s; --sz:1.45rem;">♪</span>
+    <span class="bg-note gold" style="--x:26%; --dur:25s; --del:-6s; --sz:1.85rem;">♫</span>
+    <span class="bg-note" style="--x:50%; --dur:19s; --del:-11s; --sz:1.35rem;">♩</span>
+    <span class="bg-note gold" style="--x:74%; --dur:24s; --del:-3s; --sz:1.7rem;">♬</span>
+    <span class="bg-note" style="--x:90%; --dur:22s; --del:-14s; --sz:1.5rem;">♪</span>
+  </div>
   <div class="viewer-linangkit"></div>
   <svg class="bg-mountains" viewBox="0 0 1440 320" preserveAspectRatio="none">
     <path fill="#C1DCE0" d="M0,320 L0,210 L180,165 L340,195 L520,95 L640,125 L740,55 L830,90 L940,130 L1180,105 L1440,175 L1440,320 Z"/>
@@ -589,12 +621,17 @@
           bg.addColorStop(1, isNightStage ? '#07131A' : '#0E2218');
           ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
           ctx.drawImage(img, 0, 0);
-          ctx.strokeStyle = '#DCA028'; ctx.lineWidth = Math.max(4, c.width * 0.008);
-          ctx.strokeRect(12, 12, c.width - 24, c.height - 24);
-          ctx.fillStyle = 'rgba(23, 51, 37, 0.88)'; ctx.fillRect(0, c.height - 54, c.width, 54);
-          ctx.fillStyle = '#F7E8C2'; ctx.font = `bold ${Math.max(14, Math.round(c.width * 0.022))}px sans-serif`;
+
+          // Bingkai emas berganda selari dengan ar.html & sijil
+          ctx.strokeStyle = '#173325'; ctx.lineWidth = Math.max(8, c.width * 0.012);
+          ctx.strokeRect(5, 5, c.width - 10, c.height - 10);
+          ctx.strokeStyle = '#DCA028'; ctx.lineWidth = Math.max(3, c.width * 0.005);
+          ctx.strokeRect(14, 14, c.width - 28, c.height - 28);
+
+          ctx.fillStyle = 'rgba(23, 51, 37, 0.92)'; ctx.fillRect(0, c.height - 54, c.width, 54);
+          ctx.fillStyle = '#FFE8A3'; ctx.font = `bold ${Math.max(14, Math.round(c.width * 0.022))}px sans-serif`;
           ctx.textAlign = 'center';
-          ctx.fillText(`✦ Asal Usul Sompoton · Halaman ${currentPage} (3D Diorama)`, c.width / 2, c.height - 20);
+          ctx.fillText(`✦ Asal Usul Sompoton · Halaman ${currentPage} (Diorama 3D)`, c.width / 2, c.height - 20);
           const a = document.createElement('a');
           a.download = `Diorama3D_Sompoton_Hal${currentPage}.png`;
           a.href = c.toDataURL('image/png'); a.click();
