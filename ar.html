@@ -23,12 +23,11 @@
       --gold-soft: #F7E8C2;
       --gourd: #BA5A28;
 
-      /* iOS Tinted Glass & Material 3 Expressive */
       --glass-tint: rgba(255, 253, 248, 0.68);
-      --glass-strong: rgba(255, 253, 248, 0.84);
-      --glass-border: rgba(255, 255, 255, 0.78);
+      --glass-strong: rgba(255, 253, 248, 0.86);
+      --glass-border: rgba(255, 255, 255, 0.82);
       --glass-stroke: rgba(23, 51, 37, 0.12);
-      --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.88), inset 0 -1px 2px rgba(23, 51, 37, 0.06);
+      --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(23, 51, 37, 0.06);
       --shadow-glass: 0 16px 36px -8px rgba(23, 51, 37, 0.16), 0 4px 12px rgba(23, 51, 37, 0.06);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -52,7 +51,7 @@
       background: var(--glass-strong); color: var(--forest); text-decoration: none;
       border: 1px solid var(--glass-border);
       display: grid; place-items: center; font-size: 1.45rem; line-height: 1;
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
       transition: transform 0.22s var(--spring);
     }
@@ -64,9 +63,9 @@
       background: linear-gradient(180deg, #C7E3ED 0%, #E7F2F0 44%, var(--paper) 100%);
       color: var(--forest); display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      padding: max(58px, env(safe-area-inset-top)) 20px 24px;
+      padding: max(54px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
       text-align: center; overflow-y: auto;
-      transition: opacity 0.45s ease, transform 0.45s ease;
+      transition: opacity 0.42s ease, transform 0.42s ease;
     }
     #start-screen.fade-out { opacity: 0; transform: scale(1.03); pointer-events: none; }
 
@@ -77,12 +76,30 @@
     }
     .start-orb {
       position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      will-change: transform; animation: orbDrift 18s ease-in-out infinite alternate;
     }
-    .so-1 { width: 380px; height: 380px; top: -100px; right: -110px; background: radial-gradient(circle, rgba(247, 224, 168, 0.55) 0%, transparent 70%); }
-    .so-2 { width: 360px; height: 360px; bottom: -80px; left: -100px; background: radial-gradient(circle, rgba(173, 212, 185, 0.48) 0%, transparent 70%); }
+    .so-1 { width: 380px; height: 380px; top: -100px; right: -110px; background: radial-gradient(circle, rgba(247, 224, 168, 0.56) 0%, transparent 70%); }
+    .so-2 { width: 360px; height: 360px; bottom: -80px; left: -100px; background: radial-gradient(circle, rgba(173, 212, 185, 0.48) 0%, transparent 70%); animation-delay: -6s; }
+    @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(18px, 14px, 0); } }
+
+    /* NOT MUZIK TERAPUNG DI LATAR (GPU OPTIMIZED) */
+    .music-notes-bg { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .bg-note {
+      position: absolute; bottom: -40px; left: var(--x);
+      font-size: var(--sz); color: rgba(23, 51, 37, 0.09); font-weight: 700;
+      will-change: transform, opacity; backface-visibility: hidden;
+      animation: bgNoteDrift var(--dur) linear var(--del) infinite;
+    }
+    .bg-note.gold { color: rgba(220, 160, 40, 0.16); }
+    @keyframes bgNoteDrift {
+      0% { transform: translate3d(0, 0, 0) rotate(-10deg); opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 0.9; }
+      100% { transform: translate3d(24px, -110vh, 0) rotate(14deg); opacity: 0; }
+    }
 
     .start-mountains {
-      position: fixed; bottom: 0; left: 0; width: 100%; height: 34vh;
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 32vh;
       pointer-events: none; z-index: 0; opacity: 0.82;
     }
 
@@ -91,64 +108,88 @@
       display: flex; flex-direction: column; align-items: center;
     }
 
+    /* PENTAS KULIT BUKU GEN-Z DENGAN HOLOGRAPHIC FOIL */
     .cover-stage {
-      position: relative; padding: 14px 20px; border-radius: 28px; margin-bottom: 14px;
-      background: rgba(255, 253, 248, 0.48);
-      backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
-      border: 1px solid var(--glass-border);
+      position: relative; padding: 16px 26px; border-radius: 30px; margin-bottom: 14px;
+      background: linear-gradient(145deg, rgba(255, 253, 248, 0.62), rgba(231, 243, 245, 0.4));
+      backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+      border: 1.5px solid var(--glass-border);
       box-shadow: var(--shadow-glass), var(--specular);
       display: grid; place-items: center;
     }
-    .start-cover {
-      position: relative; width: 118px; border-radius: 6px 15px 15px 6px;
-      box-shadow: -8px 16px 30px rgba(23, 51, 37, 0.24), 0 0 0 2px #fff;
-      animation: floatCover 4.8s ease-in-out infinite;
+    .cover-glow {
+      position: absolute; width: 150px; height: 150px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(220, 160, 40, 0.3), transparent 72%);
     }
+    .cover-frame {
+      position: relative; width: 114px; border-radius: 6px 15px 15px 6px; overflow: hidden;
+      box-shadow: -8px 16px 30px rgba(23, 51, 37, 0.25), 0 0 0 2px #fff;
+      will-change: transform; animation: floatCover 4.8s ease-in-out infinite;
+    }
+    .cover-frame::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.45) 48%, rgba(247, 232, 194, 0.25) 54%, transparent 72%);
+      transform: translateX(-140%); will-change: transform;
+      animation: foilSweep 5s ease-in-out infinite;
+    }
+    @keyframes foilSweep { 0%, 65% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
     @keyframes floatCover {
-      0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-      50% { transform: translateY(-5px) rotate(1deg); }
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(-1.5deg); }
+      50% { transform: translate3d(0, -6px, 0) rotate(1deg); }
     }
+    .start-cover { width: 100%; height: auto; display: block; }
+
+    .mini-sticker {
+      position: absolute; z-index: 4; pointer-events: none;
+      background: rgba(255, 253, 248, 0.92); border: 1px solid #fff;
+      padding: 4px 10px; border-radius: 999px; font-size: 0.62rem; font-weight: 800;
+      box-shadow: 0 8px 18px rgba(23, 51, 37, 0.14);
+      will-change: transform; animation: stickerBob 4s ease-in-out infinite;
+    }
+    .ms-1 { top: 10px; right: -12px; color: var(--gourd); }
+    .ms-2 { bottom: 12px; left: -14px; background: var(--forest); color: var(--gold-soft); border-color: rgba(255,255,255,0.22); animation-delay: -1.8s; }
+    @keyframes stickerBob { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -5px, 0); } }
 
     .kicker-pill {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(247, 232, 194, 0.85); border: 1px solid rgba(220, 160, 40, 0.35);
-      color: var(--gourd); font-size: 0.66rem; font-weight: 800; letter-spacing: 1.6px;
+      background: rgba(247, 232, 194, 0.88); border: 1px solid rgba(220, 160, 40, 0.35);
+      color: var(--gourd); font-size: 0.65rem; font-weight: 800; letter-spacing: 1.6px;
       text-transform: uppercase; padding: 5px 14px; border-radius: 999px; margin-bottom: 8px;
     }
     #start-screen h1 {
-      font-family: 'Fraunces', serif; font-size: clamp(1.7rem, 6.5vw, 2.1rem); line-height: 1.1;
+      font-family: 'Fraunces', serif; font-size: clamp(1.7rem, 6.5vw, 2.15rem); line-height: 1.08;
       color: var(--forest); font-weight: 800; margin-bottom: 4px; letter-spacing: -0.02em;
     }
-    .start-sub { font-size: 0.88rem; color: var(--sage); font-weight: 600; margin-bottom: 16px; }
+    .start-sub { font-size: 0.84rem; color: var(--sage); font-weight: 600; margin-bottom: 14px; }
 
     .lang-label {
-      font-size: 0.68rem; letter-spacing: 1.4px; text-transform: uppercase;
-      color: var(--sage); font-weight: 800; margin-bottom: 7px;
+      font-size: 0.66rem; letter-spacing: 1.4px; text-transform: uppercase;
+      color: var(--sage); font-weight: 800; margin-bottom: 6px;
     }
     .lang-pills {
-      display: flex; gap: 4px; margin-bottom: 18px; flex-wrap: wrap; justify-content: center;
+      display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center;
       background: rgba(23, 51, 37, 0.08); padding: 4px; border-radius: 999px;
       box-shadow: inset 0 1px 3px rgba(23, 51, 37, 0.08);
     }
     .lang-pill {
       padding: 7px 13px; border-radius: 999px; border: none;
-      background: transparent; color: var(--sage); font-weight: 700; font-size: 0.78rem;
+      background: transparent; color: var(--sage); font-weight: 700; font-size: 0.76rem;
       cursor: pointer; transition: 0.2s;
     }
     .lang-pill.active {
-      background: rgba(255, 255, 255, 0.96); color: var(--forest);
+      background: #fff; color: var(--forest);
       box-shadow: 0 3px 10px rgba(23, 51, 37, 0.14);
     }
 
     #cam-error-box {
-      display: none; width: 100%; max-width: 315px; margin-bottom: 12px;
-      background: rgba(254, 226, 226, 0.92); border: 1px solid #EF4444;
-      color: #7F1D1D; font-size: 0.78rem; line-height: 1.45;
+      display: none; width: 100%; max-width: 325px; margin-bottom: 12px;
+      background: rgba(254, 226, 226, 0.94); border: 1px solid #EF4444;
+      color: #7F1D1D; font-size: 0.77rem; line-height: 1.45;
       padding: 10px 14px; border-radius: 16px; text-align: left;
     }
 
     .btn-scan {
-      width: 100%; max-width: 315px; padding: 14px 18px; border-radius: 999px; border: none;
+      width: 100%; max-width: 325px; padding: 14px 18px; border-radius: 999px; border: none;
       background: linear-gradient(135deg, #2A5840 0%, #173325 100%);
       color: #FAF5EB; font-weight: 700; font-size: 0.94rem;
       cursor: pointer; margin-bottom: 10px;
@@ -159,65 +200,73 @@
     .btn-scan:active { transform: scale(0.95); }
 
     .btn-3d-alt {
-      width: 100%; max-width: 315px; padding: 12px; border-radius: 999px;
+      width: 100%; max-width: 325px; padding: 11px; border-radius: 999px;
       border: 1px solid var(--glass-border); background: var(--glass-strong);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      color: var(--forest); text-decoration: none; font-weight: 700; font-size: 0.84rem;
-      display: block; margin-bottom: 16px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      color: var(--forest); text-decoration: none; font-weight: 700; font-size: 0.83rem;
+      display: block; margin-bottom: 14px;
       box-shadow: 0 6px 18px rgba(23, 51, 37, 0.08), var(--specular);
       transition: transform 0.24s var(--spring);
     }
     .btn-3d-alt:active { transform: scale(0.95); }
 
-    .tips-box {
-      width: 100%; max-width: 315px; text-align: left;
-      background: var(--glass-tint);
-      backdrop-filter: blur(22px) saturate(175%); -webkit-backdrop-filter: blur(22px) saturate(175%);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px; padding: 14px 16px;
-      box-shadow: var(--shadow-glass), var(--specular);
+    /* PANDUAN 3 IKON KOMPAK */
+    .tips-grid {
+      width: 100%; max-width: 325px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
     }
-    .tips { list-style: none; font-size: 0.76rem; color: #314A3C; }
-    .tips li { margin-bottom: 6px; display: flex; gap: 8px; align-items: flex-start; }
-    .tips li:last-child { margin-bottom: 0; }
-    .tips li::before { content: "✦"; color: var(--gourd); flex-shrink: 0; }
+    .tip-chip {
+      background: var(--glass-tint);
+      backdrop-filter: blur(12px) saturate(145%); -webkit-backdrop-filter: blur(12px) saturate(145%);
+      border: 1px solid var(--glass-border); border-radius: 18px; padding: 10px 6px;
+      box-shadow: 0 6px 16px rgba(23, 51, 37, 0.07), var(--specular);
+    }
+    .tip-chip span { display: block; font-size: 1.15rem; margin-bottom: 3px; }
+    .tip-chip strong { display: block; font-size: 0.65rem; color: var(--forest); line-height: 1.25; }
 
-    /* ================= BINGKAI PENGIMBAS AR ================= */
+    /* ================= BINGKAI PENGIMBAS AR PREMIUM ================= */
     #scan-frame {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: min(68vw, 250px); height: min(68vw, 250px); z-index: 900; pointer-events: none; display: none;
     }
     .corner {
-      position: absolute; width: 34px; height: 34px; border-color: var(--gold-bright); border-style: solid;
-      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+      position: absolute; width: 36px; height: 36px; border-color: var(--gold-bright); border-style: solid;
+      filter: drop-shadow(0 2px 8px rgba(244, 196, 83, 0.45));
+      animation: cornerPulse 2.2s ease-in-out infinite alternate;
     }
-    .tl { top: 0; left: 0; border-width: 3.5px 0 0 3.5px; border-radius: 12px 0 0 0; }
-    .tr { top: 0; right: 0; border-width: 3.5px 3.5px 0 0; border-radius: 0 12px 0 0; }
-    .bl { bottom: 0; left: 0; border-width: 0 0 3.5px 3.5px; border-radius: 0 0 0 12px; }
-    .br { bottom: 0; right: 0; border-width: 0 3.5px 3.5px 0; border-radius: 0 0 12px 0; }
+    @keyframes cornerPulse { from { opacity: 0.72; } to { opacity: 1; } }
+    .tl { top: 0; left: 0; border-width: 3.5px 0 0 3.5px; border-radius: 14px 0 0 0; }
+    .tr { top: 0; right: 0; border-width: 3.5px 3.5px 0 0; border-radius: 0 14px 0 0; }
+    .bl { bottom: 0; left: 0; border-width: 0 0 3.5px 3.5px; border-radius: 0 0 0 14px; }
+    .br { bottom: 0; right: 0; border-width: 0 3.5px 3.5px 0; border-radius: 0 0 14px 0; }
     .reticle-core {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 52px; height: 52px; border-radius: 50%;
-      border: 1.5px dashed rgba(244, 196, 83, 0.7);
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 1.5px dashed rgba(244, 196, 83, 0.78);
+      box-shadow: inset 0 0 18px rgba(244, 196, 83, 0.22);
+      will-change: transform, opacity;
       animation: pulseCore 2.4s ease-in-out infinite;
     }
     @keyframes pulseCore {
-      0%, 100% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.45; }
-      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.95; }
+      0%, 100% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.48; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.96; }
     }
     .scan-line {
-      position: absolute; left: 10px; right: 10px; height: 2.5px; border-radius: 99px;
-      background: linear-gradient(90deg, transparent, #FFF0B8, var(--gold-bright), transparent);
-      box-shadow: 0 0 12px var(--gold-bright);
+      position: absolute; left: 12px; right: 12px; height: 2.5px; border-radius: 99px;
+      background: linear-gradient(90deg, transparent, #FFF4C2, var(--gold-bright), transparent);
+      box-shadow: 0 0 14px var(--gold-bright);
+      will-change: transform, opacity;
       animation: scanMove 2.2s ease-in-out infinite;
     }
-    @keyframes scanMove { 0%, 100% { top: 12px; opacity: 0.5; } 50% { top: calc(100% - 14px); opacity: 1; } }
+    @keyframes scanMove {
+      0%, 100% { transform: translate3d(0, 12px, 0); opacity: 0.55; }
+      50% { transform: translate3d(0, 224px, 0); opacity: 1; }
+    }
     .scan-caption {
-      position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: -44px; left: 50%; transform: translateX(-50%);
       background: var(--glass-strong); color: var(--forest);
-      backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%);
+      backdrop-filter: blur(12px) saturate(155%); -webkit-backdrop-filter: blur(12px) saturate(155%);
       font-size: 0.68rem; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase;
-      padding: 6px 15px; border-radius: 999px; border: 1px solid var(--glass-border);
+      padding: 6px 15px; border-radius: 999px; border: 1.5px solid var(--glass-border);
       white-space: nowrap; box-shadow: var(--shadow-glass), var(--specular);
     }
 
@@ -227,7 +276,7 @@
       display: none; align-items: center; gap: 6px;
       background: var(--glass-strong); padding: 4px 6px; border-radius: 999px;
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
     #lang-select {
@@ -238,12 +287,12 @@
     #lang-select option { background: #F8F4EA; color: #173325; }
     .hud-btn {
       width: 35px; height: 35px; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.85); color: var(--forest);
+      background: rgba(255, 255, 255, 0.88); color: var(--forest);
       border: 1px solid var(--glass-stroke); font-size: 0.95rem;
       display: grid; place-items: center; cursor: pointer;
       transition: transform 0.2s var(--spring);
     }
-    .hud-btn:active { transform: scale(0.9); }
+    .hud-btn:active { transform: scale(0.88); }
     #reset-btn { display: none; }
 
     #page-indicator {
@@ -251,24 +300,25 @@
       z-index: 999; display: none; align-items: center; gap: 8px;
       max-width: 92vw; background: var(--glass-strong); color: var(--forest);
       padding: 7px 15px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1.5px solid var(--glass-border);
+      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      transition: border-color 0.25s ease;
     }
+    #page-indicator.locked-pill { border-color: var(--gold); }
     .status-dot {
       width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
       background: var(--gold); animation: pulseStatus 1.5s infinite;
     }
-    .status-dot.locked { background: #22C55E; animation: none; }
+    .status-dot.locked { background: #22C55E; box-shadow: 0 0 0 3px rgba(34, 197, 91, 0.25); animation: none; }
     @keyframes pulseStatus { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     #ar-toast {
       position: fixed; top: calc(max(14px, env(safe-area-inset-top)) + 98px); left: 50%; transform: translate(-50%, -10px);
       z-index: 1500; opacity: 0; pointer-events: none;
-      background: rgba(23, 51, 37, 0.92); color: #FAF5EB;
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: linear-gradient(135deg, #173325, #28523C); color: #FAF5EB;
+      border: 1.5px solid var(--gold);
       border-radius: 999px; padding: 7px 16px; font-size: 0.74rem; font-weight: 700; white-space: nowrap;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
       transition: opacity 0.25s ease, transform 0.25s var(--spring);
@@ -276,14 +326,20 @@
     #ar-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     #subtitle-box {
-      position: fixed; bottom: calc(max(18px, env(safe-area-inset-bottom)) + 90px); left: 50%; transform: translateX(-50%);
-      width: 92%; max-width: 520px; z-index: 998; display: none;
+      position: fixed; bottom: calc(max(18px, env(safe-area-inset-bottom)) + 92px); left: 50%; transform: translateX(-50%);
+      width: 92%; max-width: 520px; z-index: 998; display: none; overflow: hidden;
       background: var(--glass-strong); color: var(--forest);
-      border: 1px solid var(--glass-border); border-radius: 24px;
-      padding: 12px 16px; text-align: center;
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1.5px solid var(--glass-border); border-radius: 24px;
+      padding: 13px 16px 12px; text-align: center;
+      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
+      animation: subPop 0.3s var(--spring);
     }
+    #subtitle-box::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: repeating-linear-gradient(135deg, var(--forest) 0 8px, var(--gold) 8px 13px, var(--gourd) 13px 18px, var(--forest) 18px 24px);
+    }
+    @keyframes subPop { from { opacity: 0; transform: translate(-50%, 8px) scale(0.96); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
     .sub-head { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 5px; }
     #subtitle-lang {
       background: var(--gold-soft); color: var(--gourd);
@@ -300,26 +356,43 @@
       position: fixed; bottom: max(18px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
       z-index: 999; display: none; gap: 8px; align-items: center;
       background: var(--glass-strong); padding: 8px 12px; border-radius: 999px;
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1.5px solid var(--glass-border);
+      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
+      animation: dockUp 0.35s var(--spring);
     }
-    .img-btn { background: transparent; border: 2px solid transparent; border-radius: 50%; padding: 2px; cursor: pointer; transition: transform 0.2s var(--spring), border-color 0.2s; }
+    @keyframes dockUp { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
+    .img-btn {
+      background: transparent; border: 2px solid transparent; border-radius: 50%;
+      padding: 2px; cursor: pointer;
+      transition: transform 0.2s var(--spring), border-color 0.2s, box-shadow 0.2s;
+    }
     .img-btn img { width: 50px; height: auto; display: block; border-radius: 50%; }
     .img-btn:active { transform: scale(0.88); }
-    .img-btn.active-lang { border-color: var(--gourd); box-shadow: 0 0 14px rgba(186, 90, 40, 0.5); transform: translateY(-2px); }
+    .img-btn.active-lang {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(220, 160, 40, 0.65);
+      transform: translateY(-3px) scale(1.04);
+    }
 
-    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
   </style>
 </head>
 <body>
 
   <a href="index.html" class="back-circle" title="Kembali ke Pameran">‹</a>
 
-  <!-- SKRIN MULA (TINTED GLASS × KINABALU MORNING) -->
+  <!-- SKRIN MULA (TINTED GLASS × NOT MUZIK TERAPUNG) -->
   <div id="start-screen">
     <div class="start-orb so-1"></div>
     <div class="start-orb so-2"></div>
+    <div class="music-notes-bg" aria-hidden="true">
+      <span class="bg-note" style="--x:8%; --dur:20s; --del:0s; --sz:1.45rem;">♪</span>
+      <span class="bg-note gold" style="--x:24%; --dur:24s; --del:-5s; --sz:1.85rem;">♫</span>
+      <span class="bg-note" style="--x:45%; --dur:19s; --del:-10s; --sz:1.35rem;">♩</span>
+      <span class="bg-note gold" style="--x:68%; --dur:23s; --del:-3s; --sz:1.7rem;">♬</span>
+      <span class="bg-note" style="--x:86%; --dur:21s; --del:-13s; --sz:1.5rem;">♪</span>
+    </div>
     <div class="start-linangkit"></div>
     <svg class="start-mountains" viewBox="0 0 1440 320" preserveAspectRatio="none">
       <path fill="#C1DCE0" d="M0,320 L0,210 L180,165 L340,195 L520,95 L640,125 L740,55 L830,90 L940,130 L1180,105 L1440,175 L1440,320 Z"/>
@@ -328,7 +401,12 @@
 
     <div class="start-card">
       <div class="cover-stage">
-        <img src="./images/cover.jpg" alt="Kulit Buku Asal Usul Sompoton" class="start-cover" />
+        <div class="cover-glow"></div>
+        <span class="mini-sticker ms-1">✨ WebAR 3D</span>
+        <span class="mini-sticker ms-2">🎧 3 Bahasa</span>
+        <div class="cover-frame">
+          <img src="./images/cover.jpg" alt="Kulit Buku Asal Usul Sompoton" class="start-cover" />
+        </div>
       </div>
 
       <span class="kicker-pill">✦ WebAR Interaktif · Kumpulan 13</span>
@@ -347,12 +425,10 @@
       <button class="btn-scan" id="start-ar-btn" onclick="startAR()">📷 Mula Imbas Buku (AR)</button>
       <a href="viewer.html?page=4" class="btn-3d-alt">🧊 Tiada buku? Teroka Mod 3D</a>
 
-      <div class="tips-box">
-        <ul class="tips">
-          <li>Tekan <strong>Benarkan / Allow</strong> apabila pelayar meminta akses kamera</li>
-          <li>Letak buku secara rata di kawasan bercahaya terang</li>
-          <li>Seret 1 jari untuk putar 3D, cubit 2 jari untuk zum</li>
-        </ul>
+      <div class="tips-grid">
+        <div class="tip-chip"><span>📷</span><strong>Tekan Allow Kamera</strong></div>
+        <div class="tip-chip"><span>☀️</span><strong>Cahaya Terang</strong></div>
+        <div class="tip-chip"><span>👆</span><strong>Putar & Zum 3D</strong></div>
       </div>
     </div>
   </div>
@@ -363,7 +439,7 @@
     <div class="corner bl"></div><div class="corner br"></div>
     <div class="reticle-core"></div>
     <div class="scan-line"></div>
-    <div class="scan-caption">Halakan ke Halaman 1 – 12</div>
+    <div class="scan-caption">✦ Halakan ke Halaman 1 – 12</div>
   </div>
 
   <!-- KAWALAN ATAS -->
@@ -442,6 +518,34 @@
   </a-scene>
 
   <script>
+    /* ================= ENJIN BUNYI UI HALUS (WEB AUDIO API) ================= */
+    let uiCtx = null;
+    function playUiChime(type = 'flip') {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!uiCtx && AC) uiCtx = new AC();
+        if (!uiCtx) return;
+        const run = () => {
+          const now = uiCtx.currentTime;
+          if (type === 'flip') {
+            const o = uiCtx.createOscillator(), g = uiCtx.createGain();
+            o.type = 'sine'; o.frequency.setValueAtTime(520, now); o.frequency.exponentialRampToValueAtTime(760, now + 0.07);
+            g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.1, now + 0.015); g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+            o.connect(g); g.connect(uiCtx.destination); o.start(now); o.stop(now + 0.15);
+          } else if (type === 'found') {
+            [523.25, 659.25].forEach((f, i) => {
+              const o = uiCtx.createOscillator(), g = uiCtx.createGain();
+              o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i * 0.08);
+              g.gain.setValueAtTime(0.001, now + i * 0.08); g.gain.exponentialRampToValueAtTime(0.14, now + i * 0.08 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.24);
+              o.connect(g); g.connect(uiCtx.destination); o.start(now + i * 0.08); o.stop(now + i * 0.08 + 0.26);
+            });
+          }
+        };
+        if (uiCtx.state === 'suspended') uiCtx.resume().then(run).catch(() => {});
+        else run();
+      } catch (e) {}
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     let selectedLang = ['bm', 'en', 'kdz'].includes(urlParams.get('lang')) ? urlParams.get('lang') : 'bm';
     const uiContainer = document.getElementById('ui-container');
@@ -543,18 +647,20 @@
     }
 
     function selectStartLang(lang, btn) {
+      playUiChime('flip');
       selectedLang = lang; langSelect.value = lang;
       document.querySelectorAll('.lang-pill').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
 
     function changeActiveLang(lang) {
+      playUiChime('flip');
       selectedLang = lang;
       if (currentPage) playAudio(lang);
     }
 
-    // Buka kunci saluran audio mudah alih secara senyap semasa ketikan pertama
     function unlockMobileAudio() {
+      playUiChime('flip');
       [currentAudio, currentSfx].forEach(el => {
         el.muted = true;
         el.play().then(() => { el.pause(); el.muted = false; }).catch(() => { el.muted = false; });
@@ -592,7 +698,8 @@
       startArBtn.textContent = '✨ Membuka pengimbas AR...';
       const startScreen = document.getElementById('start-screen');
       startScreen.classList.add('fade-out');
-      setTimeout(() => startScreen.style.display = 'none', 450);
+      // Nyahaktifkan keseluruhan skrin mula & animasi latar sebaik AR bermula (jimat 100% GPU)
+      setTimeout(() => { startScreen.style.display = 'none'; }, 440);
 
       document.getElementById('top-controls').style.display = 'flex';
       pageIndicator.style.display = 'flex';
@@ -615,8 +722,10 @@
         uiContainer.style.display = "flex";
         scanFrame.style.display = "none";
         statusDot.classList.add('locked');
+        pageIndicator.classList.add('locked-pill');
         pageTitleText.textContent = pageTitle;
         resetBtn.style.display = activeModel ? 'grid' : 'none';
+        playUiChime('found');
         playSfx(pageCode);
         if (activeModel) showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
       });
@@ -626,6 +735,7 @@
         resetBtn.style.display = "none";
         scanFrame.style.display = "block";
         statusDot.classList.remove('locked');
+        pageIndicator.classList.remove('locked-pill');
         pageTitleText.textContent = "Halakan kamera ke mana-mana halaman buku";
         stopAudio();
       });
@@ -646,6 +756,7 @@
 
     function resetModelTransform() {
       if (!activeModel) return;
+      playUiChime('flip');
       const defaultRotY = currentPage === 'pg10' ? (Math.PI / 2) : 0;
       activeModel.object3D.rotation.set(0, defaultRotY, 0);
       activeModel.object3D.scale.set(0.005, 0.005, 0.005);
@@ -715,11 +826,15 @@
       ctx.drawImage(video, offsetX, offsetY, drawW, drawH);
       ctx.drawImage(aCanvas, 0, 0, out.width, out.height);
 
-      ctx.strokeStyle = "#DCA028"; ctx.lineWidth = 4;
-      ctx.strokeRect(10, 10, out.width - 20, out.height - 20);
-      ctx.fillStyle = "rgba(23, 51, 37, 0.9)"; ctx.fillRect(0, out.height - 46, out.width, 46);
-      ctx.fillStyle = "#F7E8C2"; ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center";
-      ctx.fillText("✦ Asal Usul Sompoton • WebAR Storybook (Kumpulan 13 UMS)", out.width / 2, out.height - 18);
+      // Bingkai emas berganda + jalur bawah rasmi
+      ctx.strokeStyle = "#173325"; ctx.lineWidth = 10;
+      ctx.strokeRect(5, 5, out.width - 10, out.height - 10);
+      ctx.strokeStyle = "#DCA028"; ctx.lineWidth = 3;
+      ctx.strokeRect(13, 13, out.width - 26, out.height - 26);
+
+      ctx.fillStyle = "rgba(23, 51, 37, 0.92)"; ctx.fillRect(0, out.height - 50, out.width, 50);
+      ctx.fillStyle = "#FFE8A3"; ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("✦ Asal Usul Sompoton • WebAR Storybook (Kumpulan 13 UMS)", out.width / 2, out.height - 20);
 
       const link = document.createElement('a');
       link.download = `AR_Sompoton_${currentPage || 'snapshot'}.png`;
