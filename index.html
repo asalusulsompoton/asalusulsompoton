@@ -28,7 +28,6 @@
       --shadow-lift: 0 24px 52px -12px rgba(23, 51, 37, 0.18), 0 8px 18px rgba(220, 160, 40, 0.12);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-      /* Pemboleh Ubah Enjin Spatial 3D */
       --sx: 0;
       --sy: 0;
     }
@@ -47,13 +46,28 @@
       position: relative;
     }
 
-    /* LATAR AMBIENT RINGAN (GPU OPTIMIZED) */
+    /* LATAR AMBIENT & NOT MUZIK TERAPUNG (GPU OPTIMIZED) */
     .ambient-backdrop { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
     .orb { position: absolute; border-radius: 50%; will-change: transform; animation: orbFloat 22s ease-in-out infinite alternate; }
     .orb-1 { width: min(620px, 110vw); height: min(620px, 110vw); top: -18%; left: -12%; background: radial-gradient(circle, rgba(169, 214, 229, 0.52) 0%, transparent 70%); }
     .orb-2 { width: min(540px, 100vw); height: min(540px, 100vw); top: 32%; right: -16%; background: radial-gradient(circle, rgba(247, 224, 168, 0.46) 0%, transparent 70%); animation-delay: -7s; }
     .orb-3 { width: min(560px, 105vw); height: min(560px, 105vw); bottom: -14%; left: 10%; background: radial-gradient(circle, rgba(173, 212, 185, 0.4) 0%, transparent 70%); animation-delay: -13s; }
     @keyframes orbFloat { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(24px, 18px, 0); } }
+
+    .music-notes-bg { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .bg-note {
+      position: absolute; bottom: -40px; left: var(--x);
+      font-size: var(--sz); color: rgba(23, 51, 37, 0.085); font-weight: 700;
+      will-change: transform, opacity;
+      animation: bgNoteDrift var(--dur) linear var(--del) infinite;
+    }
+    .bg-note.gold { color: rgba(220, 160, 40, 0.14); }
+    @keyframes bgNoteDrift {
+      0% { transform: translate3d(0, 0, 0) rotate(-10deg); opacity: 0; }
+      12% { opacity: 1; }
+      85% { opacity: 0.9; }
+      100% { transform: translate3d(26px, -112vh, 0) rotate(14deg); opacity: 0; }
+    }
 
     .linangkit-pattern {
       position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.045;
@@ -82,7 +96,7 @@
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes barGrow { to { transform: scaleX(1); } }
 
-    /* BUTANG SUASANA RIMBA */
+    /* BUTANG SUASANA RIMBA & SPATIAL iOS */
     .ambient-fab {
       position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); right: 16px; z-index: 950;
       display: inline-flex; align-items: center; gap: 8px;
@@ -102,7 +116,6 @@
     .ambient-fab.on .amb-bars span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes eqMini { from { height: 3px; } to { height: 12px; } }
 
-    /* BUTANG SENSOR SPATIAL KHAS UNTUK iOS (iPHONE) */
     #spatial-ios-btn {
       display: none; position: fixed;
       bottom: max(16px, env(safe-area-inset-bottom)); left: 16px; z-index: 950;
@@ -133,7 +146,6 @@
     .nav-links a:hover { background: rgba(23, 51, 37, 0.07); color: var(--forest); }
     .nav-right { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
 
-    /* BUTANG PASPORT PENJELAJAH DI NAVBAR */
     .passport-nav-btn {
       display: inline-flex; align-items: center; gap: 5px;
       background: var(--gold-soft); color: var(--gourd);
@@ -197,9 +209,9 @@
     .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.4rem, 5.4vw, 4.65rem); line-height: 1.03; color: var(--forest); font-weight: 800; margin-bottom: 16px; letter-spacing: -0.025em; }
     .hero h1 span { display: block; color: var(--gourd); font-style: italic; font-weight: 700; }
     .hero-lead { font-size: clamp(0.98rem, 1.8vw, 1.06rem); line-height: 1.72; color: #365042; max-width: 530px; margin-bottom: 26px; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-bottom: 28px; }
-    .hero-actions .btn-primary { padding: 14px 24px; font-size: 0.92rem; }
-    .hero-actions .btn-glass { padding: 14px 20px; font-size: 0.9rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+    .hero-actions .btn-primary { padding: 14px 26px; font-size: 0.94rem; }
+    .hero-actions .btn-glass { padding: 14px 24px; font-size: 0.92rem; }
 
     .hero-metrics {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
@@ -212,7 +224,6 @@
     .metric strong { display: block; font-family: 'Fraunces', serif; font-size: clamp(1.1rem, 3.6vw, 1.5rem); color: var(--forest); line-height: 1.2; }
     .metric span { font-size: clamp(0.66rem, 2.2vw, 0.76rem); color: var(--sage); font-weight: 600; display: block; margin-top: 2px; }
 
-    /* PENTAS BUKU 3D GEN-Z */
     .hero-stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; perspective: 1400px; width: 100%; }
     .hero-toggle {
       display: inline-flex; background: rgba(255, 253, 248, 0.76);
@@ -308,39 +319,19 @@
     }
     #hero-3d-box model-viewer { width: 100%; height: 100%; }
 
-    /* ================= ENJIN SPATIAL 3D (GYRO & TETIKUS) ================= */
-    .spatial-active .book-pedestal-wrap {
-      transform: rotateY(calc(var(--sx) * 4deg)) rotateX(calc(var(--sy) * -3deg));
-    }
+    /* ENJIN SPATIAL 3D */
+    .spatial-active .book-pedestal-wrap { transform: rotateY(calc(var(--sx) * 4deg)) rotateX(calc(var(--sy) * -3deg)); }
     .spatial-active .magic-book {
       animation: none;
-      transform:
-        rotateY(calc(-10deg + (var(--sx) * 18deg)))
-        rotateX(calc(4deg + (var(--sy) * -14deg)))
-        translate3d(calc(var(--sx) * 10px), calc(var(--sy) * 8px), 24px);
+      transform: rotateY(calc(-10deg + (var(--sx) * 18deg))) rotateX(calc(4deg + (var(--sy) * -14deg))) translate3d(calc(var(--sx) * 10px), calc(var(--sy) * 8px), 24px);
       transition: transform 0.08s linear;
     }
-    .spatial-active .book-shadow {
-      transform: translate3d(calc(var(--sx) * -10px), calc(var(--sy) * -4px), 0);
-    }
-    .spatial-active .st-1 {
-      animation: none;
-      transform: translate3d(calc(var(--sx) * -22px), calc(var(--sy) * -16px), 45px) rotate(calc(var(--sx) * 4deg));
-    }
-    .spatial-active .st-2 {
-      animation: none;
-      transform: translate3d(calc(var(--sx) * -15px), calc(var(--sy) * -12px), 35px) rotate(calc(var(--sx) * -3deg));
-    }
-    .spatial-active .st-3 {
-      animation: none;
-      transform: translate3d(calc(var(--sx) * -26px), calc(var(--sy) * -18px), 55px) rotate(calc(var(--sx) * 3deg));
-    }
-    .spatial-active .hero-mountains {
-      transform: translate3d(calc(var(--sx) * -14px), calc(var(--sy) * -6px), 0) scale(1.04);
-    }
-    .spatial-active .book-glow-ring {
-      transform: translate(calc(-50% + var(--sx) * 26px), calc(-50% + var(--sy) * 20px));
-    }
+    .spatial-active .book-shadow { transform: translate3d(calc(var(--sx) * -10px), calc(var(--sy) * -4px), 0); }
+    .spatial-active .st-1 { animation: none; transform: translate3d(calc(var(--sx) * -22px), calc(var(--sy) * -16px), 45px) rotate(calc(var(--sx) * 4deg)); }
+    .spatial-active .st-2 { animation: none; transform: translate3d(calc(var(--sx) * -15px), calc(var(--sy) * -12px), 35px) rotate(calc(var(--sx) * -3deg)); }
+    .spatial-active .st-3 { animation: none; transform: translate3d(calc(var(--sx) * -26px), calc(var(--sy) * -18px), 55px) rotate(calc(var(--sx) * 3deg)); }
+    .spatial-active .hero-mountains { transform: translate3d(calc(var(--sx) * -14px), calc(var(--sy) * -6px), 0) scale(1.04); }
+    .spatial-active .book-glow-ring { transform: translate(calc(-50% + var(--sx) * 26px), calc(-50% + var(--sy) * 20px)); }
 
     /* JALUR TENUNAN LINANGKIT */
     .linangkit-strip { height: 6px; width: 100%; position: relative; z-index: 3; background: repeating-linear-gradient(135deg, var(--forest) 0 10px, var(--gold) 10px 15px, var(--gourd) 15px 20px, var(--forest) 20px 28px); }
@@ -369,7 +360,7 @@
     }
     .glass-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift), var(--specular); border-color: rgba(255, 255, 255, 0.95); }
 
-    /* 01: PENTAS 3 DIORAMA 3D (MUSEUM SHOWCASE) */
+    /* 01: PENTAS 3 DIORAMA 3D */
     .pedestal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
     .pedestal-card { padding: 16px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
     .pedestal-card::after {
@@ -414,62 +405,98 @@
     .pedestal-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--forest); margin-bottom: 6px; }
     .pedestal-card p { font-size: 0.86rem; color: var(--sage); margin-bottom: 16px; flex: 1; }
 
-    /* 02: STUDIO SOMPOTON UPGRADE (3 MELODI + AURA GLOW) */
-    .sompoton-studio { padding: 36px 32px; display: grid; grid-template-columns: 0.95fr 1.15fr; gap: 34px; align-items: center; }
+    /* 02: STUDIO SOMPOTON PREMIUM (PENTAS AKUSTIK ZAMRUD-EMAS) */
+    .sompoton-studio { padding: 36px 32px; display: grid; grid-template-columns: 0.92fr 1.18fr; gap: 34px; align-items: center; }
     .melody-picker { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 18px; }
     .mel-chip {
-      padding: 7px 13px; border-radius: 999px; border: 1px solid var(--glass-stroke);
-      background: rgba(255, 255, 255, 0.72); color: var(--sage);
-      font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+      padding: 8px 14px; border-radius: 999px; border: 1px solid var(--glass-stroke);
+      background: rgba(255, 255, 255, 0.76); color: var(--sage);
+      font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: transform 0.18s var(--spring), background 0.2s;
     }
-    .mel-chip.active { background: var(--gold-soft); color: var(--gourd); border-color: var(--gold); }
+    .mel-chip:active { transform: scale(0.94); }
+    .mel-chip.active { background: var(--gold-soft); color: var(--gourd); border-color: var(--gold); box-shadow: 0 4px 12px rgba(220, 160, 40, 0.16); }
     .kbd-hint { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; font-size: 0.78rem; color: var(--sage); }
     .kbd-hint kbd { background: var(--glass-strong); border: 1px solid var(--glass-stroke); color: var(--forest); padding: 2px 8px; border-radius: 7px; font-weight: 800; font-size: 0.72rem; }
     .studio-btns { display: flex; flex-wrap: wrap; gap: 10px; }
 
     .instrument-box {
-      position: relative; width: 100%; border-radius: 26px; overflow: hidden;
-      background: linear-gradient(180deg, #193A2A 0%, #0C2016 100%);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      padding: 26px 12px 20px; display: flex; flex-direction: column; align-items: center;
-      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 16px 36px rgba(23, 51, 37, 0.22);
+      position: relative; width: 100%; border-radius: 30px; overflow: hidden;
+      background: radial-gradient(circle at 50% 25%, #23533B 0%, #102A1D 58%, #081710 100%);
+      border: 2px solid rgba(247, 232, 194, 0.34);
+      padding: 20px 14px 22px; display: flex; flex-direction: column; align-items: center;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.22), 0 22px 48px rgba(15, 34, 24, 0.32);
+    }
+    .instrument-box::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 4;
+      background: repeating-linear-gradient(135deg, var(--gold) 0 8px, var(--gourd) 8px 14px, var(--forest) 14px 20px);
+    }
+    .studio-badge-top {
+      position: relative; z-index: 3; margin-bottom: 14px;
+      font-size: 0.64rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold-soft); background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(247, 232, 194, 0.22); padding: 4px 14px; border-radius: 999px;
     }
     .gourd-aura {
       position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%) scale(0.9);
-      width: 240px; height: 120px; border-radius: 50%; pointer-events: none; z-index: 1; opacity: 0.2;
-      background: radial-gradient(circle, rgba(244, 196, 83, 0.75) 0%, rgba(186, 90, 40, 0.35) 50%, transparent 72%);
+      width: 270px; height: 140px; border-radius: 50%; pointer-events: none; z-index: 1; opacity: 0.25;
+      background: radial-gradient(circle, rgba(244, 196, 83, 0.8) 0%, rgba(186, 90, 40, 0.38) 52%, transparent 72%);
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
-    .gourd-aura.pulse { transform: translateX(-50%) scale(1.22); opacity: 0.75; }
-    #wave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.9; }
-    .sompoton-body { position: relative; z-index: 2; width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; }
-    .pipes-stage { display: flex; align-items: flex-end; justify-content: center; gap: 8px; width: 100%; height: 185px; padding: 0 6px; position: relative; z-index: 3; }
+    .gourd-aura.pulse { transform: translateX(-50%) scale(1.26); opacity: 0.82; }
+    #wave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.92; }
+    .sompoton-body { position: relative; z-index: 2; width: 100%; max-width: 355px; display: flex; flex-direction: column; align-items: center; }
+    .pipes-stage { display: flex; align-items: flex-end; justify-content: center; gap: 8px; width: 100%; height: 196px; padding: 0 6px; position: relative; z-index: 3; }
     .pipe {
-      flex: 1; max-width: 44px; min-width: 30px; border-radius: 12px 12px 3px 3px; border: none; cursor: pointer;
-      background: linear-gradient(90deg, #C48B2E 0%, #FCE5A2 42%, #DDA13B 78%, #825214 100%);
-      color: #173325; font-weight: 800; font-size: 0.7rem;
+      flex: 1; max-width: 46px; min-width: 32px; border-radius: 14px 14px 4px 4px; border: 1px solid rgba(255, 244, 204, 0.38); cursor: pointer;
+      background: linear-gradient(90deg, #9F691A 0%, #E7B858 24%, #FFF3C4 46%, #D79830 74%, #6D420B 100%);
+      color: #173325; font-weight: 800; font-size: 0.72rem;
       display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-      padding-bottom: 8px; transition: transform 0.14s var(--spring), box-shadow 0.14s;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.4); position: relative;
+      padding-bottom: 10px; transition: transform 0.14s var(--spring), box-shadow 0.14s, filter 0.14s;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.45), inset 0 4px 6px rgba(255,255,255,0.4); position: relative;
       -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
-    .pipe::before { content: ""; position: absolute; top: 32%; left: -1px; right: -1px; height: 5px; background: linear-gradient(90deg, #5A2C0A, #9C571F, #4A2308); }
-    .pipe:hover { transform: translateY(-5px); }
-    .pipe.active { transform: scaleY(0.94); background: #FFF8DB; box-shadow: 0 0 30px #FFE8A3, 0 0 12px #fff; }
-    .pipe small { font-size: 0.6rem; opacity: 0.75; margin-top: 2px; }
-
-    .gourd-base {
-      width: min(78%, 235px); height: 70px; margin-top: -10px; position: relative; z-index: 2;
-      background: radial-gradient(circle at 38% 30%, #D98236 0%, #9E4F1B 55%, #4A2208 100%);
-      border-radius: 50% 50% 46% 46% / 35% 35% 65% 65%; border: 2px solid rgba(255, 232, 163, 0.3);
-      box-shadow: 0 14px 28px rgba(0,0,0,0.6), inset 0 -10px 18px rgba(0,0,0,0.4);
-      display: flex; align-items: center; justify-content: center;
+    .pipe::before {
+      content: ""; position: absolute; top: 28%; left: -1px; right: -1px; height: 6px;
+      background: linear-gradient(90deg, #4A2107, #8F4D1A, #3A1905);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
     }
-    .gourd-base::before { content: ""; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 82%; height: 9px; border-radius: 999px; background: repeating-linear-gradient(90deg, #3A1D08 0 8px, #C77C2E 8px 14px); }
-    .gourd-label { font-family: 'Fraunces', serif; font-size: 0.76rem; letter-spacing: 2.5px; color: #FFE8A3; margin-top: 8px; font-weight: 700; }
-    .floating-note { position: absolute; pointer-events: none; font-size: 1.45rem; color: #FFE8A3; font-weight: 800; will-change: transform, opacity; animation: noteRise 0.95s ease-out forwards; z-index: 10; }
-    @keyframes noteRise { 0% { transform: translate3d(0,0,0) scale(0.75); opacity: 1; } 100% { transform: translate3d(14px,-92px,0) scale(1.4); opacity: 0; } }
-    .note-status { position: relative; z-index: 3; margin-top: 14px; text-align: center; font-size: 0.82rem; color: #F7E8C2; font-weight: 600; min-height: 22px; }
+    .pipe::after {
+      content: ""; position: absolute; top: 10px; width: 10px; height: 10px; border-radius: 50%;
+      background: radial-gradient(circle, #2A1405 40%, #7C4314 100%);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .pipe:hover { transform: translateY(-6px); filter: brightness(1.06); }
+    .pipe.active {
+      transform: scaleY(0.95) translateY(-3px);
+      background: linear-gradient(90deg, #FFE494, #FFFDF2, #F4C453);
+      box-shadow: 0 0 32px rgba(255, 232, 163, 0.95), 0 0 14px #fff;
+    }
+    .pipe small { font-size: 0.6rem; opacity: 0.78; margin-top: 2px; background: rgba(23,51,37,0.12); padding: 1px 5px; border-radius: 6px; }
+
+    .rattan-tie {
+      width: min(82%, 250px); height: 12px; margin-top: -6px; z-index: 4; border-radius: 999px;
+      background: repeating-linear-gradient(90deg, #3C1C08 0 7px, #C77C2E 7px 13px, #68330F 13px 16px);
+      border: 1px solid rgba(255, 232, 163, 0.35);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .gourd-base {
+      width: min(80%, 248px); height: 78px; margin-top: -5px; position: relative; z-index: 2;
+      background: radial-gradient(circle at 36% 26%, #E89648 0%, #B4561D 48%, #5D280A 86%, #3A1604 100%);
+      border-radius: 48% 48% 46% 46% / 32% 32% 68% 68%;
+      border: 2px solid rgba(255, 232, 163, 0.35);
+      box-shadow: 0 18px 34px rgba(0,0,0,0.65), inset 0 -12px 22px rgba(0,0,0,0.45), inset 0 4px 10px rgba(255, 232, 163, 0.25);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .gourd-label { font-family: 'Fraunces', serif; font-size: 0.84rem; letter-spacing: 3px; color: #FFF0BE; font-weight: 800; text-shadow: 0 2px 6px rgba(0,0,0,0.45); }
+    .gourd-sub { font-size: 0.6rem; letter-spacing: 1.5px; color: rgba(255, 240, 190, 0.78); text-transform: uppercase; font-weight: 700; margin-top: 1px; }
+    .floating-note { position: absolute; pointer-events: none; font-size: 1.5rem; color: #FFE8A3; font-weight: 800; will-change: transform, opacity; animation: noteRise 0.95s ease-out forwards; z-index: 10; }
+    @keyframes noteRise { 0% { transform: translate3d(0,0,0) scale(0.75); opacity: 1; } 100% { transform: translate3d(14px,-96px,0) scale(1.45); opacity: 0; } }
+    .note-status {
+      position: relative; z-index: 3; margin-top: 15px; text-align: center;
+      font-size: 0.82rem; color: #F7E8C2; font-weight: 700; min-height: 24px;
+      background: rgba(255,255,255,0.07); padding: 5px 16px; border-radius: 999px;
+      border: 1px solid rgba(247, 232, 194, 0.16);
+    }
 
     /* 03: SINOPSIS, WARISAN & KENALI WATAK */
     .heritage-grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 26px; align-items: stretch; }
@@ -485,10 +512,7 @@
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
       padding-top: 16px; border-top: 1px dashed rgba(23, 51, 37, 0.14);
     }
-    .st-step {
-      background: rgba(255, 255, 255, 0.68); border: 1px solid var(--glass-border);
-      border-radius: 16px; padding: 10px; text-align: center;
-    }
+    .st-step { background: rgba(255, 255, 255, 0.68); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; text-align: center; }
     .st-step span { display: block; font-size: 1.15rem; margin-bottom: 3px; }
     .st-step strong { display: block; font-size: 0.72rem; color: var(--forest); line-height: 1.25; }
 
@@ -502,10 +526,7 @@
       transition: transform 0.2s var(--spring), background 0.2s, color 0.2s, border-color 0.2s;
     }
     .tab-btn:active { transform: scale(0.95); }
-    .tab-btn.active {
-      background: linear-gradient(135deg, #2A5840, #173325); color: #FAF5EB;
-      border-color: var(--forest); box-shadow: 0 10px 22px rgba(23, 51, 37, 0.22);
-    }
+    .tab-btn.active { background: linear-gradient(135deg, #2A5840, #173325); color: #FAF5EB; border-color: var(--forest); box-shadow: 0 10px 22px rgba(23, 51, 37, 0.22); }
     .tab-panel { padding: 26px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
     .artifact-anim { animation: artifactIn 0.35s var(--spring); }
     @keyframes artifactIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -517,25 +538,14 @@
       display: grid; place-items: center; font-size: 1.7rem;
       box-shadow: 0 8px 18px rgba(220, 160, 40, 0.16);
     }
-    .artifact-tag {
-      display: inline-block; font-size: 0.66rem; font-weight: 800; letter-spacing: 1.4px;
-      text-transform: uppercase; color: var(--gourd); margin-bottom: 2px;
-    }
+    .artifact-tag { display: inline-block; font-size: 0.66rem; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: var(--gourd); margin-bottom: 2px; }
     .tab-panel h3 { font-family: 'Fraunces', serif; color: var(--forest); font-size: 1.32rem; line-height: 1.15; }
     .tab-panel p { color: #365042; font-size: 0.93rem; line-height: 1.68; margin-bottom: 14px; }
-    .artifact-fact {
-      background: rgba(23, 51, 37, 0.05); border: 1px dashed rgba(23, 51, 37, 0.18);
-      border-radius: 16px; padding: 11px 14px; font-size: 0.82rem; color: var(--forest);
-    }
+    .artifact-fact { background: rgba(23, 51, 37, 0.05); border: 1px dashed rgba(23, 51, 37, 0.18); border-radius: 16px; padding: 11px 14px; font-size: 0.82rem; color: var(--forest); }
     .artifact-fact strong { color: var(--gourd); }
 
-    /* KAD INTERAKTIF KENALI WATAK */
     .char-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
-    .char-card {
-      padding: 20px 16px; text-align: center; cursor: pointer; position: relative;
-      display: flex; flex-direction: column; align-items: center;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .char-card { padding: 20px 16px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; -webkit-tap-highlight-color: transparent; }
     .char-card.tapped { animation: charBounce 0.45s var(--spring); border-color: var(--gold); }
     @keyframes charBounce { 0% { transform: scale(1); } 40% { transform: scale(1.06) translateY(-6px); } 100% { transform: scale(1); } }
     .char-avatar {
@@ -545,29 +555,19 @@
       display: grid; place-items: center; font-size: 2.1rem;
       box-shadow: 0 10px 22px rgba(220, 160, 40, 0.16);
     }
-    .char-role {
-      font-size: 0.65rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
-      color: var(--gourd); background: rgba(247, 232, 194, 0.7);
-      padding: 3px 10px; border-radius: 999px; margin-bottom: 6px;
-    }
+    .char-role { font-size: 0.65rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gourd); background: rgba(247, 232, 194, 0.7); padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
     .char-card h4 { font-family: 'Fraunces', serif; font-size: 1.12rem; color: var(--forest); margin-bottom: 4px; }
     .char-trait { font-size: 0.76rem; color: var(--sage); margin-bottom: 10px; }
     .char-bubble {
       width: 100%; background: rgba(255, 255, 255, 0.85); border: 1px solid var(--glass-stroke);
       border-radius: 14px; padding: 8px 10px; font-size: 0.76rem; color: var(--forest);
-      font-style: italic; line-height: 1.4; min-height: 54px;
-      display: flex; align-items: center; justify-content: center;
+      font-style: italic; line-height: 1.4; min-height: 54px; display: flex; align-items: center; justify-content: center;
     }
     .char-tap-hint { font-size: 0.68rem; font-weight: 800; color: var(--forest-mid); margin-top: 8px; }
 
-    /* 04: KAMUS MINI 3D UPGRADE */
+    /* 04: KAMUS MINI 3D */
     .dict-toolbar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-    .dict-progress-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--glass-strong); border: 1px solid var(--glass-border);
-      padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; color: var(--forest);
-      box-shadow: 0 6px 16px rgba(23, 51, 37, 0.06), var(--specular);
-    }
+    .dict-progress-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--glass-strong); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; color: var(--forest); box-shadow: 0 6px 16px rgba(23, 51, 37, 0.06), var(--specular); }
     .dict-progress-pill strong { color: var(--gourd); }
     .dict-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 14px; }
     .flip-card { background: transparent; height: 174px; perspective: 1100px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -585,42 +585,127 @@
     .flip-back p { font-size: 0.8rem; opacity: 0.92; margin-bottom: 6px; }
     .flip-back small { font-size: 0.68rem; background: rgba(255,255,255,0.12); padding: 3px 10px; border-radius: 999px; color: #DCE8D5; }
 
-    /* 05: 3 BAHASA + GALERI 12 BABAK */
-    .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .lang-card { padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
-    .lang-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .code-pill { padding: 5px 12px; border-radius: 12px; font-weight: 800; font-size: 0.78rem; background: var(--gold-soft); color: var(--gourd); }
+    /* ================= 05: PENCERITAAN 3 BAHASA & 12 BABAK (PREMIUM SHOWCASE) ================= */
+    .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 42px; }
+    .lang-card {
+      padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .lang-card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
+      opacity: 0.75; transition: opacity 0.25s;
+    }
+    .lang-card.playing { border-color: var(--gold); box-shadow: 0 20px 44px -10px rgba(220, 160, 40, 0.28), var(--specular); }
+    .lang-card.playing::before { opacity: 1; }
+    .lang-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .lang-id-wrap { display: inline-flex; align-items: center; gap: 8px; }
+    .lang-flag {
+      width: 34px; height: 34px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-soft), #FFFDF7);
+      border: 1px solid rgba(220, 160, 40, 0.35);
+      display: grid; place-items: center; font-size: 1.05rem;
+    }
+    .code-pill { padding: 4px 10px; border-radius: 999px; font-weight: 800; font-size: 0.72rem; background: rgba(23, 51, 37, 0.07); color: var(--forest); letter-spacing: 0.8px; }
     .eq { display: flex; gap: 3px; align-items: flex-end; height: 18px; opacity: 0.25; }
-    .eq span { width: 3.5px; height: 6px; background: var(--forest-mid); border-radius: 2px; }
+    .eq span { width: 3.5px; height: 6px; background: var(--gourd); border-radius: 2px; }
     .lang-card.playing .eq { opacity: 1; }
     .lang-card.playing .eq span { animation: bounceEq 0.55s ease-in-out infinite alternate; }
     .lang-card.playing .eq span:nth-child(2) { animation-delay: 0.15s; }
     .lang-card.playing .eq span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes bounceEq { from { height: 4px; } to { height: 18px; } }
-    .lang-card h3 { font-family: 'Fraunces', serif; font-size: 1.24rem; margin-bottom: 6px; color: var(--forest); }
-    .lang-card p { font-size: 0.88rem; color: var(--sage); margin-bottom: 18px; }
-    .sample-row { display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.75); border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px 14px; color: var(--forest); font-weight: 700; font-size: 0.84rem; cursor: pointer; margin-bottom: 14px; width: 100%; transition: 0.2s; }
+
+    .lang-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; margin-bottom: 5px; color: var(--forest); }
+    .lang-card p { font-size: 0.84rem; color: var(--sage); margin-bottom: 15px; line-height: 1.55; }
+    .sample-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      background: rgba(255, 255, 255, 0.84); border: 1.5px solid var(--glass-stroke);
+      border-radius: 15px; padding: 10px 14px; color: var(--forest);
+      font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; width: 100%;
+      transition: transform 0.18s var(--spring), border-color 0.2s, background 0.2s;
+    }
     .sample-row:hover { border-color: var(--gold); background: #fff; }
+    .sample-row:active { transform: scale(0.97); }
+    .lang-card.playing .sample-row { background: var(--forest); color: var(--gold-soft); border-color: var(--forest); }
     .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .card-actions .btn-primary, .card-actions .btn-glass { padding: 9px 10px; font-size: 0.78rem; }
 
-    .filter-bar { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
-    .filter-btn { padding: 9px 18px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass-strong); color: var(--sage); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: 0.2s; }
-    .filter-btn.active, .filter-btn:hover { background: var(--forest); color: #FAF5EB; border-color: var(--forest); }
+    /* PENAPIS & GALERI 12 BABAK (KOMPAK & 3D LANGSUNG) */
+    .filter-wrap { display: flex; justify-content: center; margin-bottom: 26px; }
+    .filter-bar {
+      display: inline-flex; justify-content: center; gap: 6px; flex-wrap: wrap;
+      background: var(--glass-tint); border: 1px solid var(--glass-border);
+      padding: 5px; border-radius: 999px;
+      box-shadow: var(--shadow-glass), var(--specular);
+    }
+    .filter-btn {
+      padding: 8px 16px; border-radius: 999px; border: none;
+      background: transparent; color: var(--sage); font-weight: 700; font-size: 0.8rem;
+      cursor: pointer; transition: 0.2s;
+    }
+    .filter-btn.active { background: var(--forest); color: #FAF5EB; box-shadow: 0 4px 12px rgba(23, 51, 37, 0.2); }
 
-    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 16px; }
-    .page-card { position: relative; border-radius: 24px; overflow: hidden; background: var(--glass-strong); border: 1px solid var(--glass-border); text-decoration: none; color: var(--forest); box-shadow: var(--shadow-glass), var(--specular); transition: transform 0.25s var(--spring), box-shadow 0.25s; }
-    .page-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lift); }
-    .page-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #EFE7D6; }
-    .p-num { position: absolute; top: 9px; left: 9px; z-index: 5; width: 27px; height: 27px; border-radius: 50%; background: rgba(255,253,248,0.9); color: var(--forest); font-weight: 800; font-size: 0.74rem; display: grid; place-items: center; }
+    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 16px; }
+    .page-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      background: var(--glass-strong); border: 1.5px solid var(--glass-border);
+      text-decoration: none; color: var(--forest); display: flex; flex-direction: column;
+      box-shadow: var(--shadow-glass), var(--specular);
+      transition: transform 0.25s var(--spring), box-shadow 0.25s, border-color 0.25s;
+    }
+    .page-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lift); border-color: rgba(220, 160, 40, 0.55); }
+    .page-card.is-3d { border-color: rgba(220, 160, 40, 0.48); }
+    .page-card.is-3d::after {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3.5px; z-index: 6;
+      background: repeating-linear-gradient(135deg, var(--gold) 0 8px, var(--gourd) 8px 14px, var(--forest) 14px 20px);
+    }
+
+    .page-media { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #EFE7D6; }
+    .page-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
+    .page-card:hover .page-media img { transform: scale(1.05); }
+
+    /* PENTAS MODEL 3D LANGSUNG UNTUK HAL. 4, 6 & 10 */
+    .page-3d-stage {
+      position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
+      background: radial-gradient(circle at 50% 56%, #285C42 0%, #0D2218 100%);
+    }
+    .page-3d-stage::before {
+      content: ""; position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+      width: 72%; height: 48px; border-radius: 50%; pointer-events: none; z-index: 1;
+      background: radial-gradient(circle, rgba(244, 196, 83, 0.36), transparent 72%);
+    }
+    .page-3d-stage model-viewer { width: 100%; height: 100%; position: relative; z-index: 2; --poster-color: transparent; }
+    .mini-3d-hint {
+      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 5;
+      pointer-events: none; background: rgba(13, 34, 24, 0.74); color: var(--gold-soft);
+      border: 1px solid rgba(247, 232, 194, 0.25); font-size: 0.6rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+    }
+
+    .p-num {
+      position: absolute; top: 9px; left: 9px; z-index: 5; width: 28px; height: 28px;
+      border-radius: 50%; background: rgba(255, 253, 248, 0.92); color: var(--forest);
+      font-weight: 800; font-size: 0.74rem; display: grid; place-items: center;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
+    }
     .p-badges { position: absolute; top: 9px; right: 9px; z-index: 5; display: flex; gap: 4px; }
-    .p-tag { padding: 3px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; }
-    .tag-3d { background: var(--gourd); color: #fff; }
+    .p-tag { padding: 3px 8px; border-radius: 999px; font-size: 0.63rem; font-weight: 800; box-shadow: 0 3px 8px rgba(0,0,0,0.16); }
+    .tag-3d { background: linear-gradient(135deg, var(--gourd), var(--gold)); color: #fff; }
     .tag-sfx { background: var(--forest); color: var(--gold-soft); }
-    .p-body { padding: 13px; }
-    .p-body h4 { font-size: 0.84rem; font-weight: 700; line-height: 1.35; }
 
-    /* 06: KUIZ 5 SOALAN & SIJIL PREMIUM */
-    .quiz-box { max-width: 720px; margin: 0 auto; padding: 34px 28px; }
+    .p-body {
+      padding: 12px 13px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+      text-decoration: none; color: var(--forest); gap: 6px;
+    }
+    .p-body h4 { font-size: 0.84rem; font-weight: 700; line-height: 1.32; }
+    .p-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.7rem; font-weight: 800; color: var(--gourd);
+      padding-top: 6px; border-top: 1px dashed rgba(23, 51, 37, 0.1);
+    }
+
+    /* 06: KUIZ 5 SOALAN & PRATONTON SIJIL BERKILAU */
+    .quiz-box { max-width: 760px; margin: 0 auto; padding: 34px 28px; }
     .quiz-top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.75rem; font-weight: 800; color: var(--gourd); letter-spacing: 1.2px; }
     .quiz-prog-track { width: 100%; height: 7px; background: rgba(23, 51, 37, 0.1); border-radius: 999px; overflow: hidden; margin-bottom: 22px; }
     .quiz-prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd)); transition: width 0.35s ease; }
@@ -638,25 +723,28 @@
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.88); } 100% { opacity: 1; transform: scale(1); } }
     .celebrate-trophy { font-size: 3.4rem; display: inline-block; animation: trophyBounce 1.4s ease-in-out infinite; }
     @keyframes trophyBounce { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
-    .name-input { width: 100%; max-width: 320px; padding: 13px 18px; border-radius: 999px; border: 1.5px solid var(--forest-mid); background: #fff; color: var(--forest); font-size: 0.94rem; text-align: center; margin: 14px 0; outline: none; }
-    .badge-card {
-      margin: 22px auto 0; max-width: 440px; padding: 28px 22px; border-radius: 28px;
-      background: linear-gradient(145deg, #FFFDF7, #F5E8CC);
-      border: 2px solid var(--gold); text-align: center; box-shadow: var(--shadow-lift);
-      position: relative; overflow: hidden;
+    .name-input { width: 100%; max-width: 340px; padding: 13px 18px; border-radius: 999px; border: 1.5px solid var(--forest-mid); background: #fff; color: var(--forest); font-size: 0.94rem; text-align: center; margin: 14px 0; outline: none; }
+
+    .cert-preview-wrap { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; animation: popIn 0.6s var(--spring); }
+    .cert-preview-frame {
+      position: relative; width: 100%; max-width: 580px; border-radius: 22px; overflow: hidden;
+      padding: 6px; background: linear-gradient(135deg, #DCA028, #FFF4CC, #BA5A28, #28523C);
+      box-shadow: 0 24px 54px -10px rgba(23, 51, 37, 0.28), 0 0 28px rgba(220, 160, 40, 0.26);
+      will-change: transform; animation: certFloat 5s ease-in-out infinite;
     }
-    .badge-card::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
-      background: repeating-linear-gradient(135deg, var(--forest) 0 10px, var(--gold) 10px 15px, var(--gourd) 15px 20px, var(--forest) 20px 28px);
+    @keyframes certFloat { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -5px, 0); } }
+    .cert-preview-frame img { width: 100%; height: auto; display: block; border-radius: 17px; }
+    .cert-preview-frame::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.45) 48%, rgba(255, 240, 184, 0.25) 54%, transparent 72%);
+      transform: translateX(-140%); will-change: transform;
+      animation: foilSweep 4.5s ease-in-out infinite;
     }
-    .badge-card .medal { font-size: 2.8rem; margin-bottom: 6px; }
-    .badge-card h3 { font-family: 'Fraunces', serif; color: var(--gourd); font-size: 1.32rem; margin-bottom: 4px; }
-    .badge-card .winner-name { font-size: 1.28rem; font-weight: 800; color: var(--forest); margin: 8px 0; }
 
     .confetti { position: fixed; width: 9px; height: 9px; z-index: 3000; pointer-events: none; will-change: transform; animation: confettiDrop 2.5s ease-out forwards; }
     @keyframes confettiDrop { 0% { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0,100vh,0) rotate(720deg); opacity: 0; } }
 
-    /* 07: SOALAN LAZIM (FAQ) ESTETIK & SMOOTH GRID */
+    /* 07: SOALAN LAZIM (FAQ) */
     .faq-list { max-width: 800px; margin: 0 auto; display: grid; gap: 12px; }
     .faq-item {
       background: var(--glass-strong); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -665,26 +753,17 @@
       transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--spring);
     }
     .faq-item.open { border-color: rgba(220, 160, 40, 0.55); box-shadow: var(--shadow-lift), var(--specular); }
-    .faq-q {
-      width: 100%; background: transparent; border: none; color: var(--forest);
-      padding: 18px 20px; font-size: 0.94rem; font-weight: 700; text-align: left;
-      display: flex; align-items: center; gap: 14px; cursor: pointer;
-    }
+    .faq-q { width: 100%; background: transparent; border: none; color: var(--forest); padding: 18px 20px; font-size: 0.94rem; font-weight: 700; text-align: left; display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .faq-icon { width: 38px; height: 38px; border-radius: 14px; flex-shrink: 0; background: var(--gold-soft); display: grid; place-items: center; font-size: 1.1rem; }
     .faq-title { flex: 1; line-height: 1.35; }
-    .faq-chevron {
-      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-      background: rgba(23, 51, 37, 0.06); color: var(--gourd);
-      display: grid; place-items: center; font-size: 1.2rem; font-weight: 700;
-      transition: transform 0.3s var(--spring), background 0.2s, color 0.2s;
-    }
+    .faq-chevron { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; background: rgba(23, 51, 37, 0.06); color: var(--gourd); display: grid; place-items: center; font-size: 1.2rem; font-weight: 700; transition: transform 0.3s var(--spring), background 0.2s, color 0.2s; }
     .faq-item.open .faq-chevron { transform: rotate(45deg); background: var(--forest); color: #FAF5EB; }
     .faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s ease; }
     .faq-item.open .faq-body { grid-template-rows: 1fr; }
     .faq-inner { overflow: hidden; }
     .faq-a { padding: 0 22px 20px 72px; color: var(--sage); font-size: 0.9rem; line-height: 1.65; }
 
-    /* ================= MODAL PASPORT & VIDEO DEMO (TINTED GLASS) ================= */
+    /* MODAL PASPORT & PELEKAT KOLEKTOR */
     .glass-modal-overlay {
       position: fixed; inset: 0; z-index: 4000;
       background: rgba(15, 34, 24, 0.55);
@@ -702,29 +781,31 @@
       text-align: center;
     }
     .glass-modal-overlay.open .glass-modal { transform: scale(1); }
-    .modal-close {
-      position: absolute; top: 14px; right: 14px; width: 36px; height: 36px;
-      border-radius: 50%; border: 1px solid var(--glass-stroke);
-      background: #fff; color: var(--forest); font-size: 1.15rem; font-weight: 700;
-      cursor: pointer; display: grid; place-items: center;
-    }
+    .modal-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--glass-stroke); background: #fff; color: var(--forest); font-size: 1.15rem; font-weight: 700; cursor: pointer; display: grid; place-items: center; }
 
     .sticker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0; }
-    .sticker-slot {
-      padding: 16px 12px; border-radius: 22px;
-      background: rgba(23, 51, 37, 0.04); border: 1.5px dashed rgba(23, 51, 37, 0.18);
-      transition: transform 0.3s var(--spring), background 0.3s, border-color 0.3s;
-    }
+    .sticker-slot { padding: 16px 12px; border-radius: 22px; background: rgba(23, 51, 37, 0.04); border: 1.5px dashed rgba(23, 51, 37, 0.18); transition: transform 0.3s var(--spring), background 0.3s, border-color 0.3s; }
     .sticker-slot .s-ico { font-size: 2.1rem; filter: grayscale(1) opacity(0.38); transition: 0.35s; margin-bottom: 6px; }
     .sticker-slot h4 { font-size: 0.86rem; color: var(--sage); margin-bottom: 3px; }
     .sticker-slot p { font-size: 0.72rem; color: var(--sage); opacity: 0.8; line-height: 1.35; }
-    .sticker-slot.unlocked {
-      background: linear-gradient(145deg, #FFFDF7, #F7E8C2);
-      border: 1.5px solid var(--gold); box-shadow: 0 10px 24px rgba(220, 160, 40, 0.18);
-    }
+    .sticker-slot.unlocked { background: linear-gradient(145deg, #FFFDF7, #F7E8C2); border: 1.5px solid var(--gold); box-shadow: 0 10px 24px rgba(220, 160, 40, 0.18); }
     .sticker-slot.unlocked .s-ico { filter: none; transform: scale(1.1); }
     .sticker-slot.unlocked h4 { color: var(--forest); }
     .sticker-slot.unlocked p { color: var(--gourd); font-weight: 700; opacity: 1; }
+
+    .master-reward-box {
+      display: none; margin: 14px 0 18px; padding: 18px 14px; border-radius: 24px;
+      background: linear-gradient(145deg, #FFFDF7, #F7E8C2);
+      border: 2px solid var(--gold); box-shadow: 0 12px 28px rgba(220, 160, 40, 0.22);
+      animation: popIn 0.5s var(--spring);
+    }
+    .master-sticker-preview {
+      width: 175px; height: 175px; margin: 10px auto 12px; position: relative;
+      border-radius: 50%; overflow: hidden;
+      filter: drop-shadow(0 12px 22px rgba(23, 51, 37, 0.26));
+      animation: certFloat 4.2s ease-in-out infinite;
+    }
+    .master-sticker-preview img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
     #badge-toast {
       position: fixed; top: calc(max(12px, env(safe-area-inset-top)) + 58px); left: 50%;
@@ -736,14 +817,6 @@
       transition: opacity 0.3s ease, transform 0.35s var(--spring);
     }
     #badge-toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-    .video-box {
-      width: 100%; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden;
-      background: linear-gradient(135deg, #173325, #0D2016); margin-top: 14px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: var(--gold-soft); position: relative;
-    }
-    .video-box iframe { width: 100%; height: 100%; border: none; display: block; }
 
     .reveal { opacity: 0; transform: translate3d(0, 20px, 0); transition: opacity 0.55s ease, transform 0.55s ease; }
     .reveal.show { opacity: 1; transform: translate3d(0, 0, 0); }
@@ -765,8 +838,8 @@
     }
 
     @media (max-width: 640px) {
-      section.wrap { padding: 64px 18px; }
-      .hero { padding: 84px 18px 54px; gap: 22px; }
+      section.wrap { padding: 64px 16px; }
+      .hero { padding: 84px 16px 54px; gap: 22px; }
       .navbar { padding: 6px 8px 6px 12px; }
       .brand { font-size: 0.84rem; gap: 6px; }
       .brand-emblem { width: 25px; height: 25px; font-size: 0.78rem; }
@@ -776,11 +849,15 @@
       .book-pedestal-wrap { padding: 22px 26px 16px; border-radius: 32px; }
       .genz-sticker { font-size: 0.64rem; padding: 5px 10px; }
       .st-1 { right: -6px; } .st-2 { left: -8px; } .st-3 { right: -8px; }
-      .pedestal-grid, .lang-grid { grid-template-columns: 1fr; }
+      .pedestal-grid, .lang-grid { grid-template-columns: 1fr; gap: 14px; }
+      .lang-card { padding: 18px; }
       .sompoton-studio { padding: 24px 16px; gap: 24px; }
       .story-box, .tab-panel, .quiz-box { padding: 22px 18px; }
       .kbd-hint { display: none; }
-      .dict-grid, .pages-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .dict-grid, .pages-grid { grid-template-columns: repeat(2, 1fr); gap: 11px; }
+      .p-body { padding: 10px 10px 11px; }
+      .p-body h4 { font-size: 0.78rem; }
+      .p-foot { font-size: 0.65rem; }
       .char-grid { gap: 12px; }
       .char-card { padding: 16px 12px; }
       .sticker-grid { gap: 10px; }
@@ -789,25 +866,17 @@
       #spatial-ios-btn { bottom: max(12px, env(safe-area-inset-bottom)); left: 12px; padding: 8px 13px; font-size: 0.72rem; }
     }
 
-    /* ================= PENGOPTIMUMAN PRESTASI 60 FPS ================= */
-    section.wrap {
-      content-visibility: auto;
-      contain-intrinsic-size: 1px 680px;
+    /* PENGOPTIMUMAN PRESTASI 60 FPS */
+    section.wrap { content-visibility: auto; contain-intrinsic-size: 1px 680px; }
+    .orb, .bg-note, .magic-book, .genz-sticker, .hero-mountains, .book-glow-ring, .marquee-track, .cert-preview-frame {
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
     }
-
-    .orb, .magic-book, .genz-sticker, .hero-mountains, .book-glow-ring, .marquee-track {
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
-
     @media (max-width: 768px) {
       .glass-card, .hero-metrics, .book-pedestal-wrap, .faq-item {
-        backdrop-filter: blur(10px) saturate(140%);
-        -webkit-backdrop-filter: blur(10px) saturate(140%);
+        backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%);
       }
       .navbar, .ambient-fab, #spatial-ios-btn {
-        backdrop-filter: blur(12px) saturate(150%);
-        -webkit-backdrop-filter: blur(12px) saturate(150%);
+        backdrop-filter: blur(12px) saturate(150%); -webkit-backdrop-filter: blur(12px) saturate(150%);
       }
     }
   </style>
@@ -818,6 +887,15 @@
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
+  </div>
+  <div class="music-notes-bg" aria-hidden="true">
+    <span class="bg-note" style="--x:7%; --dur:21s; --del:0s; --sz:1.5rem;">♪</span>
+    <span class="bg-note gold" style="--x:21%; --dur:25s; --del:-6s; --sz:1.9rem;">♫</span>
+    <span class="bg-note" style="--x:36%; --dur:19s; --del:-11s; --sz:1.35rem;">♩</span>
+    <span class="bg-note gold" style="--x:54%; --dur:24s; --del:-3s; --sz:1.7rem;">♬</span>
+    <span class="bg-note" style="--x:70%; --dur:22s; --del:-14s; --sz:1.45rem;">♪</span>
+    <span class="bg-note gold" style="--x:84%; --dur:26s; --del:-8s; --sz:1.85rem;">♫</span>
+    <span class="bg-note" style="--x:93%; --dur:20s; --del:-16s; --sz:1.4rem;">♬</span>
   </div>
   <div class="linangkit-pattern"></div>
 
@@ -883,7 +961,6 @@
         <div class="hero-actions">
           <a href="ar.html" class="btn-primary">📷 <span data-i18n="btn_scan">Mula Imbas Buku (AR)</span></a>
           <a href="viewer.html?page=4" class="btn-glass">🧊 <span data-i18n="btn_3d">Mod 3D Tanpa Buku</span></a>
-          <button class="btn-glass" onclick="openDemoModal()">🎬 <span data-i18n="btn_demo">Tonton Demo AR</span></button>
         </div>
         <div class="hero-metrics">
           <div class="metric"><strong>12</strong><span data-i18n="m_pages">Halaman AR</span></div>
@@ -892,7 +969,6 @@
         </div>
       </div>
 
-      <!-- PENTAS BUKU 3D GEN-Z: MUNCUL DAHULU DI TELEFON -->
       <div class="hero-stage">
         <div class="hero-toggle">
           <button id="tog-book" class="active" onclick="switchHeroMode('book')">📖 Buku 3D</button>
@@ -945,7 +1021,7 @@
   </div>
   <div class="linangkit-strip"></div>
 
-  <!-- 01: PENTAS 3 DIORAMA 3D (MUSEUM SHOWCASE) -->
+  <!-- 01: PENTAS 3 DIORAMA 3D -->
   <section id="diorama" class="wrap reveal">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="d3_kicker">PENTAS DIORAMA ISOMETRIK</span>
@@ -995,7 +1071,7 @@
     </div>
   </section>
 
-  <!-- 02: STUDIO SOMPOTON MAYA (3 MELODI + AURA) -->
+  <!-- 02: STUDIO SOMPOTON MAYA (PENTAS AKUSTIK ZAMRUD-EMAS) -->
   <section id="studio" class="wrap reveal">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="st_kicker">PENGALAMAN BUNYI INTERAKTIF</span>
@@ -1004,9 +1080,9 @@
 
     <div class="glass-card sompoton-studio">
       <div>
-        <h3 style="font-family:'Fraunces',serif; font-size:clamp(1.3rem, 4vw, 1.7rem); color:var(--forest); margin-bottom:8px;">Labu Korodu & Paip Sumbiling</h3>
+        <h3 style="font-family:'Fraunces',serif; font-size:clamp(1.3rem, 4vw, 1.75rem); color:var(--forest); margin-bottom:8px;">Labu Korodu & Paip Sumbiling</h3>
         <p style="color:var(--sage); font-size:0.93rem;" data-i18n="st_desc">
-          Pilih salah satu daripada <strong>3 melodi tradisional</strong> di bawah dan tekan <strong>Auto-Main</strong>, atau ketik paip buluh untuk mencipta alunan anda sendiri.
+          Alami alunan buluh tradisional Sabah dengan harmoni <em>drone</em> asli. Pilih salah satu daripada <strong>3 melodi berirama</strong> di bawah atau ketik paip buluh secara langsung.
         </p>
 
         <div class="melody-picker">
@@ -1026,18 +1102,23 @@
       </div>
 
       <div class="instrument-box">
+        <div class="studio-badge-top">✦ Studio Akustik Buluh Sabah ✦</div>
         <div class="gourd-aura" id="gourd-aura"></div>
         <canvas id="wave-canvas"></canvas>
         <div class="sompoton-body">
           <div class="pipes-stage" id="pipes-stage">
-            <button class="pipe" data-key="a" style="height:175px;" onclick="playPipe(261.63, 'C4 — Lombohon', this)">C4<small>A</small></button>
-            <button class="pipe" data-key="s" style="height:155px;" onclick="playPipe(293.66, 'D4 — Monongkol', this)">D4<small>S</small></button>
-            <button class="pipe" data-key="d" style="height:136px;" onclick="playPipe(329.63, 'E4 — Suruk', this)">E4<small>D</small></button>
-            <button class="pipe" data-key="f" style="height:120px;" onclick="playPipe(392.00, 'G4 — Baranat', this)">G4<small>F</small></button>
-            <button class="pipe" data-key="g" style="height:105px;" onclick="playPipe(440.00, 'A4 — Randawi', this)">A4<small>G</small></button>
-            <button class="pipe" data-key="h" style="height:90px;" onclick="playPipe(523.25, 'C5 — Tuntuduk', this)">C5<small>H</small></button>
+            <button class="pipe" data-key="a" style="height:186px;" onclick="playPipe(261.63, 'C4 — Lombohon', this)">C4<small>A</small></button>
+            <button class="pipe" data-key="s" style="height:164px;" onclick="playPipe(293.66, 'D4 — Monongkol', this)">D4<small>S</small></button>
+            <button class="pipe" data-key="d" style="height:144px;" onclick="playPipe(329.63, 'E4 — Suruk', this)">E4<small>D</small></button>
+            <button class="pipe" data-key="f" style="height:126px;" onclick="playPipe(392.00, 'G4 — Baranat', this)">G4<small>F</small></button>
+            <button class="pipe" data-key="g" style="height:110px;" onclick="playPipe(440.00, 'A4 — Randawi', this)">A4<small>G</small></button>
+            <button class="pipe" data-key="h" style="height:94px;" onclick="playPipe(523.25, 'C5 — Tuntuduk', this)">C5<small>H</small></button>
           </div>
-          <div class="gourd-base"><span class="gourd-label">SOMPOTON</span></div>
+          <div class="rattan-tie"></div>
+          <div class="gourd-base">
+            <span class="gourd-label">SOMPOTON</span>
+            <span class="gourd-sub">Korodu · Sabah</span>
+          </div>
         </div>
         <div class="note-status" id="note-status">Ketik paip buluh atau tekan Auto-Main 🎶</div>
       </div>
@@ -1095,7 +1176,6 @@
       </div>
     </div>
 
-    <!-- KENALI WATAK CERITA (INTERAKTIF UNTUK KANAK-KANAK) -->
     <div style="margin-top:50px;">
       <div style="text-align:center; margin-bottom:18px;">
         <span class="sec-kicker" data-i18n="char_kicker">KENALI WATAK CERITA</span>
@@ -1157,74 +1237,103 @@
     <div class="dict-grid" id="dict-grid"></div>
   </section>
 
-  <!-- 05: 3 BAHASA + GALERI 12 BABAK -->
+  <!-- 05: PENCERITAAN 3 BAHASA & 12 BABAK (PREMIUM + DIORAMA 3D LANGSUNG) -->
   <section id="halaman" class="wrap reveal">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="l_kicker">PENCERITAAN 3 BAHASA & 12 BABAK</span>
       <h2 data-i18n="p_title">Setiap Halaman, Satu Dunia Kecil</h2>
-      <p data-i18n="l_sub">Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau tapis 12 babak cerita di bawah.</p>
+      <p data-i18n="l_sub">Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau putar terus diorama 3D pada Halaman 4, 6 & 10 di bawah.</p>
     </div>
 
-    <div class="lang-grid" style="margin-bottom:44px;">
+    <div class="lang-grid">
       <div class="glass-card lang-card" id="card-bm">
         <div>
-          <div class="lang-top"><span class="code-pill">BM</span><div class="eq"><span></span><span></span><span></span></div></div>
+          <div class="lang-top">
+            <div class="lang-id-wrap">
+              <span class="lang-flag">🇲🇾</span>
+              <span class="code-pill">BM</span>
+            </div>
+            <div class="eq"><span></span><span></span><span></span></div>
+          </div>
           <h3>Bahasa Melayu</h3>
-          <p>Penceritaan lengkap 12 halaman dalam Bahasa Melayu yang mudah difahami kanak-kanak.</p>
-          <button class="sample-row" onclick="playSample('bm', 'card-bm')">▶ Dengar contoh suara</button>
+          <p>Penceritaan lengkap 12 halaman dalam Bahasa Melayu yang mesra kanak-kanak.</p>
+          <button class="sample-row" onclick="playSample('bm', 'card-bm')">
+            <span>▶ Dengar contoh suara</span>
+            <span style="font-size:0.7rem; opacity:0.7;">Hal. 1</span>
+          </button>
         </div>
         <div class="card-actions">
-          <a href="ar.html?lang=bm" class="btn-primary">Imbas AR</a>
-          <a href="viewer.html?lang=bm&page=4" class="btn-glass" style="padding:9px;">Lihat 3D</a>
+          <a href="ar.html?lang=bm" class="btn-primary">📷 Imbas AR</a>
+          <a href="viewer.html?lang=bm&page=4" class="btn-glass">🧊 Lihat 3D</a>
         </div>
       </div>
 
       <div class="glass-card lang-card" id="card-en">
         <div>
-          <div class="lang-top"><span class="code-pill">EN</span><div class="eq"><span></span><span></span><span></span></div></div>
+          <div class="lang-top">
+            <div class="lang-id-wrap">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="code-pill">EN</span>
+            </div>
+            <div class="eq"><span></span><span></span><span></span></div>
+          </div>
           <h3>English</h3>
-          <p>Full 12-page English narration bringing Sabahan folklore to international readers.</p>
-          <button class="sample-row" onclick="playSample('en', 'card-en')">▶ Listen to voice sample</button>
+          <p>Full 12-page English narration bringing Sabahan folklore to global readers.</p>
+          <button class="sample-row" onclick="playSample('en', 'card-en')">
+            <span>▶ Listen to voice sample</span>
+            <span style="font-size:0.7rem; opacity:0.7;">Pg. 1</span>
+          </button>
         </div>
         <div class="card-actions">
-          <a href="ar.html?lang=en" class="btn-primary">Scan AR</a>
-          <a href="viewer.html?lang=en&page=4" class="btn-glass" style="padding:9px;">View 3D</a>
+          <a href="ar.html?lang=en" class="btn-primary">📷 Scan AR</a>
+          <a href="viewer.html?lang=en&page=4" class="btn-glass">🧊 View 3D</a>
         </div>
       </div>
 
       <div class="glass-card lang-card" id="card-kdz">
         <div>
-          <div class="lang-top"><span class="code-pill">KDZ</span><div class="eq"><span></span><span></span><span></span></div></div>
+          <div class="lang-top">
+            <div class="lang-id-wrap">
+              <span class="lang-flag">🏔️</span>
+              <span class="code-pill">KDZ</span>
+            </div>
+            <div class="eq"><span></span><span></span><span></span></div>
+          </div>
           <h3>Kadazandusun</h3>
-          <p>Memartabatkan bahasa ibunda Sabah dengan sebutan asli penceritaan Kadazandusun.</p>
-          <button class="sample-row" onclick="playSample('kdz', 'card-kdz')">▶ Dengar contoh suara</button>
+          <p>Memartabatkan bahasa ibunda Sabah dengan sebutan asli Kadazandusun.</p>
+          <button class="sample-row" onclick="playSample('kdz', 'card-kdz')">
+            <span>▶ Dengar contoh suara</span>
+            <span style="font-size:0.7rem; opacity:0.7;">Hal. 1</span>
+          </button>
         </div>
         <div class="card-actions">
-          <a href="ar.html?lang=kdz" class="btn-primary">Imbas AR</a>
-          <a href="viewer.html?lang=kdz&page=4" class="btn-glass" style="padding:9px;">Lihat 3D</a>
+          <a href="ar.html?lang=kdz" class="btn-primary">📷 Imbas AR</a>
+          <a href="viewer.html?lang=kdz&page=4" class="btn-glass">🧊 Lihat 3D</a>
         </div>
       </div>
     </div>
 
-    <div class="filter-bar">
-      <button class="filter-btn active" onclick="renderPages('all', this)">Semua (12)</button>
-      <button class="filter-btn" onclick="renderPages('3d', this)">✨ Babak 3D (3)</button>
-      <button class="filter-btn" onclick="renderPages('sfx', this)">🎵 Ada SFX (5)</button>
+    <div class="filter-wrap">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="renderPages('all', this)">Semua (12)</button>
+        <button class="filter-btn" onclick="renderPages('3d', this)">✨ Babak 3D (3)</button>
+        <button class="filter-btn" onclick="renderPages('sfx', this)">🎵 Ada SFX (5)</button>
+      </div>
     </div>
     <div class="pages-grid" id="pages-grid"></div>
   </section>
 
-  <!-- 06: KUIZ 5 SOALAN & SIJIL PNG PREMIUM -->
+  <!-- 06: KUIZ 5 SOALAN & PRATONTON SIJIL PREMIUM -->
   <section id="kuiz" class="wrap reveal">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="q_kicker">CABARAN INTERAKTIF & SIJIL</span>
       <h2 data-i18n="q_title">Kuiz Warisan Sompoton</h2>
-      <p data-i18n="q_sub">Jawab 5 soalan ringkas dan muat turun Sijil Digital rasmi Duta Muda Sompoton dengan nama anda.</p>
+      <p data-i18n="q_sub">Jawab 5 soalan ringkas, lihat pratonton berkilau Sijil Digital eksklusif anda, dan muat turun dalam format PNG.</p>
     </div>
     <div class="glass-card quiz-box" id="quiz-box"></div>
   </section>
 
-  <!-- 07: SOALAN LAZIM (FAQ ESTETIK) -->
+  <!-- 07: SOALAN LAZIM (FAQ) -->
   <section id="soalan" class="wrap reveal" style="padding-top:16px;">
     <div class="sec-head">
       <span class="sec-kicker">PANDUAN & BANTUAN</span>
@@ -1273,13 +1382,13 @@
   <!-- TOAST LENCANA -->
   <div id="badge-toast"></div>
 
-  <!-- MODAL PASPORT PENJELAJAH BORNEO -->
+  <!-- MODAL PASPORT PENJELAJAH BORNEO (AUTO-RESET + PELEKAT KOLEKTOR PNG) -->
   <div class="glass-modal-overlay" id="passport-modal" onclick="if(event.target===this) closePassport()">
     <div class="glass-modal">
       <button class="modal-close" onclick="closePassport()">×</button>
-      <span class="sec-kicker">MISI KANAK-KANAK · GAMIFIKASI</span>
+      <span class="sec-kicker">MISI PAMERAN · GAMIFIKASI</span>
       <h3 style="font-family:'Fraunces',serif; font-size:1.55rem; color:var(--forest); margin-bottom:4px;">Pasport Penjelajah Borneo</h3>
-      <p style="font-size:0.86rem; color:var(--sage);">Kumpul keempat-empat pelekat digital semasa meneroka laman web ini!</p>
+      <p style="font-size:0.86rem; color:var(--sage);">Kumpul 4 misi di bawah untuk membuka <strong>Pelekat Digital Kolektor</strong> eksklusif!</p>
 
       <div class="sticker-grid">
         <div class="sticker-slot" id="slot-musician">
@@ -1304,21 +1413,13 @@
         </div>
       </div>
 
-      <div id="passport-master-msg" style="display:none; background:var(--gold-soft); color:var(--gourd); padding:10px 14px; border-radius:16px; font-size:0.82rem; font-weight:800; margin-bottom:12px;">
-        🌟 TAHNIAH! Anda ialah Master Penjelajah Borneo!
+      <div class="master-reward-box" id="passport-master-box">
+        <div style="font-size:0.75rem; font-weight:800; letter-spacing:1.4px; color:var(--gourd); text-transform:uppercase;">🌟 MISI LENGKAP 4/4 · HADIAH EKSKLUSIF</div>
+        <div class="master-sticker-preview"><img id="master-sticker-img" alt="Pelekat Digital Master Penjelajah Borneo" /></div>
+        <button class="btn-primary" onclick="downloadMasterSticker()" style="padding:10px 20px; font-size:0.84rem;">⬇ Muat Turun Pelekat Digital (PNG)</button>
       </div>
-      <button class="btn-primary" onclick="closePassport()">Teruskan Meneroka ›</button>
-    </div>
-  </div>
 
-  <!-- MODAL VIDEO DEMO AR (YOUTUBE) -->
-  <div class="glass-modal-overlay" id="demo-modal" onclick="if(event.target===this) closeDemoModal()">
-    <div class="glass-modal" style="max-width:660px;">
-      <button class="modal-close" onclick="closeDemoModal()">×</button>
-      <span class="sec-kicker">VIDEO DEMONSTRASI WEBAR</span>
-      <h3 style="font-family:'Fraunces',serif; font-size:1.45rem; color:var(--forest);">Asal Usul Sompoton dalam Aksi</h3>
-      <p style="font-size:0.84rem; color:var(--sage);">Tonton bagaimana halaman buku fizikal bertukar menjadi diorama 3D & audio 3 bahasa.</p>
-      <div class="video-box" id="demo-video-box"></div>
+      <button class="btn-glass" onclick="closePassport()" style="padding:9px 20px; font-size:0.84rem;">Teruskan Meneroka ›</button>
     </div>
   </div>
 
@@ -1347,7 +1448,6 @@
       }
     }, { passive: true });
 
-    /* AUTO-JEDA PENUH MODEL 3D DI LUAR SKRIN */
     const mvObs = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         const mv = entry.target;
@@ -1383,7 +1483,7 @@
       }
     }
 
-    /* ================= ENJIN WEB AUDIO (SOMPOTON + SFX KAD + KUIZ) ================= */
+    /* ================= ENJIN WEB AUDIO ================= */
     let audioCtx = null, audioUnlocked = false;
     function ensureAudioUnlocked() {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -1438,20 +1538,94 @@
       else run();
     }
 
-    /* ================= PASPORT PENJELAJAH BORNEO (LOCALSTORAGE) ================= */
-    const PASSPORT_KEY = 'sompoton_passport_v1';
+    /* ================= PASPORT PENJELAJAH BORNEO (RESET SETIAP REFRESH + PELEKAT PNG) ================= */
     let passport = { musician: false, scholar: false, explorer: false, champion: false };
-    try {
-      const saved = JSON.parse(localStorage.getItem(PASSPORT_KEY));
-      if (saved) passport = { ...passport, ...saved };
-    } catch (e) {}
-
+    let masterStickerUrl = null;
     let badgeToastTimer = null;
+
     function showBadgeToast(text) {
       const t = document.getElementById('badge-toast');
       t.textContent = text; t.classList.add('show');
       clearTimeout(badgeToastTimer);
       badgeToastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    function generateMasterStickerPNG() {
+      const c = document.createElement('canvas'); c.width = 640; c.height = 640;
+      const g = c.getContext('2d');
+      const cx = 320, cy = 320;
+
+      g.beginPath(); g.arc(cx, cy, 304, 0, Math.PI * 2);
+      g.fillStyle = '#FFFDF7'; g.fill();
+
+      const bg = g.createRadialGradient(cx, cy - 60, 40, cx, cy, 286);
+      bg.addColorStop(0, '#2E6649'); bg.addColorStop(0.65, '#173325'); bg.addColorStop(1, '#0B1D14');
+      g.beginPath(); g.arc(cx, cy, 286, 0, Math.PI * 2); g.fillStyle = bg; g.fill();
+
+      const goldRing = g.createLinearGradient(60, 60, 580, 580);
+      goldRing.addColorStop(0, '#FFF0B8'); goldRing.addColorStop(0.5, '#DCA028'); goldRing.addColorStop(1, '#BA5A28');
+      g.strokeStyle = goldRing; g.lineWidth = 10;
+      g.beginPath(); g.arc(cx, cy, 272, 0, Math.PI * 2); g.stroke();
+      g.lineWidth = 2.5;
+      g.beginPath(); g.arc(cx, cy, 250, 0, Math.PI * 2); g.stroke();
+
+      for (let i = 0; i < 24; i++) {
+        const ang = (i / 24) * Math.PI * 2;
+        const rx = cx + Math.cos(ang) * 261, ry = cy + Math.sin(ang) * 261;
+        g.save(); g.translate(rx, ry); g.rotate(ang);
+        g.fillStyle = i % 2 === 0 ? '#FFF0B8' : '#BA5A28';
+        g.beginPath(); g.moveTo(0, -5); g.lineTo(5, 0); g.lineTo(0, 5); g.lineTo(-5, 0); g.closePath(); g.fill();
+        g.restore();
+      }
+
+      g.save();
+      g.beginPath(); g.arc(cx, cy, 246, 0, Math.PI * 2); g.clip();
+      g.fillStyle = 'rgba(247, 232, 194, 0.14)';
+      g.beginPath();
+      g.moveTo(60, 560); g.lineTo(140, 400); g.lineTo(220, 420); g.lineTo(295, 330);
+      g.lineTo(340, 355); g.lineTo(395, 315); g.lineTo(475, 405); g.lineTo(580, 560); g.closePath(); g.fill();
+      g.restore();
+
+      const pipeHeights = [92, 80, 68, 56, 46];
+      pipeHeights.forEach((h, i) => {
+        const px = cx - 44 + i * 20, py = 248 - h;
+        const pg = g.createLinearGradient(px, py, px + 14, py);
+        pg.addColorStop(0, '#B57B20'); pg.addColorStop(0.5, '#FFF1C2'); pg.addColorStop(1, '#8C5810');
+        g.fillStyle = pg;
+        g.beginPath(); g.roundRect(px, py, 14, h, 5); g.fill();
+      });
+
+      const gourdG = g.createRadialGradient(cx - 10, 268, 6, cx, 276, 56);
+      gourdG.addColorStop(0, '#E89648'); gourdG.addColorStop(0.6, '#BA5A28'); gourdG.addColorStop(1, '#58250A');
+      g.fillStyle = gourdG;
+      g.beginPath(); g.ellipse(cx, 274, 58, 32, 0, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = '#FFE8A3'; g.lineWidth = 2; g.stroke();
+
+      g.fillStyle = '#BA5A28';
+      g.beginPath(); g.roundRect(102, 324, 436, 56, 28); g.fill();
+      g.strokeStyle = '#FFE8A3'; g.lineWidth = 2.5; g.stroke();
+
+      g.textAlign = 'center';
+      g.fillStyle = '#FFFDF7'; g.font = 'bold 25px Georgia, serif';
+      g.fillText('MASTER PENJELAJAH', cx, 360);
+
+      g.fillStyle = '#FFE8A3'; g.font = 'bold 34px Georgia, serif';
+      g.fillText('BORNEO', cx, 422);
+
+      g.fillStyle = '#DCE8D5'; g.font = 'bold 17px sans-serif';
+      g.fillText('✦ ASAL USUL SOMPOTON WEBAR ✦', cx, 462);
+
+      g.fillStyle = '#DCA028'; g.font = 'bold 15px sans-serif';
+      g.fillText('KUMPULAN 13 · FKI UMS · 4/4 MISI', cx, 502);
+
+      return c.toDataURL('image/png');
+    }
+
+    function downloadMasterSticker() {
+      if (!masterStickerUrl) masterStickerUrl = generateMasterStickerPNG();
+      const a = document.createElement('a');
+      a.download = 'Pelekat_Master_Penjelajah_Borneo.png';
+      a.href = masterStickerUrl; a.click();
     }
 
     function updatePassportUI() {
@@ -1463,18 +1637,27 @@
         const el = document.getElementById(`slot-${k}`);
         if (el) el.classList.toggle('unlocked', !!passport[k]);
       });
-      document.getElementById('passport-master-msg').style.display = count === keys.length ? 'block' : 'none';
+      const rewardBox = document.getElementById('passport-master-box');
+      if (count === keys.length) {
+        if (!masterStickerUrl) masterStickerUrl = generateMasterStickerPNG();
+        document.getElementById('master-sticker-img').src = masterStickerUrl;
+        rewardBox.style.display = 'block';
+      } else {
+        rewardBox.style.display = 'none';
+      }
     }
 
     function unlockBadge(key, title) {
       if (passport[key]) return;
       passport[key] = true;
-      try { localStorage.setItem(PASSPORT_KEY, JSON.stringify(passport)); } catch (e) {}
       updatePassportUI();
       playUiChime('fanfare');
       showBadgeToast(`🎉 Pelekat Baharu: ${title}!`);
       if (Object.values(passport).every(Boolean)) {
-        setTimeout(() => { launchConfetti(); showBadgeToast('🌟 Tahniah! Semua 4 Pelekat Borneo Lengkap!'); }, 1200);
+        setTimeout(() => {
+          launchConfetti();
+          showBadgeToast('🌟 4/4 Lengkap! Buka Pasport untuk muat turun Pelekat Kolektor!');
+        }, 1200);
       }
     }
 
@@ -1482,7 +1665,7 @@
     function closePassport() { document.getElementById('passport-modal').classList.remove('open'); }
     updatePassportUI();
 
-    /* ================= SFX PANTAS PADA PENTAS DIORAMA 3D ================= */
+    /* ================= SFX DIORAMA 3D ================= */
     let dioramaSfx = new Audio(), activeDioramaBtn = null;
     function toggleDioramaSfx(src, btn) {
       ensureAudioUnlocked();
@@ -1501,7 +1684,7 @@
       }).catch(() => {});
     }
 
-    /* ================= STUDIO SOMPOTON (3 MELODI + ON-DEMAND WAVE) ================= */
+    /* ================= STUDIO SOMPOTON PREMIUM (REED TIMBRE + 3 MELODI BERIRAMA) ================= */
     let waveEnergy = 0, isMelodyPlaying = false, studioVisible = false, pipesPlayedCount = 0;
     let autoRiffTimers = [], isAutoRiffRunning = false, selectedMelody = 'sumazau';
     const gourdAura = document.getElementById('gourd-aura');
@@ -1518,21 +1701,19 @@
       if (!studioVisible || document.hidden) return;
       const w = waveCanvas.width, h = waveCanvas.height;
       wCtx.clearRect(0, 0, w, h);
-      wavePhase += 0.065;
+      wavePhase += 0.068;
       waveEnergy += ((isMelodyPlaying ? 26 : 0) - waveEnergy) * 0.07;
       for (let layer = 0; layer < 2; layer++) {
         wCtx.beginPath();
-        const amp = Math.max(2, waveEnergy * (layer === 0 ? 1 : 0.6));
+        const amp = Math.max(2, waveEnergy * (layer === 0 ? 1 : 0.58));
         for (let x = 0; x <= w; x += 10) {
-          const y = h * 0.36 + Math.sin(x * 0.024 + wavePhase + layer * 1.5) * amp * Math.sin((x / w) * Math.PI);
+          const y = h * 0.34 + Math.sin(x * 0.025 + wavePhase + layer * 1.6) * amp * Math.sin((x / w) * Math.PI);
           if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y);
         }
-        wCtx.strokeStyle = layer === 0 ? 'rgba(247, 232, 194, 0.7)' : 'rgba(74, 222, 128, 0.4)';
+        wCtx.strokeStyle = layer === 0 ? 'rgba(247, 232, 194, 0.72)' : 'rgba(74, 222, 128, 0.42)';
         wCtx.lineWidth = layer === 0 ? 2.5 : 1.5; wCtx.stroke();
       }
-      if (isMelodyPlaying || waveEnergy > 0.3) {
-        waveRaf = requestAnimationFrame(drawWave);
-      }
+      if (isMelodyPlaying || waveEnergy > 0.3) waveRaf = requestAnimationFrame(drawWave);
     }
 
     function resizeWave() {
@@ -1547,30 +1728,38 @@
       if (studioVisible) wakeWave();
     }, { threshold: 0.05 }).observe(document.getElementById('studio'));
 
-    function triggerPipeSound(freq, label, btn) {
+    function triggerPipeSound(freq, label, btn, duration = 0.72) {
       const ctx = ensureAudioUnlocked();
       if (!ctx) return;
 
       const startTone = () => {
         const now = ctx.currentTime;
-        const osc1 = ctx.createOscillator(), osc2 = ctx.createOscillator(), drone = ctx.createOscillator();
-        const gain = ctx.createGain(), dGain = ctx.createGain();
-        osc1.type = 'triangle'; osc1.frequency.setValueAtTime(freq, now);
-        osc2.type = 'sine'; osc2.frequency.setValueAtTime(freq * 1.5, now);
-        drone.type = 'sine'; drone.frequency.setValueAtTime(freq * 0.5, now);
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1250, now);
+        filter.Q.setValueAtTime(1.8, now);
 
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.24, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+        const oscReed = ctx.createOscillator(), oscWarm = ctx.createOscillator(), oscDrone = ctx.createOscillator();
+        oscReed.type = 'sawtooth'; oscReed.frequency.setValueAtTime(freq, now);
+        oscWarm.type = 'triangle'; oscWarm.frequency.setValueAtTime(freq * 1.003, now);
+        oscDrone.type = 'triangle'; oscDrone.frequency.setValueAtTime(196.00, now);
 
-        dGain.gain.setValueAtTime(0.001, now);
-        dGain.gain.exponentialRampToValueAtTime(0.07, now + 0.08);
-        dGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+        const mainGain = ctx.createGain(), droneGain = ctx.createGain();
+        mainGain.gain.setValueAtTime(0.001, now);
+        mainGain.gain.linearRampToValueAtTime(0.2, now + 0.045);
+        mainGain.gain.exponentialRampToValueAtTime(0.12, now + duration * 0.65);
+        mainGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-        osc1.connect(gain); osc2.connect(gain); drone.connect(dGain);
-        gain.connect(ctx.destination); dGain.connect(ctx.destination);
-        osc1.start(now); osc2.start(now); drone.start(now);
-        osc1.stop(now + 1.05); osc2.stop(now + 1.05); drone.stop(now + 0.95);
+        droneGain.gain.setValueAtTime(0.001, now);
+        droneGain.gain.linearRampToValueAtTime(0.055, now + 0.06);
+        droneGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        oscReed.connect(filter); oscWarm.connect(filter);
+        filter.connect(mainGain); oscDrone.connect(droneGain);
+        mainGain.connect(ctx.destination); droneGain.connect(ctx.destination);
+
+        oscReed.start(now); oscWarm.start(now); oscDrone.start(now);
+        oscReed.stop(now + duration + 0.05); oscWarm.stop(now + duration + 0.05); oscDrone.stop(now + duration + 0.05);
       };
 
       if (ctx.state === 'suspended') ctx.resume().then(startTone).catch(() => {});
@@ -1582,7 +1771,7 @@
       setTimeout(() => gourdAura.classList.remove('pulse'), 220);
 
       if (btn) {
-        btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), 230);
+        btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), Math.min(260, duration * 400));
         const stage = document.getElementById('pipes-stage');
         const note = document.createElement('span');
         note.className = 'floating-note';
@@ -1598,7 +1787,7 @@
       if (pipesPlayedCount >= 3) unlockBadge('musician', 'Pemuzik Sompoton 🎋');
     }
 
-    function playPipe(freq, label, btn) { triggerPipeSound(freq, label, btn); }
+    function playPipe(freq, label, btn) { triggerPipeSound(freq, label, btn, 0.85); }
 
     window.addEventListener('keydown', e => {
       if (document.activeElement.tagName === 'INPUT') return;
@@ -1622,16 +1811,23 @@
 
     const sompotonMelodies = {
       sumazau: [
-        ['a',0],['d',300],['f',600],['g',900],['f',1250],['d',1550],['s',1850],['a',2200],
-        ['d',2600],['f',2900],['h',3250],['g',3600],['f',3950],['d',4300],['a',4650]
+        ['f', 0, 0.36], ['g', 280, 0.36], ['f', 560, 0.28], ['d', 820, 0.44],
+        ['f', 1200, 0.36], ['g', 1480, 0.36], ['h', 1760, 0.58],
+        ['g', 2260, 0.34], ['f', 2540, 0.34], ['d', 2820, 0.34], ['s', 3100, 0.44],
+        ['d', 3500, 0.32], ['f', 3780, 0.36], ['d', 4080, 0.32], ['a', 4360, 0.72],
+        ['d', 4950, 0.3], ['f', 5220, 0.3], ['g', 5500, 0.42], ['h', 5880, 0.85]
       ],
       kinabalu: [
-        ['h',0],['g',420],['f',840],['d',1300],['f',1720],['g',2140],['a',2600],
-        ['s',3020],['d',3440],['f',3860],['g',4280],['h',4750]
+        ['a', 0, 0.55], ['d', 460, 0.45], ['f', 860, 0.65], ['g', 1420, 0.45],
+        ['h', 1840, 0.75], ['g', 2500, 0.45], ['f', 2920, 0.6],
+        ['d', 3460, 0.45], ['f', 3880, 0.45], ['g', 4300, 0.55], ['f', 4800, 0.4],
+        ['d', 5180, 0.45], ['s', 5600, 0.55], ['a', 6100, 0.95]
       ],
       odu: [
-        ['a',0],['s',280],['d',560],['f',840],['g',1160],['h',1500],['g',1860],
-        ['f',2160],['d',2460],['f',2800],['d',3120],['s',3440],['a',3800]
+        ['d', 0, 0.5], ['f', 440, 0.45], ['g', 860, 0.6], ['f', 1400, 0.4],
+        ['d', 1780, 0.55], ['s', 2280, 0.45], ['a', 2700, 0.68],
+        ['s', 3320, 0.4], ['d', 3700, 0.45], ['f', 4120, 0.55], ['h', 4640, 0.7],
+        ['g', 5280, 0.45], ['f', 5700, 0.55], ['d', 6200, 0.45], ['a', 6620, 0.95]
       ]
     };
 
@@ -1645,16 +1841,16 @@
         f: [392.00, 'G4 — Baranat'], g: [440.00, 'A4 — Randawi'], h: [523.25, 'C5 — Tuntuduk']
       };
       const seq = sompotonMelodies[selectedMelody] || sompotonMelodies.sumazau;
-      const totalDuration = seq[seq.length - 1][1] + 900;
+      const totalDuration = seq[seq.length - 1][1] + 1000;
 
       const runSequence = () => {
         isAutoRiffRunning = true;
         btnEl.innerHTML = '⏹ Hentikan Melodi';
-        seq.forEach(([k, delay]) => {
+        seq.forEach(([k, delay, dur]) => {
           const timer = setTimeout(() => {
             const btn = document.querySelector(`.pipe[data-key="${k}"]`);
             const [freq, label] = pipeMap[k];
-            triggerPipeSound(freq, label, btn);
+            triggerPipeSound(freq, label, btn, dur);
           }, delay);
           autoRiffTimers.push(timer);
         });
@@ -1680,28 +1876,12 @@
       }
     }
 
-    /* ================= KAD ARTIFAK WARISAN INTERAKTIF ================= */
+    /* ================= KAD ARTIFAK & KENALI WATAK ================= */
     const heritageData = {
-      aki: {
-        icon: "👴🏽", tag: "Watak Utama · Simbol Kasih Sayang", t: "Aki & Odu",
-        d: "Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot).",
-        fact: "Dalam bahasa Kadazandusun, <em>Aki</em> bermaksud datuk dan <em>Odu</em> bermaksud nenek."
-      },
-      sompoton: {
-        icon: "🎋", tag: "Alat Muzik Tradisional Sabah", t: "Alat Muzik Sompoton",
-        d: "Alat muzik tiupan tradisional Sabah yang dihasilkan daripada buah labu kering (korodu), lapan paip buluh sumbiling pelbagai panjang, lilin lebah (sopinit), dan ikatan rotan.",
-        fact: "Sompoton mampu menghasilkan melodi dan bunyi harmoni (<em>drone</em>) secara serentak apabila ditiup."
-      },
-      wakid: {
-        icon: "🧺", tag: "Kraf Tangan Anyaman Borneo", t: "Bakul Wakid",
-        d: "Bakul galas tradisional masyarakat Sabah yang dianyam daripada buluh dan rotan. Digunakan oleh Aki dan Odu untuk membawa bekalan dan hasil hutan sepanjang pengembaraan.",
-        fact: "Anyaman Wakid terkenal kerana sangat kukuh dan kalis lasak untuk meredah hutan tanah tinggi."
-      },
-      haiwan: {
-        icon: "🦌", tag: "Keharmonian Alam Rimba", t: "Anak Rusa (Payau) & Burung Magis",
-        d: "Melambangkan keharmonian manusia dengan alam rimba Borneo. Kebaikan Aki dan Odu membersihkan sungai tersekat dibalas dengan petunjuk ke hutan buluh magis.",
-        fact: "Nilai murni menjaga alam sekitar merupakan teras penting dalam cerita rakyat masyarakat Sabah."
-      }
+      aki: { icon: "👴🏽", tag: "Watak Utama · Simbol Kasih Sayang", t: "Aki & Odu", d: "Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot).", fact: "Dalam bahasa Kadazandusun, <em>Aki</em> bermaksud datuk dan <em>Odu</em> bermaksud nenek." },
+      sompoton: { icon: "🎋", tag: "Alat Muzik Tradisional Sabah", t: "Alat Muzik Sompoton", d: "Alat muzik tiupan tradisional Sabah yang dihasilkan daripada buah labu kering (korodu), lapan paip buluh sumbiling pelbagai panjang, lilin lebah (sopinit), dan ikatan rotan.", fact: "Sompoton mampu menghasilkan melodi dan bunyi harmoni (<em>drone</em>) secara serentak apabila ditiup." },
+      wakid: { icon: "🧺", tag: "Kraf Tangan Anyaman Borneo", t: "Bakul Wakid", d: "Bakul galas tradisional masyarakat Sabah yang dianyam daripada buluh dan rotan. Digunakan oleh Aki dan Odu untuk membawa bekalan dan hasil hutan sepanjang pengembaraan.", fact: "Anyaman Wakid terkenal kerana sangat kukuh dan kalis lasak untuk meredah hutan tanah tinggi." },
+      haiwan: { icon: "🦌", tag: "Keharmonian Alam Rimba", t: "Anak Rusa (Payau) & Burung Magis", d: "Melambangkan keharmonian manusia dengan alam rimba Borneo. Kebaikan Aki dan Odu membersihkan sungai tersekat dibalas dengan petunjuk ke hutan buluh magis.", fact: "Nilai murni menjaga alam sekitar merupakan teras penting dalam cerita rakyat masyarakat Sabah." }
     };
     function openTab(key, btn) {
       playUiChime('flip');
@@ -1712,62 +1892,36 @@
         <div class="artifact-anim">
           <div class="artifact-head">
             <div class="artifact-emblem">${item.icon}</div>
-            <div>
-              <span class="artifact-tag">${item.tag}</span>
-              <h3>${item.t}</h3>
-            </div>
+            <div><span class="artifact-tag">${item.tag}</span><h3>${item.t}</h3></div>
           </div>
           <p>${item.d}</p>
           <div class="artifact-fact"><strong>✦ Fakta Budaya:</strong> ${item.fact}</div>
         </div>`;
     }
 
-    /* ================= INTERAKSI KAD KENALI WATAK ================= */
     const charLines = {
-      aki: [
-        "“Kopivosian! Saya Aki. Mari kita cari penawar untuk Odu!”",
-        "“Demi Odu, saya sanggup meredah hutan rimba!”",
-        "“Dengar bunyi angin pada buluh itu... itulah ilham Sompoton!”"
-      ],
-      odu: [
-        "“Dengan rotan dan lilin lebah, Sompoton kita siap!”",
-        "“Aki! Suara saya sudah kembali! Terima kasih!”",
-        "“Bekerjasama menjadikan segala dugaan lebih mudah.”"
-      ],
-      payau: [
-        "“Pounsikou! Terima kasih bersihkan sungai kami!”",
-        "“Air sungai jernih semula, semua haiwan gembira!”"
-      ],
-      burung: [
-        "“Cip! Cip! Ikut saya ke rimbunan buluh magis!”",
-        "“Kebaikan hati sentiasa membawa rahmat di rimba Borneo!”"
-      ]
+      aki: ["“Kopivosian! Saya Aki. Mari kita cari penawar untuk Odu!”", "“Demi Odu, saya sanggup meredah hutan rimba!”", "“Dengar bunyi angin pada buluh itu... itulah ilham Sompoton!”"],
+      odu: ["“Dengan rotan dan lilin lebah, Sompoton kita siap!”", "“Aki! Suara saya sudah kembali! Terima kasih!”", "“Bekerjasama menjadikan segala dugaan lebih mudah.”"],
+      payau: ["“Pounsikou! Terima kasih bersihkan sungai kami!”", "“Air sungai jernih semula, semua haiwan gembira!”"],
+      burung: ["“Cip! Cip! Ikut saya ke rimbunan buluh magis!”", "“Kebaikan hati sentiasa membawa rahmat di rimba Borneo!”"]
     };
     const charIdx = { aki: 0, odu: 0, payau: 0, burung: 0 };
     let birdPreview = new Audio('./sfx/pg6_burung.mp3');
 
     function interactChar(id, cardEl) {
       ensureAudioUnlocked();
-      cardEl.classList.remove('tapped');
-      void cardEl.offsetWidth;
-      cardEl.classList.add('tapped');
-
+      cardEl.classList.remove('tapped'); void cardEl.offsetWidth; cardEl.classList.add('tapped');
       charIdx[id] = (charIdx[id] + 1) % charLines[id].length;
       document.getElementById(`bubble-${id}`).textContent = charLines[id][charIdx[id]];
-
       if (id === 'burung') {
         birdPreview.currentTime = 0; birdPreview.volume = 0.55;
-        birdPreview.play().catch(() => {});
-        setTimeout(() => birdPreview.pause(), 2200);
-      } else if (id === 'aki') {
-        playUiChime('correct');
-      } else {
-        playUiChime('flip');
-      }
+        birdPreview.play().catch(() => {}); setTimeout(() => birdPreview.pause(), 2200);
+      } else if (id === 'aki') playUiChime('correct');
+      else playUiChime('flip');
       unlockBadge('explorer', 'Peneroka 3D & Watak 🧊');
     }
 
-    /* ================= KAMUS MINI (BUNYI + KEMAJUAN) ================= */
+    /* ================= KAMUS MINI ================= */
     const vocab = [
       { icon: "👴🏽", kdz: "Aki", ph: "/a-ki/", bm: "Datuk / Warga Emas Lelaki", en: "Grandfather" },
       { icon: "👵🏽", kdz: "Odu", ph: "/o-du/", bm: "Nenek / Warga Emas Wanita", en: "Grandmother" },
@@ -1785,15 +1939,10 @@
         <div class="flip-card" data-idx="${idx}" onclick="flipDictCard(this, ${idx})">
           <div class="flip-inner">
             <div class="flip-front">
-              <div class="dict-icon">${v.icon}</div>
-              <h3>${v.kdz}</h3>
-              <div class="dict-phonetic">${v.ph}</div>
-              <span>Ketik untuk terjemahan ↻</span>
+              <div class="dict-icon">${v.icon}</div><h3>${v.kdz}</h3><div class="dict-phonetic">${v.ph}</div><span>Ketik untuk terjemahan ↻</span>
             </div>
             <div class="flip-back">
-              <strong>${v.bm}</strong>
-              <p>${v.en}</p>
-              <small>Kadazandusun · Sabah</small>
+              <strong>${v.bm}</strong><p>${v.en}</p><small>Kadazandusun · Sabah</small>
             </div>
           </div>
         </div>`;
@@ -1801,8 +1950,7 @@
 
     function flipDictCard(card, idx) {
       playUiChime('flip');
-      card.classList.toggle('flipped');
-      card.classList.add('discovered');
+      card.classList.toggle('flipped'); card.classList.add('discovered');
       discoveredSet.add(idx);
       document.getElementById('dict-count').textContent = `${discoveredSet.size} / ${vocab.length}`;
       if (discoveredSet.size >= 4) unlockBadge('scholar', 'Cendekiawan KDZ 📖');
@@ -1820,14 +1968,13 @@
       if (discoveredSet.size >= 4) unlockBadge('scholar', 'Cendekiawan KDZ 📖');
     }
 
-    /* ================= 3 BAHASA & GALERI 12 BABAK ================= */
+    /* ================= 3 BAHASA & GALERI 12 BABAK (MODEL 3D LANGSUNG HAL. 4, 6 & 10) ================= */
     let sampleAudio = new Audio(), playingCardId = null;
     function playSample(lang, cardId) {
       const card = document.getElementById(cardId);
       if (playingCardId === cardId && !sampleAudio.paused) { sampleAudio.pause(); card.classList.remove('playing'); playingCardId = null; return; }
       document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('playing'));
-      sampleAudio.src = `./audio/pg1_${lang}.mp3`;
-      sampleAudio.play().catch(() => {});
+      sampleAudio.src = `./audio/pg1_${lang}.mp3`; sampleAudio.play().catch(() => {});
       card.classList.add('playing'); playingCardId = cardId;
       sampleAudio.onended = () => { card.classList.remove('playing'); playingCardId = null; };
     }
@@ -1836,26 +1983,65 @@
       { n: 1, t: "Kehidupan Harmoni Aki & Odu", d3: false, sfx: true, pos: "center 75%" },
       { n: 2, t: "Dugaan Kehilangan Suara Odu", d3: false, sfx: false, pos: "center 85%" },
       { n: 3, t: "Misi Mencari Penawar di Hutan", d3: false, sfx: false, pos: "center bottom" },
-      { n: 4, t: "Aliran Anak Sungai Tersekat", d3: true, sfx: true, pos: "center center" },
+      { n: 4, t: "Aliran Anak Sungai Tersekat", d3: true, sfx: true, glb: "./models/page4.glb" },
       { n: 5, t: "Kebaikan Membawa Rahmat", d3: false, sfx: false, pos: "center 80%" },
-      { n: 6, t: "Petunjuk ke Hutan Magis", d3: true, sfx: true, pos: "center center" },
+      { n: 6, t: "Petunjuk ke Hutan Magis", d3: true, sfx: true, glb: "./models/page6.glb" },
       { n: 7, t: "Alunan Melodi Rimbunan Buluh", d3: false, sfx: true, pos: "center bottom" },
       { n: 8, t: "Ilham Daripada Alam", d3: false, sfx: false, pos: "center 15%" },
       { n: 9, t: "Kerjasama Menghasilkan Sompoton", d3: false, sfx: false, pos: "center 85%" },
-      { n: 10, t: "Melodi Ajaib Memulihkan Suara", d3: true, sfx: true, pos: "center center" },
+      { n: 10, t: "Melodi Ajaib Memulihkan Suara", d3: true, sfx: true, glb: "./models/page10.glb" },
       { n: 11, t: "Nyanyian Odu Bergema", d3: false, sfx: false, pos: "center 85%" },
       { n: 12, t: "Sompoton, Simbol Cinta Sejati", d3: false, sfx: false, pos: "center 85%" }
     ];
+
     function renderPages(filter, btn) {
-      if (btn) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-      const grid = document.getElementById('pages-grid'); grid.innerHTML = '';
+      if (btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        playUiChime('flip');
+      }
+      const grid = document.getElementById('pages-grid');
+      grid.innerHTML = '';
+
       pages.filter(p => filter === 'all' || (filter === '3d' && p.d3) || (filter === 'sfx' && p.sfx)).forEach(p => {
-        grid.innerHTML += `<a href="viewer.html?page=${p.n}" class="page-card"><span class="p-num">${p.n}</span><div class="p-badges">${p.d3 ? '<span class="p-tag tag-3d">✨ 3D</span>' : ''}${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}</div><img src="./images/page${p.n}.jpg" loading="lazy" alt="Halaman ${p.n}" style="object-position:${p.pos};" onerror="this.src='./images/cover.jpg'"><div class="p-body"><h4>${p.t}</h4></div></a>`;
+        if (p.d3 && p.glb) {
+          grid.innerHTML += `
+            <div class="page-card is-3d">
+              <div class="page-3d-stage">
+                <span class="p-num">${p.n}</span>
+                <div class="p-badges">
+                  <span class="p-tag tag-3d">✨ 3D</span>
+                  ${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}
+                </div>
+                <model-viewer class="smart-mv" src="${p.glb}" loading="lazy" camera-controls autoplay shadow-intensity="0.65" exposure="1.15" camera-orbit="35deg 66deg 114%"></model-viewer>
+                <span class="mini-3d-hint">👆 Putar 360°</span>
+              </div>
+              <a href="viewer.html?page=${p.n}" class="p-body">
+                <h4>${p.t}</h4>
+                <div class="p-foot"><span>Buka Teater 3D</span><span>›</span></div>
+              </a>
+            </div>`;
+        } else {
+          grid.innerHTML += `
+            <a href="viewer.html?page=${p.n}" class="page-card">
+              <div class="page-media">
+                <span class="p-num">${p.n}</span>
+                <div class="p-badges">${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}</div>
+                <img src="./images/page${p.n}.jpg" loading="lazy" alt="Halaman ${p.n}" style="object-position:${p.pos};" onerror="this.src='./images/cover.jpg'">
+              </div>
+              <div class="p-body">
+                <h4>${p.t}</h4>
+                <div class="p-foot"><span>Baca Babak</span><span>›</span></div>
+              </div>
+            </a>`;
+        }
       });
+
+      grid.querySelectorAll('.smart-mv').forEach(el => mvObs.observe(el));
     }
     renderPages('all');
 
-    /* ================= KUIZ 5 SOALAN + SAMBUTAN + SIJIL PNG PREMIUM ================= */
+    /* ================= KUIZ 5 SOALAN + PRATONTON SIJIL DIRAJA (1400×960) ================= */
     const quizData = [
       { q: "1. Mengapakah Odu kehilangan suaranya pada awal cerita?", opts: ["Terjatuh di hutan", "Akibat demam panas yang teruk", "Tersesat di sungai"], ans: 1 },
       { q: "2. Haiwan apakah yang membimbing Aki dan Odu ke hutan buluh magis?", opts: ["Burung kecil", "Kancil", "Rama-rama"], ans: 0 },
@@ -1863,7 +2049,7 @@
       { q: "4. Apakah perkataan pertama yang disebut Odu apabila suaranya pulih?", opts: ["Sompoton!", "Terima kasih!", "Aki!"], ans: 2 },
       { q: "5. Apakah maksud perkataan 'Poring' dalam bahasa Kadazandusun?", opts: ["Pokok Buluh", "Anak Sungai", "Bakul Galas"], ans: 0 }
     ];
-    let qIdx = 0, score = 0, savedWinner = "Pembaca Hebat";
+    let qIdx = 0, score = 0, savedWinner = "Pembaca Hebat", latestCertUrl = null;
 
     function renderQuiz() {
       const box = document.getElementById('quiz-box');
@@ -1877,21 +2063,18 @@
             <div class="celebrate-trophy">🏆</div>
             <h3 style="font-family:'Fraunces',serif; color:var(--forest); font-size:1.55rem; margin-top:6px;">Tahniah! Kuiz Selesai</h3>
             <p style="color:var(--gourd); font-weight:800; font-size:1.02rem; margin-top:4px;">Skor Anda: ${score} / ${quizData.length} • ${msg}</p>
-            <p style="color:var(--sage); margin-top:8px; font-size:0.9rem;">Masukkan nama anda untuk menjana <strong>Sijil Digital Eksklusif</strong>:</p>
+            <p style="color:var(--sage); margin-top:8px; font-size:0.9rem;">Masukkan nama penuh anda untuk pratonton & muat turun <strong>Sijil Diraja Warisan</strong>:</p>
             <input type="text" id="player-name" class="name-input" placeholder="Taip nama penuh anda..." /><br/>
-            <button class="btn-primary" onclick="showBadge()">🏅 Jana Sijil Digital</button>
+            <button class="btn-primary" onclick="showBadge()">✨ Papar & Jana Sijil Digital</button>
             <div id="badge-area"></div>
-            <button class="btn-glass" style="margin-top:16px;" onclick="qIdx=0;score=0;renderQuiz()">↻ Cuba Semula</button>
+            <button class="btn-glass" style="margin-top:18px;" onclick="qIdx=0;score=0;latestCertUrl=null;renderQuiz()">↻ Cuba Semula Kuiz</button>
           </div>`;
         return;
       }
       const item = quizData[qIdx];
-      const pct = ((qIdx) / quizData.length) * 100;
+      const pct = (qIdx / quizData.length) * 100;
       box.innerHTML = `
-        <div class="quiz-top-meta">
-          <span>SOALAN ${qIdx + 1} DARIPADA ${quizData.length}</span>
-          <span>SKOR: ${score}</span>
-        </div>
+        <div class="quiz-top-meta"><span>SOALAN ${qIdx + 1} DARIPADA ${quizData.length}</span><span>SKOR: ${score}</span></div>
         <div class="quiz-prog-track"><div class="quiz-prog-fill" style="width:${pct}%"></div></div>
         <div class="quiz-q">${item.q}</div>
         <div class="quiz-opts">${item.opts.map((o, i) => `<button class="quiz-opt" onclick="checkAns(${i}, this)">${o}</button>`).join('')}</div>`;
@@ -1899,11 +2082,8 @@
 
     function checkAns(choice, btn) {
       const buttons = document.querySelectorAll('.quiz-opt'); buttons.forEach(b => b.disabled = true);
-      if (choice === quizData[qIdx].ans) {
-        btn.classList.add('correct'); score++; playUiChime('correct');
-      } else {
-        btn.classList.add('wrong'); buttons[quizData[qIdx].ans].classList.add('correct'); playUiChime('wrong');
-      }
+      if (choice === quizData[qIdx].ans) { btn.classList.add('correct'); score++; playUiChime('correct'); }
+      else { btn.classList.add('wrong'); buttons[quizData[qIdx].ans].classList.add('correct'); playUiChime('wrong'); }
       setTimeout(() => { qIdx++; renderQuiz(); }, 800);
     }
 
@@ -1919,123 +2099,149 @@
       }
     }
 
+    function buildCertificateDataURL() {
+      const c = document.createElement('canvas'); c.width = 1400; c.height = 960;
+      const g = c.getContext('2d');
+
+      const bg = g.createRadialGradient(700, 420, 120, 700, 480, 860);
+      bg.addColorStop(0, '#FFFDF9'); bg.addColorStop(0.6, '#F9F3E4'); bg.addColorStop(1, '#ECDEC0');
+      g.fillStyle = bg; g.fillRect(0, 0, 1400, 960);
+
+      g.strokeStyle = 'rgba(220, 160, 40, 0.07)'; g.lineWidth = 1.5;
+      for (let x = 70; x < 1340; x += 90) {
+        for (let y = 70; y < 900; y += 90) {
+          g.beginPath(); g.moveTo(x, y - 22); g.lineTo(x + 22, y); g.lineTo(x, y + 22); g.lineTo(x - 22, y); g.closePath(); g.stroke();
+        }
+      }
+
+      g.fillStyle = 'rgba(40, 82, 60, 0.05)';
+      g.beginPath();
+      g.moveTo(40, 920); g.lineTo(40, 720); g.lineTo(250, 645); g.lineTo(460, 690);
+      g.lineTo(630, 540); g.lineTo(715, 575); g.lineTo(815, 495); g.lineTo(920, 565);
+      g.lineTo(1110, 635); g.lineTo(1360, 595); g.lineTo(1360, 920); g.closePath(); g.fill();
+
+      g.fillStyle = 'rgba(23, 51, 37, 0.065)';
+      g.beginPath();
+      g.moveTo(40, 920); g.lineTo(40, 770); g.quadraticCurveTo(360, 690, 700, 745);
+      g.quadraticCurveTo(1060, 800, 1360, 720); g.lineTo(1360, 920); g.closePath(); g.fill();
+
+      g.strokeStyle = '#173325'; g.lineWidth = 18; g.strokeRect(26, 26, 1348, 908);
+      const goldStroke = g.createLinearGradient(0, 0, 1400, 960);
+      goldStroke.addColorStop(0, '#DCA028'); goldStroke.addColorStop(0.5, '#FFF0B8'); goldStroke.addColorStop(1, '#BA5A28');
+      g.strokeStyle = goldStroke; g.lineWidth = 4; g.strokeRect(48, 48, 1304, 864);
+      g.strokeStyle = 'rgba(23, 51, 37, 0.25)'; g.lineWidth = 1.5; g.strokeRect(62, 62, 1276, 836);
+
+      for (let x = 92; x < 1300; x += 30) {
+        g.fillStyle = (x % 60 === 0) ? '#DCA028' : '#BA5A28';
+        g.beginPath(); g.moveTo(x + 15, 72); g.lineTo(x + 26, 83); g.lineTo(x + 15, 94); g.lineTo(x + 4, 83); g.closePath(); g.fill();
+        g.beginPath(); g.moveTo(x + 15, 866); g.lineTo(x + 26, 877); g.lineTo(x + 15, 888); g.lineTo(x + 4, 877); g.closePath(); g.fill();
+      }
+
+      [[78, 78], [1322, 78], [78, 882], [1322, 882]].forEach(([px, py]) => {
+        g.fillStyle = '#173325'; g.beginPath(); g.arc(px, py, 14, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#DCA028'; g.beginPath(); g.arc(px, py, 7, 0, Math.PI * 2); g.fill();
+      });
+
+      g.textAlign = 'center';
+      g.fillStyle = '#BA5A28'; g.font = 'bold 21px sans-serif';
+      g.fillText('PAMERAN WEBAR WARISAN BORNEO  •  FAKULTI KOMPUTERAN & INFORMATIK, UMS', 700, 160);
+
+      g.fillStyle = '#173325'; g.font = 'bold 64px Georgia, serif';
+      g.fillText('SIJIL PENGHARGAAN', 700, 240);
+
+      const ribGrad = g.createLinearGradient(440, 268, 960, 318);
+      ribGrad.addColorStop(0, '#173325'); ribGrad.addColorStop(0.5, '#28523C'); ribGrad.addColorStop(1, '#173325');
+      g.fillStyle = ribGrad;
+      g.beginPath(); g.roundRect(455, 268, 490, 48, 24); g.fill();
+      g.strokeStyle = '#DCA028'; g.lineWidth = 2.5; g.stroke();
+      g.fillStyle = '#FFE8A3'; g.font = 'bold 22px Georgia, serif';
+      g.fillText('✦   DUTA MUDA SOMPOTON   ✦', 700, 300);
+
+      g.fillStyle = '#516E5E'; g.font = 'italic 24px Georgia, serif';
+      g.fillText('Dengan sukacitanya dianugerahkan kepada', 700, 382);
+
+      g.fillStyle = '#173325'; g.font = 'bold 66px Georgia, serif';
+      g.fillText(savedWinner, 700, 470);
+
+      const lineGrad = g.createLinearGradient(360, 496, 1040, 496);
+      lineGrad.addColorStop(0, 'transparent'); lineGrad.addColorStop(0.5, '#DCA028'); lineGrad.addColorStop(1, 'transparent');
+      g.fillStyle = lineGrad; g.fillRect(360, 495, 680, 3.5);
+
+      g.fillStyle = '#2B4537'; g.font = '24px sans-serif';
+      g.fillText('Kerana telah berjaya menamatkan Cabaran Kuiz Warisan Buku Cerita WebAR', 700, 556);
+      g.fillStyle = '#173325'; g.font = 'bold 26px Georgia, serif';
+      g.fillText('“ASAL USUL SOMPOTON”', 700, 596);
+
+      g.fillStyle = 'rgba(220, 160, 40, 0.18)';
+      g.beginPath(); g.roundRect(540, 616, 320, 40, 20); g.fill();
+      g.fillStyle = '#BA5A28'; g.font = 'bold 21px sans-serif';
+      g.fillText(`PENCAPAIAN SKOR: ${score} / ${quizData.length}`, 700, 643);
+
+      g.fillStyle = '#BA5A28';
+      g.beginPath(); g.moveTo(670, 748); g.lineTo(648, 845); g.lineTo(682, 822); g.lineTo(700, 845); g.lineTo(700, 748); g.fill();
+      g.beginPath(); g.moveTo(730, 748); g.lineTo(752, 845); g.lineTo(718, 822); g.lineTo(700, 845); g.lineTo(700, 748); g.fill();
+
+      const sealX = 700, sealY = 740;
+      g.fillStyle = '#B87A14';
+      g.beginPath();
+      for (let i = 0; i < 32; i++) {
+        const a = (i / 32) * Math.PI * 2, r = i % 2 === 0 ? 60 : 53;
+        const x = sealX + Math.cos(a) * r, y = sealY + Math.sin(a) * r;
+        if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+      }
+      g.closePath(); g.fill();
+
+      const sealGrad = g.createRadialGradient(sealX - 12, sealY - 12, 8, sealX, sealY, 52);
+      sealGrad.addColorStop(0, '#FFF5C8'); sealGrad.addColorStop(0.55, '#DCA028'); sealGrad.addColorStop(1, '#9E6814');
+      g.fillStyle = sealGrad; g.beginPath(); g.arc(sealX, sealY, 50, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = '#FFFDF7'; g.lineWidth = 2.5; g.beginPath(); g.arc(sealX, sealY, 41, 0, Math.PI * 2); g.stroke();
+      g.fillStyle = '#173325'; g.font = 'bold 19px Georgia, serif';
+      g.fillText('UMS', sealX, sealY - 2);
+      g.font = 'bold 13px sans-serif'; g.fillText('KUMP. 13', sealX, sealY + 17);
+
+      g.strokeStyle = 'rgba(23, 51, 37, 0.35)'; g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(190, 775); g.lineTo(470, 775); g.stroke();
+      g.beginPath(); g.moveTo(930, 775); g.lineTo(1210, 775); g.stroke();
+
+      g.fillStyle = '#173325'; g.font = 'bold 19px Georgia, serif';
+      g.fillText('Kumpulan 13 · IT32603', 330, 762);
+      g.fillStyle = '#516E5E'; g.font = '16px sans-serif';
+      g.fillText('Pembangun Projek WebAR', 330, 800);
+      g.fillText('Fakulti Komputeran & Informatik', 330, 822);
+
+      const today = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+      g.fillStyle = '#173325'; g.font = 'bold 19px Georgia, serif';
+      g.fillText(today, 1070, 762);
+      g.fillStyle = '#516E5E'; g.font = '16px sans-serif';
+      g.fillText('Tarikh Penganugerahan', 1070, 800);
+      g.fillText('Universiti Malaysia Sabah', 1070, 822);
+
+      return c.toDataURL('image/png');
+    }
+
     function showBadge() {
       savedWinner = document.getElementById('player-name').value.trim() || "Pembaca Hebat";
+      latestCertUrl = buildCertificateDataURL();
       launchConfetti();
       playUiChime('fanfare');
       document.getElementById('badge-area').innerHTML = `
-        <div class="badge-card quiz-celebrate">
-          <div class="medal">🏅</div>
-          <h3>DUTA MUDA SOMPOTON</h3>
-          <p style="font-size:0.82rem; color:var(--sage);">Dianugerahkan secara rasmi kepada</p>
-          <div class="winner-name">${savedWinner}</div>
-          <p style="font-size:0.8rem; color:var(--gourd); font-weight:700; margin-bottom:14px;">Skor Kuiz Warisan: ${score}/${quizData.length} • Asal Usul Sompoton WebAR</p>
-          <button class="btn-primary" onclick="downloadCertPNG()" style="padding:10px 20px; font-size:0.84rem;">⬇ Muat Turun Sijil Premium (PNG)</button>
+        <div class="cert-preview-wrap">
+          <div class="cert-preview-frame">
+            <img src="${latestCertUrl}" alt="Pratonton Sijil Digital Duta Muda Sompoton" />
+          </div>
+          <button class="btn-primary" onclick="downloadCertPNG()" style="padding:12px 26px; font-size:0.9rem;">⬇ Muat Turun Sijil Premium (PNG)</button>
         </div>`;
     }
 
     function downloadCertPNG() {
-      const c = document.createElement('canvas'); c.width = 1200; c.height = 800;
-      const g = c.getContext('2d');
-
-      const bg = g.createLinearGradient(0, 0, 1200, 800);
-      bg.addColorStop(0, '#FFFDF7'); bg.addColorStop(0.55, '#F8F2E2'); bg.addColorStop(1, '#EFE2C4');
-      g.fillStyle = bg; g.fillRect(0, 0, 1200, 800);
-
-      g.fillStyle = 'rgba(23, 51, 37, 0.055)';
-      g.beginPath();
-      g.moveTo(0, 800); g.lineTo(0, 620); g.lineTo(200, 560); g.lineTo(390, 595);
-      g.lineTo(540, 470); g.lineTo(620, 495); g.lineTo(710, 430); g.lineTo(800, 485);
-      g.lineTo(960, 540); g.lineTo(1200, 505); g.lineTo(1200, 800); g.closePath(); g.fill();
-
-      g.strokeStyle = '#173325'; g.lineWidth = 14; g.strokeRect(26, 26, 1148, 748);
-      g.strokeStyle = '#DCA028'; g.lineWidth = 3; g.strokeRect(46, 46, 1108, 708);
-
-      for (let x = 60; x < 1140; x += 28) {
-        g.fillStyle = (x % 56 === 0) ? '#DCA028' : '#BA5A28';
-        g.beginPath();
-        g.moveTo(x + 14, 58); g.lineTo(x + 24, 68); g.lineTo(x + 14, 78); g.lineTo(x + 4, 68); g.closePath(); g.fill();
-        g.beginPath();
-        g.moveTo(x + 14, 722); g.lineTo(x + 24, 732); g.lineTo(x + 14, 742); g.lineTo(x + 4, 732); g.closePath(); g.fill();
-      }
-
-      g.textAlign = 'center';
-      g.fillStyle = '#BA5A28'; g.font = 'bold 20px sans-serif';
-      g.fillText('PAMERAN WEBAR WARISAN BORNEO • UMS FKI', 600, 145);
-
-      g.fillStyle = '#173325'; g.font = 'bold 54px Georgia, serif';
-      g.fillText('SIJIL PENGHARGAAN', 600, 215);
-
-      g.fillStyle = '#DCA028'; g.font = 'bold 24px Georgia, serif';
-      g.fillText('✦  DUTA MUDA SOMPOTON  ✦', 600, 262);
-
-      g.fillStyle = '#516E5E'; g.font = '22px sans-serif';
-      g.fillText('Dengan sukacitanya dianugerahkan kepada', 600, 332);
-
-      g.fillStyle = '#173325'; g.font = 'bold 58px Georgia, serif';
-      g.fillText(savedWinner, 600, 415);
-
-      const lineGrad = g.createLinearGradient(340, 440, 860, 440);
-      lineGrad.addColorStop(0, 'transparent'); lineGrad.addColorStop(0.5, '#DCA028'); lineGrad.addColorStop(1, 'transparent');
-      g.fillStyle = lineGrad; g.fillRect(340, 438, 520, 3);
-
-      g.fillStyle = '#314A3C'; g.font = '22px sans-serif';
-      g.fillText(`Kerana berjaya menamatkan Kuiz Warisan Asal Usul Sompoton`, 600, 492);
-      g.fillStyle = '#BA5A28'; g.font = 'bold 22px sans-serif';
-      g.fillText(`dengan pencapaian skor ${score} / ${quizData.length}`, 600, 528);
-
-      g.fillStyle = '#BA5A28';
-      g.beginPath(); g.moveTo(575, 625); g.lineTo(560, 695); g.lineTo(590, 678); g.lineTo(600, 695); g.lineTo(600, 625); g.fill();
-      g.beginPath(); g.moveTo(625, 625); g.lineTo(640, 695); g.lineTo(610, 678); g.lineTo(600, 695); g.lineTo(600, 625); g.fill();
-
-      const sealGrad = g.createRadialGradient(590, 595, 6, 600, 605, 48);
-      sealGrad.addColorStop(0, '#FFF0B8'); sealGrad.addColorStop(0.6, '#DCA028'); sealGrad.addColorStop(1, '#9E6814');
-      g.fillStyle = sealGrad; g.beginPath(); g.arc(600, 605, 44, 0, Math.PI * 2); g.fill();
-      g.strokeStyle = '#FFFDF7'; g.lineWidth = 2.5; g.beginPath(); g.arc(600, 605, 36, 0, Math.PI * 2); g.stroke();
-      g.fillStyle = '#173325'; g.font = 'bold 16px Georgia, serif';
-      g.fillText('UMS', 600, 602); g.font = 'bold 12px sans-serif'; g.fillText('KUMP. 13', 600, 619);
-
-      g.fillStyle = '#516E5E'; g.font = '17px sans-serif';
-      g.fillText('Kumpulan 13 · IT32603 WebAR', 270, 648);
-      g.fillText('Fakulti Komputeran & Informatik', 270, 672);
-
-      const today = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
-      g.fillText(today, 930, 648);
-      g.fillText('Universiti Malaysia Sabah', 930, 672);
-
+      if (!latestCertUrl) latestCertUrl = buildCertificateDataURL();
       const a = document.createElement('a');
       a.download = `Sijil_Sompoton_${savedWinner.replace(/\s+/g, '_')}.png`;
-      a.href = c.toDataURL('image/png'); a.click();
+      a.href = latestCertUrl; a.click();
     }
     renderQuiz();
 
-    /* ================= MODAL VIDEO DEMO YOUTUBE ================= */
-    // Gantikan dengan ID video YouTube anda selepas muat naik (cth: "dQw4w9WgXcQ")
-    const YOUTUBE_DEMO_ID = "";
-
-    function openDemoModal() {
-      playUiChime('flip');
-      const box = document.getElementById('demo-video-box');
-      if (YOUTUBE_DEMO_ID) {
-        box.innerHTML = `<iframe src="https://www.youtube.com/embed/${YOUTUBE_DEMO_ID}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-      } else {
-        box.innerHTML = `
-          <div style="padding:24px; text-align:center;">
-            <div style="font-size:2.8rem; margin-bottom:8px;">🎬</div>
-            <h4 style="font-family:'Fraunces',serif; font-size:1.15rem; margin-bottom:6px; color:#FFFDF7;">Video Demo Rasmi Bakal Tiba</h4>
-            <p style="font-size:0.82rem; color:#DCE8D5; max-width:360px; margin:0 auto 14px;">Sebaik sahaja video YouTube dimuat naik, masukkan ID video pada pemboleh ubah <code>YOUTUBE_DEMO_ID</code> untuk dipaparkan di sini.</p>
-            <a href="ar.html" class="btn-primary" style="padding:9px 18px; font-size:0.8rem;">📷 Cuba Imbas AR Sekarang</a>
-          </div>`;
-      }
-      document.getElementById('demo-modal').classList.add('open');
-    }
-
-    function closeDemoModal() {
-      document.getElementById('demo-modal').classList.remove('open');
-      document.getElementById('demo-video-box').innerHTML = '';
-    }
-
-    /* ================= FAQ ACCORDION ================= */
+    /* ================= FAQ, DWIBAHASA & REVEAL ================= */
     function toggleFaq(btn) {
       const item = btn.parentElement;
       const isOpen = item.classList.contains('open');
@@ -2043,35 +2249,34 @@
       if (!isOpen) { item.classList.add('open'); playUiChime('flip'); }
     }
 
-    /* ================= DWIBAHASA & REVEAL ================= */
     const dict = {
       bm: {
         nav_3d: "Pentas 3D", nav_studio: "Sompoton", nav_story: "Warisan", nav_dict: "Kamus", nav_pages: "12 Babak", nav_quiz: "Kuiz", nav_scan: "Imbas AR",
         hero_tag: "Pameran Interaktif Borneo • UMS FKI",
         hero_desc: "Hidupkan lagenda cinta sejati Aki dan Odu dari kaki Gunung Kinabalu. Imbas halaman buku menggunakan telefon pintar untuk meneroka diorama 3D isometrik, penceritaan 3 bahasa, sari kata langsung, dan alunan asli Sompoton tanpa aplikasi.",
-        btn_scan: "Mula Imbas Buku (AR)", btn_3d: "Mod 3D Tanpa Buku", btn_demo: "Tonton Demo AR",
+        btn_scan: "Mula Imbas Buku (AR)", btn_3d: "Mod 3D Tanpa Buku",
         m_pages: "Halaman AR", m_3d: "Diorama + SFX", m_lang: "BM · EN · KDZ",
         d3_kicker: "PENTAS DIORAMA ISOMETRIK", d3_title: "Tiga Dunia 3D Hidup", d3_sub: "Putar model 3D secara 360° dan tekan ikon pembesar suara untuk mendengar suasana rimba sebenar.",
         st_kicker: "PENGALAMAN BUNYI INTERAKTIF", st_title: "Mainkan Sompoton Maya",
         h_kicker: "SINOPSIS & WARISAN SABAH", h_title: "Lagenda Cinta di Kaki Gunung Kinabalu",
         char_kicker: "KENALI WATAK CERITA", char_title: "Ketik Watak untuk Mendengar Pesanan Mereka",
         d_kicker: "PEMELIHARAAN BAHASA IBUNDA", d_title: "Kamus Mini Kadazandusun", d_sub: "Ketik mana-mana kad untuk membalikkannya secara 3D beserta bunyi buluh interaktif.",
-        l_kicker: "PENCERITAAN 3 BAHASA & 12 BABAK", p_title: "Setiap Halaman, Satu Dunia Kecil", l_sub: "Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau tapis 12 babak cerita di bawah.",
-        q_kicker: "CABARAN INTERAKTIF & SIJIL", q_title: "Kuiz Warisan Sompoton", q_sub: "Jawab 5 soalan ringkas dan muat turun Sijil Digital rasmi Duta Muda Sompoton dengan nama anda."
+        l_kicker: "PENCERITAAN 3 BAHASA & 12 BABAK", p_title: "Setiap Halaman, Satu Dunia Kecil", l_sub: "Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau putar terus diorama 3D pada Halaman 4, 6 & 10 di bawah.",
+        q_kicker: "CABARAN INTERAKTIF & SIJIL", q_title: "Kuiz Warisan Sompoton", q_sub: "Jawab 5 soalan ringkas, lihat pratonton berkilau Sijil Digital eksklusif anda, dan muat turun dalam format PNG."
       },
       en: {
         nav_3d: "3D Stage", nav_studio: "Sompoton", nav_story: "Heritage", nav_dict: "Dictionary", nav_pages: "12 Scenes", nav_quiz: "Quiz", nav_scan: "Scan AR",
         hero_tag: "Interactive Borneo Exhibition • UMS FKI",
         hero_desc: "Bring the legend of Aki and Odu to life from the foothills of Mount Kinabalu. Scan any book page with your smartphone to explore 3D isometric dioramas, trilingual narration, live subtitles, and authentic Sompoton music with zero app installation.",
-        btn_scan: "Start Scanning (AR)", btn_3d: "3D Mode (No Book)", btn_demo: "Watch AR Demo",
+        btn_scan: "Start Scanning (AR)", btn_3d: "3D Mode (No Book)",
         m_pages: "AR Pages", m_3d: "Dioramas + SFX", m_lang: "BM · EN · KDZ",
         d3_kicker: "ISOMETRIC DIORAMA STAGE", d3_title: "Three Living 3D Worlds", d3_sub: "Rotate the 3D models 360° and tap the speaker icon to hear authentic forest soundscapes.",
         st_kicker: "INTERACTIVE SOUND EXPERIENCE", st_title: "Play the Virtual Sompoton",
         h_kicker: "SYNOPSIS & SABAHAN HERITAGE", h_title: "A Legend of Love at Mount Kinabalu",
         char_kicker: "MEET THE CHARACTERS", char_title: "Tap Each Character to Hear Their Message",
         d_kicker: "HERITAGE LANGUAGE PRESERVATION", d_title: "Kadazandusun Mini Dictionary", d_sub: "Tap any card to flip it in 3D with interactive bamboo chimes.",
-        l_kicker: "TRILINGUAL NARRATION & 12 SCENES", p_title: "Every Page, a Living Miniature World", l_sub: "Preview trilingual narration with Smart SFX, or filter all 12 story scenes below.",
-        q_kicker: "INTERACTIVE CHALLENGE & CERTIFICATE", q_title: "Sompoton Heritage Quiz", q_sub: "Answer 5 quick questions and download your personalized Sompoton Young Ambassador digital certificate."
+        l_kicker: "TRILINGUAL NARRATION & 12 SCENES", p_title: "Every Page, a Living Miniature World", l_sub: "Preview trilingual narration with Smart SFX, or spin the live 3D dioramas on Pages 4, 6 & 10 below.",
+        q_kicker: "INTERACTIVE CHALLENGE & CERTIFICATE", q_title: "Sompoton Heritage Quiz", q_sub: "Answer 5 quick questions, preview your shimmering digital certificate, and download it as PNG."
       }
     };
     function setLang(l) {
@@ -2106,7 +2311,6 @@
       currSY += (targetSY - currSY) * 0.1;
       heroWrapper.style.setProperty('--sx', currSX.toFixed(3));
       heroWrapper.style.setProperty('--sy', currSY.toFixed(3));
-
       if (Math.abs(targetSX - currSX) > 0.002 || Math.abs(targetSY - currSY) > 0.002) {
         spatialRaf = requestAnimationFrame(updateSpatial);
       }
@@ -2114,17 +2318,13 @@
 
     function activateSpatial(x, y) {
       targetSX = x; targetSY = y;
-      if (!document.body.classList.contains('spatial-active')) {
-        document.body.classList.add('spatial-active');
-      }
+      if (!document.body.classList.contains('spatial-active')) document.body.classList.add('spatial-active');
       wakeSpatial();
     }
 
     function handleGyro(e) {
       if (!heroInView || e.gamma === null || e.beta === null) return;
-      const gx = Math.max(-30, Math.min(30, e.gamma)) / 30;
-      const gy = Math.max(-30, Math.min(30, e.beta - 45)) / 30;
-      activateSpatial(gx, gy);
+      activateSpatial(Math.max(-30, Math.min(30, e.gamma)) / 30, Math.max(-30, Math.min(30, e.beta - 45)) / 30);
     }
 
     if (window.matchMedia('(pointer: fine)').matches) {
