@@ -477,16 +477,23 @@
     <button class="img-btn" onclick="stopAudio()"><img src="./ui/btn_stop.png" alt="Stop" /></button>
   </div>
 
-  <!-- BABAK WEBAR (TEROPTIMUM: MODEL 3D DIMUAT SECARA ON-DEMAND) -->
+  <!-- BABAK WEBAR (PRAMUAT PANTAS + SEMUA ANIMASI SERENTAK) -->
   <a-scene
     loading-screen="enabled: false"
-    mindar-image="imageTargetSrc: ./asalusulsompoton.mind; autoStart: false; uiScanning: no; uiLoading: no; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 5; missTolerance: 5;"
+    mindar-image="imageTargetSrc: ./asalusulsompoton.mind; autoStart: false; maxTrack: 1; uiScanning: no; uiLoading: no; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 5; missTolerance: 5;"
     gltf-model="dracoDecoderPath: https://www.gstatic.com/draco/versioned/decoders/1.5.6/;"
     color-space="sRGB"
     renderer="colorManagement: true; alpha: true; antialias: false; precision: mediump; powerPreference: high-performance; preserveDrawingBuffer: true;"
     vr-mode-ui="enabled: false"
     xr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
+
+    <!-- Pramuat kesemua 3 model 3D supaya terus muncul serta-merta bila diimbas -->
+    <a-assets timeout="15000">
+      <a-asset-item id="model-pg4" src="./models/page4.glb"></a-asset-item>
+      <a-asset-item id="model-pg6" src="./models/page6.glb"></a-asset-item>
+      <a-asset-item id="model-pg10" src="./models/page10.glb"></a-asset-item>
+    </a-assets>
 
     <a-light type="ambient" color="#ffffff" intensity="1.5"></a-light>
     <a-light type="directional" color="#ffffff" intensity="1.2" position="1 2 2"></a-light>
@@ -496,15 +503,15 @@
     <a-entity id="target-pg2" mindar-image-target="targetIndex: 1"></a-entity>
     <a-entity id="target-pg3" mindar-image-target="targetIndex: 2"></a-entity>
 
-    <!-- Model 3D hanya dimuatkan ke GPU apabila halaman diimbas (jimat VRAM & elak crash) -->
+    <!-- clip: * memainkan semua animasi serentak; timeScale: 0 menjeda bila belum diimbas -->
     <a-entity id="target-pg4" mindar-image-target="targetIndex: 3">
-      <a-entity id="gltf-pg4" data-src="./models/page4.glb" position="0 -0.15 0.05" rotation="0 0 0" scale="0.015 0.015 0.015"></a-entity>
+      <a-gltf-model id="gltf-pg4" src="#model-pg4" position="0 -0.15 0.05" rotation="0 0 0" scale="0.015 0.015 0.015" animation-mixer="clip: *; loop: repeat; timeScale: 0"></a-gltf-model>
     </a-entity>
 
     <a-entity id="target-pg5" mindar-image-target="targetIndex: 4"></a-entity>
 
     <a-entity id="target-pg6" mindar-image-target="targetIndex: 5">
-      <a-entity id="gltf-pg6" data-src="./models/page6.glb" position="0 -0.15 0.05" rotation="0 0 0" scale="0.18 0.18 0.18"></a-entity>
+      <a-gltf-model id="gltf-pg6" src="#model-pg6" position="0 -0.15 0.05" rotation="0 0 0" scale="0.18 0.18 0.18" animation-mixer="clip: *; loop: repeat; timeScale: 0"></a-gltf-model>
     </a-entity>
 
     <a-entity id="target-pg7" mindar-image-target="targetIndex: 6"></a-entity>
@@ -512,7 +519,7 @@
     <a-entity id="target-pg9" mindar-image-target="targetIndex: 8"></a-entity>
 
     <a-entity id="target-pg10" mindar-image-target="targetIndex: 9">
-      <a-entity id="gltf-pg10" data-src="./models/page10.glb" position="0 -0.15 0.05" rotation="0 90 0" scale="0.015 0.015 0.015"></a-entity>
+      <a-gltf-model id="gltf-pg10" src="#model-pg10" position="0 -0.15 0.05" rotation="0 90 0" scale="0.015 0.015 0.015" animation-mixer="clip: *; loop: repeat; timeScale: 0"></a-gltf-model>
     </a-entity>
 
     <a-entity id="target-pg11" mindar-image-target="targetIndex: 10"></a-entity>
@@ -567,7 +574,7 @@
       b.classList.toggle('active', b.dataset.lang === selectedLang);
     });
 
-    let currentPage = null, activeModel = null, loaded3DPage = null;
+    let currentPage = null, activeModel = null;
     let currentAudio = new Audio(), currentSfx = new Audio();
 
     const sfxList = {
@@ -641,7 +648,7 @@
       }
     };
 
-    /* ================= TETAPAN SAIZ & PENGURUS MEMORI GPU 3D (ANTI-CRASH) ================= */
+    /* ================= TETAPAN SAIZ & KEDUDUKAN TEPAT (HAL. 4, 6 & 10) ================= */
     const modelConfig = {
       pg4:  { scale: 0.015, posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
       pg6:  { scale: 0.18,  posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
@@ -657,54 +664,10 @@
       modelEl.dataset.defaultScale = cfg.scale;
     }
 
-    // Bebaskan memori GPU model 3D lama sebelum memuat model baharu
-    function dispose3DModel(pageCode) {
-      const el = document.getElementById(`gltf-${pageCode}`);
-      if (!el) return;
-      const mesh = el.getObject3D('mesh');
-      if (mesh) {
-        mesh.traverse(node => {
-          if (node.isMesh) {
-            if (node.geometry) node.geometry.dispose();
-            const mats = Array.isArray(node.material) ? node.material : [node.material];
-            mats.forEach(m => {
-              if (!m) return;
-              ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap'].forEach(k => {
-                if (m[k]) m[k].dispose();
-              });
-              m.dispose();
-            });
-          }
-        });
-      }
-      el.removeAttribute('animation-mixer');
-      el.removeAttribute('gltf-model');
-    }
-
-    function activate3DModel(pageCode, modelEl) {
-      if (!modelEl) return;
-      if (loaded3DPage && loaded3DPage !== pageCode) {
-        dispose3DModel(loaded3DPage);
-        loaded3DPage = null;
-      }
-      if (loaded3DPage !== pageCode) {
-        showToast("⏳ Memuatkan diorama 3D...");
-        modelEl.setAttribute('gltf-model', modelEl.dataset.src);
-        modelEl.setAttribute('animation-mixer', 'timeScale: 1');
-        loaded3DPage = pageCode;
-      } else {
-        modelEl.setAttribute('animation-mixer', 'timeScale: 1');
-        showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
-      }
-    }
-
     ['pg4', 'pg6', 'pg10'].forEach(code => {
       const el = document.getElementById(`gltf-${code}`);
       if (!el) return;
-      el.addEventListener('model-loaded', () => {
-        applyModelConfig(code, el);
-        if (currentPage === code) showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
-      });
+      el.addEventListener('model-loaded', () => applyModelConfig(code, el));
     });
 
     function resetModelTransform() {
@@ -773,7 +736,6 @@
       startArBtn.textContent = '✨ Membuka pengimbas AR...';
       const startScreen = document.getElementById('start-screen');
       startScreen.classList.add('fade-out');
-      // Nyahaktifkan keseluruhan skrin mula untuk jimat 100% GPU
       setTimeout(() => { startScreen.remove(); }, 420);
 
       document.getElementById('top-controls').style.display = 'flex';
@@ -782,6 +744,9 @@
 
       const sceneEl = document.querySelector('a-scene');
       const launch = () => {
+        if (sceneEl.renderer) {
+          sceneEl.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        }
         const arSystem = sceneEl.systems["mindar-image-system"];
         if (arSystem) arSystem.start();
       };
@@ -802,10 +767,14 @@
         resetBtn.style.display = activeModel ? 'grid' : 'none';
         playUiChime('found');
         playSfx(pageCode);
-        if (activeModel) activate3DModel(pageCode, activeModel);
+        if (activeModel) {
+          // Terus aktifkan semua animasi serentak serta-merta tanpa menunggu muatan
+          activeModel.setAttribute('animation-mixer', 'clip: *; loop: repeat; timeScale: 1');
+          showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
+        }
       });
       el.addEventListener("targetLost", () => {
-        if (activeModel) activeModel.setAttribute('animation-mixer', 'timeScale: 0');
+        if (activeModel) activeModel.setAttribute('animation-mixer', 'clip: *; loop: repeat; timeScale: 0');
         currentPage = null; activeModel = null;
         uiContainer.style.display = "none";
         resetBtn.style.display = "none";
@@ -953,9 +922,9 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         stopAudio();
-        if (activeModel) activeModel.setAttribute('animation-mixer', 'timeScale: 0');
+        if (activeModel) activeModel.setAttribute('animation-mixer', 'clip: *; loop: repeat; timeScale: 0');
       } else if (activeModel) {
-        activeModel.setAttribute('animation-mixer', 'timeScale: 1');
+        activeModel.setAttribute('animation-mixer', 'clip: *; loop: repeat; timeScale: 1');
       }
     });
   </script>
