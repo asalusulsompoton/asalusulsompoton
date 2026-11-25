@@ -11,7 +11,6 @@
   <style>
     :root {
       --paper: #F8F4EA;
-      --sky-top: #C7E3ED;
       --forest: #173325;
       --forest-mid: #28523C;
       --sage: #516E5E;
@@ -19,17 +18,14 @@
       --gold-soft: #F7E8C2;
       --gourd: #BA5A28;
 
-      --glass-tint: rgba(255, 253, 248, 0.78);
-      --glass-strong: rgba(255, 253, 248, 0.9);
-      --glass-border: rgba(255, 255, 255, 0.84);
+      --glass-tint: rgba(255, 253, 248, 0.86);
+      --glass-strong: rgba(255, 253, 248, 0.94);
+      --glass-border: rgba(255, 255, 255, 0.88);
       --glass-stroke: rgba(23, 51, 37, 0.1);
-      --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.88), inset 0 -1px 2px rgba(23, 51, 37, 0.05);
-      --shadow-glass: 0 14px 32px -10px rgba(23, 51, 37, 0.11), 0 4px 10px rgba(23, 51, 37, 0.05);
-      --shadow-lift: 0 22px 46px -12px rgba(23, 51, 37, 0.17), 0 8px 18px rgba(220, 160, 40, 0.12);
-      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-      --sx: 0;
-      --sy: 0;
+      --specular: inset 0 1px 1px rgba(255, 255, 255, 0.88);
+      --shadow-glass: 0 12px 28px -10px rgba(23, 51, 37, 0.11), 0 4px 10px rgba(23, 51, 37, 0.05);
+      --shadow-lift: 0 18px 38px -12px rgba(23, 51, 37, 0.16);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,64 +42,25 @@
       position: relative;
     }
 
-    /* JEDA ANIMASI LATAR SEMASA SCROLL ATAU TAB TIDAK AKTIF (ELAK LAG 60 FPS) */
-    body.is-scrolling .orb,
-    body.is-scrolling .bg-note,
+    /* JEDA ANIMASI SEMASA SCROLL ATAU TAB TIDAK AKTIF */
     body.is-scrolling .marquee-track,
-    body.is-scrolling .genz-sticker,
     body.is-scrolling .magic-book,
-    body.is-scrolling .book-cover-leaf::after,
-    body.tab-hidden .orb,
-    body.tab-hidden .bg-note,
-    body.tab-hidden .marquee-track {
+    body.tab-hidden .marquee-track,
+    body.tab-hidden .magic-book {
       animation-play-state: paused !important;
     }
 
-    /* SLOT 3D DINAMIK (ANTI-CRASH MEMORI) */
-    .mv-slot {
-      position: relative; width: 100%; height: 100%; z-index: 2;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .mv-slot model-viewer {
-      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
-      --poster-color: transparent;
-    }
-    .mv-loader {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-      color: var(--gold-soft); font-size: 1.6rem; pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-    .mv-loader small { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.8; }
-    .mv-loader span { animation: pulse3DLoad 1.2s ease-in-out infinite alternate; }
-    .mv-slot.loaded .mv-loader { opacity: 0; }
-    @keyframes pulse3DLoad { from { opacity: 0.4; transform: scale(0.92); } to { opacity: 0.95; transform: scale(1.08); } }
-
-    /* LATAR AMBIENT & NOT MUZIK TERAPUNG (GPU OPTIMIZED) */
-    .ambient-backdrop { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .orb { position: absolute; border-radius: 50%; animation: orbFloat 24s ease-in-out infinite alternate; }
-    .orb-1 { width: min(620px, 110vw); height: min(620px, 110vw); top: -18%; left: -12%; background: radial-gradient(circle, rgba(169, 214, 229, 0.52) 0%, transparent 70%); }
-    .orb-2 { width: min(540px, 100vw); height: min(540px, 100vw); top: 32%; right: -16%; background: radial-gradient(circle, rgba(247, 224, 168, 0.46) 0%, transparent 70%); animation-delay: -7s; }
-    .orb-3 { width: min(560px, 105vw); height: min(560px, 105vw); bottom: -14%; left: 10%; background: radial-gradient(circle, rgba(173, 212, 185, 0.4) 0%, transparent 70%); animation-delay: -13s; }
-    @keyframes orbFloat { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(20px, 14px, 0); } }
-
-    .music-notes-bg { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
-    .bg-note {
-      position: absolute; bottom: -40px; left: var(--x);
-      font-size: var(--sz); color: rgba(23, 51, 37, 0.085); font-weight: 700;
-      backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      animation: bgNoteDrift var(--dur) linear var(--del) infinite;
-    }
-    .bg-note.gold { color: rgba(220, 160, 40, 0.14); }
-    @keyframes bgNoteDrift {
-      0% { transform: translate3d(0, 0, 0) rotate(-10deg); opacity: 0; }
-      12% { opacity: 1; }
-      85% { opacity: 0.9; }
-      100% { transform: translate3d(24px, -112vh, 0) rotate(14deg); opacity: 0; }
+    /* LATAR STATIK RINGAN (TIADA ANIMASI ORB / NOT MUZIK LATAR) */
+    .ambient-backdrop {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(169, 214, 229, 0.36) 0%, transparent 46%),
+        radial-gradient(circle at 88% 42%, rgba(247, 224, 168, 0.32) 0%, transparent 44%),
+        radial-gradient(circle at 20% 88%, rgba(173, 212, 185, 0.28) 0%, transparent 45%);
     }
 
     .linangkit-pattern {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.045;
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.04;
       background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0L56 28L28 56L0 28Z' fill='none' stroke='%23173325' stroke-width='0.9'/%3E%3Cpath d='M28 12L44 28L28 44L12 28Z' fill='none' stroke='%23BA5A28' stroke-width='0.7'/%3E%3Ccircle cx='28' cy='28' r='2' fill='%23DCA028'/%3E%3C/svg%3E");
       background-size: 56px 56px;
     }
@@ -114,59 +71,44 @@
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
     }
 
-    /* TIRAI PEMBUKAAN */
+    /* TIRAI PEMBUKAAN RINGKAS */
     #intro-curtain {
       position: fixed; inset: 0; z-index: 10000; padding: 24px; text-align: center;
       background: linear-gradient(180deg, #CBE6F0 0%, #F8F4EA 100%);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-      transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.45s ease;
+      transition: transform 0.5s var(--ease), opacity 0.4s ease;
     }
     #intro-curtain.hide { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-    .curtain-kicker { font-size: 0.7rem; font-weight: 800; letter-spacing: 3.5px; color: var(--gourd); text-transform: uppercase; opacity: 0; animation: fadeInUp 0.35s ease forwards; }
-    .curtain-title { font-family: 'Fraunces', serif; font-size: clamp(1.85rem, 6.5vw, 3.4rem); font-weight: 800; color: var(--forest); line-height: 1.12; opacity: 0; animation: fadeInUp 0.5s 0.06s ease forwards; }
-    .curtain-bar { width: min(170px, 48vw); height: 3px; border-radius: 99px; transform: scaleX(0); background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd)); animation: barGrow 0.6s 0.1s ease forwards; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes barGrow { to { transform: scaleX(1); } }
+    .curtain-kicker { font-size: 0.7rem; font-weight: 800; letter-spacing: 3px; color: var(--gourd); text-transform: uppercase; }
+    .curtain-title { font-family: 'Fraunces', serif; font-size: clamp(1.85rem, 6.5vw, 3.3rem); font-weight: 800; color: var(--forest); line-height: 1.12; }
+    .curtain-bar { width: min(160px, 46vw); height: 3px; border-radius: 99px; background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd)); }
 
-    /* BUTANG SUASANA RIMBA & SPATIAL iOS */
+    /* BUTANG SUASANA RIMBA */
     .ambient-fab {
       position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); right: 16px; z-index: 950;
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255, 253, 248, 0.94);
+      background: rgba(255, 253, 248, 0.95);
       border: 1px solid var(--glass-border); color: var(--forest); padding: 10px 16px; border-radius: 999px;
       font-size: 0.76rem; font-weight: 700; cursor: pointer;
       box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.25s var(--spring), background 0.25s;
+      transition: transform 0.2s ease, background 0.2s;
     }
-    .ambient-fab:active { transform: scale(0.94); }
-    .ambient-fab.on { background: rgba(23, 51, 37, 0.94); color: #FAF5EB; border-color: rgba(220, 160, 40, 0.55); }
+    .ambient-fab:active { transform: scale(0.95); }
+    .ambient-fab.on { background: var(--forest); color: #FAF5EB; border-color: rgba(220, 160, 40, 0.6); }
     .amb-bars { display: flex; gap: 2.5px; align-items: flex-end; height: 12px; }
     .amb-bars span { width: 2.5px; height: 4px; background: var(--gourd); border-radius: 2px; }
-    .ambient-fab.on .amb-bars span { background: var(--gold); animation: eqMini 0.6s ease-in-out infinite alternate; }
+    .ambient-fab.on .amb-bars span { background: var(--gold); animation: eqMini 0.65s ease-in-out infinite alternate; }
     .ambient-fab.on .amb-bars span:nth-child(2) { animation-delay: 0.15s; }
     .ambient-fab.on .amb-bars span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes eqMini { from { height: 3px; } to { height: 12px; } }
+    @keyframes eqMini { from { height: 3px; } to { height: 11px; } }
 
-    #spatial-ios-btn {
-      display: none; position: fixed;
-      bottom: max(16px, env(safe-area-inset-bottom)); left: 16px; z-index: 950;
-      align-items: center; gap: 7px;
-      background: rgba(255, 253, 248, 0.94);
-      border: 1px solid var(--glass-border); color: var(--forest);
-      padding: 10px 15px; border-radius: 999px; font-size: 0.74rem; font-weight: 800;
-      cursor: pointer; box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.22s var(--spring), background 0.2s, color 0.2s;
-    }
-    #spatial-ios-btn:active { transform: scale(0.92); }
-    #spatial-ios-btn.active { background: var(--forest); color: var(--gold-soft); border-color: var(--gold); }
-
-    /* NAVBAR TINTED GLASS */
+    /* NAVBAR */
     .nav-wrap { position: fixed; top: max(10px, env(safe-area-inset-top)); left: 0; right: 0; z-index: 1000; display: flex; justify-content: center; padding: 0 12px; }
     .navbar {
-      width: 100%; max-width: 1180px; background: rgba(255, 253, 248, 0.92);
+      width: 100%; max-width: 1180px; background: rgba(255, 253, 248, 0.94);
       border: 1px solid var(--glass-border); border-radius: 999px;
       padding: 7px 9px 7px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      box-shadow: 0 10px 28px rgba(23, 51, 37, 0.09), var(--specular);
+      box-shadow: 0 10px 26px rgba(23, 51, 37, 0.09), var(--specular);
     }
     .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--forest); font-family: 'Fraunces', serif; font-weight: 800; font-size: 1rem; white-space: nowrap; flex-shrink: 0; }
     .brand-emblem { width: 31px; height: 31px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #2D5D44, #173325); display: grid; place-items: center; font-size: 0.9rem; }
@@ -181,39 +123,38 @@
       border: 1px solid rgba(220, 160, 40, 0.45);
       padding: 6px 11px; border-radius: 999px;
       font-size: 0.72rem; font-weight: 800; cursor: pointer;
-      transition: transform 0.2s var(--spring), background 0.2s;
+      transition: transform 0.2s ease, background 0.2s;
     }
-    .passport-nav-btn:hover { transform: scale(1.05); }
-    .passport-nav-btn:active { transform: scale(0.92); }
+    .passport-nav-btn:active { transform: scale(0.94); }
     .passport-nav-btn.complete { background: var(--forest); color: var(--gold-soft); border-color: var(--gold); }
 
     .lang-switch { display: flex; background: rgba(23, 51, 37, 0.07); border-radius: 999px; padding: 3px; }
     .lang-switch button { border: none; background: transparent; color: var(--sage); padding: 5px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
-    .lang-switch button.active { background: #fff; color: var(--forest); box-shadow: 0 2px 8px rgba(23, 51, 37, 0.12); }
+    .lang-switch button.active { background: #fff; color: var(--forest); box-shadow: 0 2px 6px rgba(23, 51, 37, 0.12); }
 
     .btn-primary {
       white-space: nowrap; text-decoration: none; border: none; cursor: pointer;
       background: linear-gradient(135deg, #2A5840 0%, #173325 100%);
       color: #FAF5EB; padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: 0.86rem;
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 10px 24px rgba(23, 51, 37, 0.24), inset 0 1px 1px rgba(255,255,255,0.28);
-      transition: transform 0.22s var(--spring), box-shadow 0.22s;
+      box-shadow: 0 8px 20px rgba(23, 51, 37, 0.22);
+      transition: transform 0.2s ease, box-shadow 0.2s;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23, 51, 37, 0.32); }
-    .btn-primary:active { transform: scale(0.95); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(23, 51, 37, 0.28); }
+    .btn-primary:active { transform: scale(0.96); }
 
     .btn-glass {
       white-space: nowrap; text-decoration: none; cursor: pointer;
       background: var(--glass-strong);
       color: var(--forest); padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: 0.86rem;
-      border: 1px solid var(--glass-border); box-shadow: 0 6px 18px rgba(23, 51, 37, 0.08), var(--specular);
+      border: 1px solid var(--glass-border); box-shadow: 0 6px 16px rgba(23, 51, 37, 0.08), var(--specular);
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      transition: transform 0.22s var(--spring), border-color 0.2s, background 0.2s;
+      transition: transform 0.2s ease, border-color 0.2s, background 0.2s;
     }
     .btn-glass:hover { transform: translateY(-2px); background: #fff; border-color: var(--gold); }
-    .btn-glass:active { transform: scale(0.95); }
+    .btn-glass:active { transform: scale(0.96); }
 
-    /* ================= HERO & BUKU 3D GEN-Z ================= */
+    /* ================= HERO & BUKU 3D TERAPUNG RINGKAS ================= */
     .hero-wrapper {
       position: relative; overflow: hidden; z-index: 2;
       background: linear-gradient(180deg, rgba(199, 227, 237, 0.84) 0%, rgba(234, 244, 241, 0.65) 48%, rgba(248, 244, 234, 0) 100%);
@@ -221,9 +162,9 @@
     .hero-mountains { position: absolute; bottom: 0; left: 0; width: 100%; height: 44%; pointer-events: none; z-index: 0; opacity: 0.88; }
 
     .hero {
-      min-height: 94vh; position: relative; z-index: 2;
-      padding: 116px 6% 74px; max-width: 1280px; margin: 0 auto;
-      display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 46px; align-items: center;
+      min-height: 92vh; position: relative; z-index: 2;
+      padding: 112px 6% 70px; max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 44px; align-items: center;
     }
     .hero > div, .sompoton-studio > div, .heritage-grid > div { min-width: 0; }
 
@@ -231,11 +172,11 @@
       display: inline-flex; align-items: center; gap: 8px; padding: 7px 15px; border-radius: 999px;
       background: var(--glass-strong); border: 1px solid var(--glass-border);
       color: var(--forest-mid); font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
-      margin-bottom: 16px; box-shadow: 0 6px 18px rgba(23, 51, 37, 0.06), var(--specular);
+      margin-bottom: 16px; box-shadow: 0 6px 16px rgba(23, 51, 37, 0.06);
     }
     .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22A55B; box-shadow: 0 0 0 3px rgba(34, 165, 91, 0.22); }
 
-    .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.4rem, 5.4vw, 4.65rem); line-height: 1.03; color: var(--forest); font-weight: 800; margin-bottom: 16px; letter-spacing: -0.025em; }
+    .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.4rem, 5.4vw, 4.6rem); line-height: 1.03; color: var(--forest); font-weight: 800; margin-bottom: 16px; letter-spacing: -0.025em; }
     .hero h1 span { display: block; color: var(--gourd); font-style: italic; font-weight: 700; }
     .hero-lead { font-size: clamp(0.98rem, 1.8vw, 1.06rem); line-height: 1.72; color: #365042; max-width: 530px; margin-bottom: 26px; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
@@ -253,53 +194,37 @@
     .metric strong { display: block; font-family: 'Fraunces', serif; font-size: clamp(1.1rem, 3.6vw, 1.5rem); color: var(--forest); line-height: 1.2; }
     .metric span { font-size: clamp(0.66rem, 2.2vw, 0.76rem); color: var(--sage); font-weight: 600; display: block; margin-top: 2px; }
 
-    .hero-stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; perspective: 1400px; width: 100%; }
-    .hero-toggle {
-      display: inline-flex; background: rgba(255, 253, 248, 0.85);
-      border: 1px solid var(--glass-border); border-radius: 999px; padding: 4px; z-index: 5;
-      box-shadow: 0 8px 22px rgba(23, 51, 37, 0.08), var(--specular);
-    }
-    .hero-toggle button { border: none; background: transparent; color: var(--sage); padding: 8px 16px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: 0.25s; }
-    .hero-toggle button.active { background: var(--forest); color: #FAF5EB; box-shadow: 0 4px 12px rgba(23, 51, 37, 0.22); }
+    .hero-stage { position: relative; display: flex; flex-direction: column; align-items: center; perspective: 1200px; width: 100%; }
 
     .book-pedestal-wrap {
       position: relative; display: flex; flex-direction: column; align-items: center; z-index: 3;
-      padding: 28px 36px 20px; border-radius: 38px;
-      background: linear-gradient(145deg, rgba(255, 253, 248, 0.76), rgba(231, 243, 245, 0.6));
+      padding: 28px 36px 20px; border-radius: 36px;
+      background: linear-gradient(145deg, rgba(255, 253, 248, 0.85), rgba(231, 243, 245, 0.7));
       border: 1.5px solid var(--glass-border);
       box-shadow: var(--shadow-glass), var(--specular);
-      transform-style: preserve-3d;
-    }
-    .book-glow-ring {
-      position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);
-      width: 240px; height: 240px; border-radius: 50%; pointer-events: none; z-index: 0;
-      background: radial-gradient(circle, rgba(220, 160, 40, 0.26) 0%, rgba(169, 214, 229, 0.18) 50%, transparent 72%);
     }
 
     .genz-sticker {
       position: absolute; z-index: 8; pointer-events: none;
-      background: rgba(255, 253, 248, 0.94);
-      border: 1px solid #fff; color: var(--forest);
+      background: #FFFDF8; border: 1px solid #fff; color: var(--forest);
       padding: 6px 12px; border-radius: 999px; font-size: 0.7rem; font-weight: 800;
-      box-shadow: 0 10px 24px rgba(23, 51, 37, 0.14);
-      animation: stickerBob 4.2s ease-in-out infinite;
+      box-shadow: 0 8px 18px rgba(23, 51, 37, 0.12);
     }
-    .st-1 { top: 14px; right: -12px; color: var(--gourd); animation-delay: 0s; }
-    .st-2 { bottom: 68px; left: -16px; color: var(--forest-mid); animation-delay: -1.4s; }
-    .st-3 { top: 44%; right: -18px; background: var(--forest); color: var(--gold-soft); border-color: rgba(255,255,255,0.25); animation-delay: -2.6s; }
-    @keyframes stickerBob { 0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); } 50% { transform: translate3d(0, -7px, 0) rotate(2deg); } }
+    .st-1 { top: 14px; right: -12px; color: var(--gourd); }
+    .st-2 { bottom: 68px; left: -16px; color: var(--forest-mid); }
+    .st-3 { top: 44%; right: -18px; background: var(--forest); color: var(--gold-soft); border-color: rgba(255,255,255,0.25); }
 
     .magic-book {
       position: relative; width: min(60vw, 255px); aspect-ratio: 295 / 415; z-index: 3;
-      transform-style: preserve-3d; transform: rotateY(-12deg) rotateX(4deg);
-      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1); cursor: pointer;
+      transform-style: preserve-3d; transform: rotateY(-10deg) rotateX(3deg);
+      transition: transform 0.45s var(--ease); cursor: pointer;
       animation: bookFloat 5s ease-in-out infinite;
     }
     @keyframes bookFloat {
-      0%, 100% { transform: rotateY(-12deg) rotateX(4deg) translate3d(0, 0, 0); }
-      50% { transform: rotateY(-7deg) rotateX(2deg) translate3d(0, -8px, 0); }
+      0%, 100% { transform: rotateY(-10deg) rotateX(3deg) translate3d(0, 0, 0); }
+      50% { transform: rotateY(-8deg) rotateX(2deg) translate3d(0, -8px, 0); }
     }
-    .magic-book:hover { animation-play-state: paused; transform: rotateY(-4deg) rotateX(1deg) scale(1.03); }
+    .magic-book:hover { animation-play-state: paused; transform: rotateY(-4deg) rotateX(1deg) scale(1.02); }
     .magic-book::before {
       content: ""; position: absolute; top: 3px; bottom: 3px; left: -12px; width: 14px;
       background: linear-gradient(90deg, #1A3627, #38684D, #173325);
@@ -310,67 +235,40 @@
       background: linear-gradient(135deg, #FFFDF7 0%, #F2E7D0 100%);
       color: var(--forest); padding: 20px 16px; display: flex; flex-direction: column;
       justify-content: center; align-items: center; text-align: center;
-      box-shadow: inset 12px 0 22px rgba(23,51,37,0.1), 0 22px 44px rgba(23, 51, 37, 0.24);
+      box-shadow: inset 12px 0 22px rgba(23,51,37,0.1), 0 18px 36px rgba(23, 51, 37, 0.2);
     }
     .book-inside h4 { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--gourd); margin-bottom: 8px; }
     .book-inside p { font-size: 0.84rem; line-height: 1.5; margin-bottom: 14px; color: #365042; }
     .book-cover-leaf {
       position: absolute; inset: 0; transform-origin: left center; overflow: hidden;
       border-radius: 6px 18px 18px 6px;
-      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1); transform-style: preserve-3d;
+      transition: transform 0.55s var(--ease); transform-style: preserve-3d;
     }
-    .book-cover-leaf::after {
-      content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.42) 48%, rgba(247, 232, 194, 0.28) 54%, transparent 70%);
-      transform: translateX(-140%);
-      animation: foilSweep 5.5s ease-in-out infinite;
-    }
-    @keyframes foilSweep { 0%, 65% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
-    .magic-book:hover .book-cover-leaf { transform: rotateY(-38deg); }
+    .magic-book:hover .book-cover-leaf { transform: rotateY(-34deg); }
     .book-cover-leaf img {
       width: 100%; height: 100%; object-fit: cover; display: block;
-      box-shadow: -10px 20px 40px rgba(23, 51, 37, 0.24), 0 0 0 2px #fff;
+      box-shadow: -8px 16px 32px rgba(23, 51, 37, 0.22), 0 0 0 2px #fff;
     }
-    .book-shadow { width: 190px; height: 16px; margin-top: 14px; border-radius: 50%; background: radial-gradient(ellipse, rgba(23, 51, 37, 0.22) 0%, transparent 72%); }
+    .book-shadow { width: 185px; height: 15px; margin-top: 14px; border-radius: 50%; background: radial-gradient(ellipse, rgba(23, 51, 37, 0.2) 0%, transparent 72%); }
     .book-hover-tip {
       margin-top: 8px; display: inline-flex; align-items: center; gap: 6px;
       background: rgba(23, 51, 37, 0.08); color: var(--forest);
       padding: 5px 14px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
     }
 
-    #hero-3d-box {
-      display: none; width: min(88vw, 360px); height: min(88vw, 390px); z-index: 3;
-      border-radius: 32px; background: radial-gradient(circle at center, #224B36, #0E2318);
-      border: 3px solid rgba(255, 255, 255, 0.85); box-shadow: var(--shadow-lift); overflow: hidden;
-    }
-
-    /* ENJIN SPATIAL 3D */
-    .spatial-active .book-pedestal-wrap { transform: rotateY(calc(var(--sx) * 4deg)) rotateX(calc(var(--sy) * -3deg)); }
-    .spatial-active .magic-book {
-      animation: none;
-      transform: rotateY(calc(-10deg + (var(--sx) * 18deg))) rotateX(calc(4deg + (var(--sy) * -14deg))) translate3d(calc(var(--sx) * 10px), calc(var(--sy) * 8px), 24px);
-      transition: transform 0.08s linear;
-    }
-    .spatial-active .book-shadow { transform: translate3d(calc(var(--sx) * -10px), calc(var(--sy) * -4px), 0); }
-    .spatial-active .st-1 { animation: none; transform: translate3d(calc(var(--sx) * -22px), calc(var(--sy) * -16px), 45px) rotate(calc(var(--sx) * 4deg)); }
-    .spatial-active .st-2 { animation: none; transform: translate3d(calc(var(--sx) * -15px), calc(var(--sy) * -12px), 35px) rotate(calc(var(--sx) * -3deg)); }
-    .spatial-active .st-3 { animation: none; transform: translate3d(calc(var(--sx) * -26px), calc(var(--sy) * -18px), 55px) rotate(calc(var(--sx) * 3deg)); }
-    .spatial-active .hero-mountains { transform: translate3d(calc(var(--sx) * -14px), calc(var(--sy) * -6px), 0) scale(1.04); }
-    .spatial-active .book-glow-ring { transform: translate(calc(-50% + var(--sx) * 26px), calc(-50% + var(--sy) * 20px)); }
-
     /* JALUR TENUNAN LINANGKIT */
     .linangkit-strip { height: 6px; width: 100%; position: relative; z-index: 3; background: repeating-linear-gradient(135deg, var(--forest) 0 10px, var(--gold) 10px 15px, var(--gourd) 15px 20px, var(--forest) 20px 28px); }
     .marquee-wrap { position: relative; z-index: 3; overflow: hidden; background: var(--forest); padding: 13px 0; }
-    .marquee-track { display: flex; gap: 36px; width: max-content; animation: marquee 30s linear infinite; }
+    .marquee-track { display: flex; gap: 36px; width: max-content; animation: marquee 32s linear infinite; }
     .marquee-track span { font-family: 'Fraunces', serif; font-size: 0.86rem; color: var(--gold-soft); letter-spacing: 1.5px; white-space: nowrap; }
     @keyframes marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 
     /* SEKSYEN UMUM */
-    section.wrap { padding: 84px 6%; max-width: 1240px; margin: 0 auto; position: relative; z-index: 2; }
-    .sec-head { text-align: center; max-width: 680px; margin: 0 auto 40px; }
+    section.wrap { padding: 80px 6%; max-width: 1240px; margin: 0 auto; position: relative; z-index: 2; }
+    .sec-head { text-align: center; max-width: 680px; margin: 0 auto 38px; }
     .sec-kicker {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(247, 232, 194, 0.82); border: 1px solid rgba(220, 160, 40, 0.32);
+      background: rgba(247, 232, 194, 0.85); border: 1px solid rgba(220, 160, 40, 0.32);
       color: var(--gourd); font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
       text-transform: uppercase; padding: 5px 15px; border-radius: 999px; margin-bottom: 12px;
     }
@@ -379,17 +277,31 @@
 
     .glass-card {
       background: var(--glass-tint);
-      border: 1px solid var(--glass-border); border-radius: 30px;
+      border: 1px solid var(--glass-border); border-radius: 28px;
       box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.25s var(--spring), box-shadow 0.25s ease, border-color 0.25s ease;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
     @media (min-width: 769px) {
-      .navbar, .glass-card, .hero-metrics, .book-pedestal-wrap, .faq-item {
-        backdrop-filter: blur(14px) saturate(150%);
-        -webkit-backdrop-filter: blur(14px) saturate(150%);
-      }
-      .glass-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift), var(--specular); border-color: rgba(255, 255, 255, 0.95); }
+      .glass-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift), var(--specular); }
     }
+
+    /* SLOT 3D DINAMIK (ANTI-CRASH MEMORI) */
+    .mv-slot {
+      position: relative; width: 100%; height: 100%; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mv-slot model-viewer {
+      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
+      --poster-color: transparent;
+    }
+    .mv-loader {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      color: var(--gold-soft); font-size: 1.5rem; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .mv-loader small { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.8; }
+    .mv-slot.loaded .mv-loader { opacity: 0; }
 
     /* 01: PENTAS 3 DIORAMA 3D */
     .pedestal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
@@ -402,33 +314,27 @@
     .pedestal-stage {
       height: 255px; border-radius: 22px; overflow: hidden; position: relative;
       background: radial-gradient(circle at 50% 58%, #285C42 0%, #0D2218 100%);
-      margin-bottom: 14px; box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.38);
+      margin-bottom: 14px; box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.35);
       cursor: pointer;
-    }
-    .pedestal-stage::before {
-      content: ""; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-      width: 70%; height: 60px; border-radius: 50%; pointer-events: none; z-index: 1;
-      background: radial-gradient(circle, rgba(244, 196, 83, 0.35), transparent 70%);
     }
     .pedestal-tag {
       position: absolute; top: 10px; left: 10px; z-index: 5;
-      background: rgba(255, 253, 248, 0.92);
+      background: rgba(255, 253, 248, 0.94);
       color: var(--forest); font-size: 0.68rem; font-weight: 800; padding: 5px 11px; border-radius: 999px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.16);
     }
     .stage-sfx-btn {
       position: absolute; top: 10px; right: 10px; z-index: 5;
       width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.65);
-      background: rgba(255, 253, 248, 0.92);
+      background: rgba(255, 253, 248, 0.94);
       color: var(--forest); font-size: 0.9rem; cursor: pointer; display: grid; place-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s var(--spring), background 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.18); transition: transform 0.18s ease, background 0.18s;
     }
-    .stage-sfx-btn:active { transform: scale(0.88); }
-    .stage-sfx-btn.playing { background: var(--gold); color: var(--forest); animation: pulseSfx 1.4s infinite; }
-    @keyframes pulseSfx { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 160, 40, 0.6); } 50% { box-shadow: 0 0 0 8px rgba(220, 160, 40, 0); } }
+    .stage-sfx-btn:active { transform: scale(0.9); }
+    .stage-sfx-btn.playing { background: var(--gold); color: var(--forest); }
     .stage-hint {
       position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 4;
-      pointer-events: none; background: rgba(13, 34, 24, 0.78); color: var(--gold-soft);
+      pointer-events: none; background: rgba(13, 34, 24, 0.8); color: var(--gold-soft);
       border: 1px solid rgba(247, 232, 194, 0.25);
       font-size: 0.66rem; font-weight: 700; padding: 4px 11px; border-radius: 999px; white-space: nowrap;
     }
@@ -436,26 +342,25 @@
     .pedestal-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--forest); margin-bottom: 6px; }
     .pedestal-card p { font-size: 0.86rem; color: var(--sage); margin-bottom: 16px; flex: 1; }
 
-    /* 02: STUDIO SOMPOTON PREMIUM (PENTAS AKUSTIK ZAMRUD-EMAS) */
-    .sompoton-studio { padding: 36px 32px; display: grid; grid-template-columns: 0.92fr 1.18fr; gap: 34px; align-items: center; }
+    /* 02: STUDIO SOMPOTON MAYA (RINGAN & NOT MUZIK SEDERHANA) */
+    .sompoton-studio { padding: 34px 30px; display: grid; grid-template-columns: 0.92fr 1.18fr; gap: 32px; align-items: center; }
     .melody-picker { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 18px; }
     .mel-chip {
       padding: 8px 14px; border-radius: 999px; border: 1px solid var(--glass-stroke);
-      background: rgba(255, 255, 255, 0.84); color: var(--sage);
-      font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: transform 0.18s var(--spring), background 0.2s;
+      background: rgba(255, 255, 255, 0.88); color: var(--sage);
+      font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: background 0.2s, color 0.2s;
     }
-    .mel-chip:active { transform: scale(0.94); }
-    .mel-chip.active { background: var(--gold-soft); color: var(--gourd); border-color: var(--gold); box-shadow: 0 4px 12px rgba(220, 160, 40, 0.16); }
+    .mel-chip.active { background: var(--gold-soft); color: var(--gourd); border-color: var(--gold); }
     .kbd-hint { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; font-size: 0.78rem; color: var(--sage); }
-    .kbd-hint kbd { background: var(--glass-strong); border: 1px solid var(--glass-stroke); color: var(--forest); padding: 2px 8px; border-radius: 7px; font-weight: 800; font-size: 0.72rem; }
+    .kbd-hint kbd { background: #fff; border: 1px solid var(--glass-stroke); color: var(--forest); padding: 2px 8px; border-radius: 7px; font-weight: 800; font-size: 0.72rem; }
     .studio-btns { display: flex; flex-wrap: wrap; gap: 10px; }
 
     .instrument-box {
-      position: relative; width: 100%; border-radius: 30px; overflow: hidden;
-      background: radial-gradient(circle at 50% 25%, #23533B 0%, #102A1D 58%, #081710 100%);
+      position: relative; width: 100%; border-radius: 28px; overflow: hidden;
+      background: radial-gradient(circle at 50% 25%, #23533B 0%, #102A1D 60%, #081710 100%);
       border: 2px solid rgba(247, 232, 194, 0.34);
       padding: 20px 14px 22px; display: flex; flex-direction: column; align-items: center;
-      box-shadow: inset 0 1px 1px rgba(255,255,255,0.22), 0 22px 48px rgba(15, 34, 24, 0.32);
+      box-shadow: 0 18px 38px rgba(15, 34, 24, 0.28);
     }
     .instrument-box::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 4;
@@ -467,14 +372,6 @@
       color: var(--gold-soft); background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(247, 232, 194, 0.22); padding: 4px 14px; border-radius: 999px;
     }
-    .gourd-aura {
-      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%) scale(0.9);
-      width: 270px; height: 140px; border-radius: 50%; pointer-events: none; z-index: 1; opacity: 0.25;
-      background: radial-gradient(circle, rgba(244, 196, 83, 0.8) 0%, rgba(186, 90, 40, 0.38) 52%, transparent 72%);
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-    .gourd-aura.pulse { transform: translateX(-50%) scale(1.26); opacity: 0.82; }
-    #wave-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.92; }
     .sompoton-body { position: relative; z-index: 2; width: 100%; max-width: 355px; display: flex; flex-direction: column; align-items: center; }
     .pipes-stage { display: flex; align-items: flex-end; justify-content: center; gap: 8px; width: 100%; height: 196px; padding: 0 6px; position: relative; z-index: 3; }
     .pipe {
@@ -482,25 +379,23 @@
       background: linear-gradient(90deg, #9F691A 0%, #E7B858 24%, #FFF3C4 46%, #D79830 74%, #6D420B 100%);
       color: #173325; font-weight: 800; font-size: 0.72rem;
       display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-      padding-bottom: 10px; transition: transform 0.14s var(--spring), box-shadow 0.14s, filter 0.14s;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.45), inset 0 4px 6px rgba(255,255,255,0.4); position: relative;
+      padding-bottom: 10px; transition: transform 0.12s ease, background 0.12s;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4); position: relative;
       -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
     .pipe::before {
       content: ""; position: absolute; top: 28%; left: -1px; right: -1px; height: 6px;
       background: linear-gradient(90deg, #4A2107, #8F4D1A, #3A1905);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
     }
     .pipe::after {
       content: ""; position: absolute; top: 10px; width: 10px; height: 10px; border-radius: 50%;
       background: radial-gradient(circle, #2A1405 40%, #7C4314 100%);
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
     }
-    .pipe:hover { transform: translateY(-6px); filter: brightness(1.06); }
+    .pipe:hover { transform: translateY(-4px); }
     .pipe.active {
-      transform: scaleY(0.95) translateY(-3px);
+      transform: translateY(-2px) scaleY(0.96);
       background: linear-gradient(90deg, #FFE494, #FFFDF2, #F4C453);
-      box-shadow: 0 0 32px rgba(255, 232, 163, 0.95), 0 0 14px #fff;
+      box-shadow: 0 0 18px rgba(255, 232, 163, 0.85);
     }
     .pipe small { font-size: 0.6rem; opacity: 0.78; margin-top: 2px; background: rgba(23,51,37,0.12); padding: 1px 5px; border-radius: 6px; }
 
@@ -508,30 +403,37 @@
       width: min(82%, 250px); height: 12px; margin-top: -6px; z-index: 4; border-radius: 999px;
       background: repeating-linear-gradient(90deg, #3C1C08 0 7px, #C77C2E 7px 13px, #68330F 13px 16px);
       border: 1px solid rgba(255, 232, 163, 0.35);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
     .gourd-base {
       width: min(80%, 248px); height: 78px; margin-top: -5px; position: relative; z-index: 2;
       background: radial-gradient(circle at 36% 26%, #E89648 0%, #B4561D 48%, #5D280A 86%, #3A1604 100%);
       border-radius: 48% 48% 46% 46% / 32% 32% 68% 68%;
       border: 2px solid rgba(255, 232, 163, 0.35);
-      box-shadow: 0 18px 34px rgba(0,0,0,0.65), inset 0 -12px 22px rgba(0,0,0,0.45), inset 0 4px 10px rgba(255, 232, 163, 0.25);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.55);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .gourd-label { font-family: 'Fraunces', serif; font-size: 0.84rem; letter-spacing: 3px; color: #FFF0BE; font-weight: 800; text-shadow: 0 2px 6px rgba(0,0,0,0.45); }
+    .gourd-label { font-family: 'Fraunces', serif; font-size: 0.84rem; letter-spacing: 3px; color: #FFF0BE; font-weight: 800; }
     .gourd-sub { font-size: 0.6rem; letter-spacing: 1.5px; color: rgba(255, 240, 190, 0.78); text-transform: uppercase; font-weight: 700; margin-top: 1px; }
-    .floating-note { position: absolute; pointer-events: none; font-size: 1.5rem; color: #FFE8A3; font-weight: 800; animation: noteRise 0.95s ease-out forwards; z-index: 10; }
-    @keyframes noteRise { 0% { transform: translate3d(0,0,0) scale(0.75); opacity: 1; } 100% { transform: translate3d(14px,-96px,0) scale(1.45); opacity: 0; } }
+
+    /* NOT MUZIK SEDERHANA & RINGAN */
+    .floating-note {
+      position: absolute; pointer-events: none; font-size: 1.25rem; color: #FFE8A3; font-weight: 800;
+      animation: noteRiseSimple 0.65s ease-out forwards; z-index: 10;
+    }
+    @keyframes noteRiseSimple {
+      0% { transform: translateY(0); opacity: 0.95; }
+      100% { transform: translateY(-48px); opacity: 0; }
+    }
     .note-status {
       position: relative; z-index: 3; margin-top: 15px; text-align: center;
       font-size: 0.82rem; color: #F7E8C2; font-weight: 700; min-height: 24px;
-      background: rgba(255,255,255,0.07); padding: 5px 16px; border-radius: 999px;
+      background: rgba(255,255,255,0.08); padding: 5px 16px; border-radius: 999px;
       border: 1px solid rgba(247, 232, 194, 0.16);
     }
 
     /* 03: SINOPSIS, WARISAN & KENALI WATAK */
     .heritage-grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 26px; align-items: stretch; }
-    .story-box { padding: 32px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+    .story-box { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
     .story-box p { font-size: 0.98rem; color: #314A3C; margin-bottom: 14px; line-height: 1.75; }
     .drop-cap::first-letter { font-family: 'Fraunces', serif; float: left; font-size: 3.4rem; line-height: 0.8; padding-right: 12px; color: var(--gourd); font-weight: 800; }
     .story-quote {
@@ -543,7 +445,7 @@
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
       padding-top: 16px; border-top: 1px dashed rgba(23, 51, 37, 0.14);
     }
-    .st-step { background: rgba(255, 255, 255, 0.78); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; text-align: center; }
+    .st-step { background: rgba(255, 255, 255, 0.85); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; text-align: center; }
     .st-step span { display: block; font-size: 1.15rem; margin-bottom: 3px; }
     .st-step strong { display: block; font-size: 0.72rem; color: var(--forest); line-height: 1.25; }
 
@@ -553,21 +455,16 @@
       padding: 11px 14px; border-radius: 18px; border: 1px solid var(--glass-border);
       background: var(--glass-strong); color: var(--sage); font-weight: 700; font-size: 0.82rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-      box-shadow: 0 4px 12px rgba(23, 51, 37, 0.05);
-      transition: transform 0.2s var(--spring), background 0.2s, color 0.2s, border-color 0.2s;
+      transition: background 0.2s, color 0.2s;
     }
-    .tab-btn:active { transform: scale(0.95); }
-    .tab-btn.active { background: linear-gradient(135deg, #2A5840, #173325); color: #FAF5EB; border-color: var(--forest); box-shadow: 0 10px 22px rgba(23, 51, 37, 0.22); }
-    .tab-panel { padding: 26px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-    .artifact-anim { animation: artifactIn 0.35s var(--spring); }
-    @keyframes artifactIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .tab-btn.active { background: linear-gradient(135deg, #2A5840, #173325); color: #FAF5EB; border-color: var(--forest); }
+    .tab-panel { padding: 26px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
     .artifact-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
     .artifact-emblem {
       width: 56px; height: 56px; border-radius: 18px; flex-shrink: 0;
       background: linear-gradient(135deg, var(--gold-soft), #FFFDF7);
       border: 1.5px solid rgba(220, 160, 40, 0.45);
       display: grid; place-items: center; font-size: 1.7rem;
-      box-shadow: 0 8px 18px rgba(220, 160, 40, 0.16);
     }
     .artifact-tag { display: inline-block; font-size: 0.66rem; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: var(--gourd); margin-bottom: 2px; }
     .tab-panel h3 { font-family: 'Fraunces', serif; color: var(--forest); font-size: 1.32rem; line-height: 1.15; }
@@ -576,48 +473,59 @@
     .artifact-fact strong { color: var(--gourd); }
 
     .char-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
-    .char-card { padding: 20px 16px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; -webkit-tap-highlight-color: transparent; }
-    .char-card.tapped { animation: charBounce 0.45s var(--spring); border-color: var(--gold); }
-    @keyframes charBounce { 0% { transform: scale(1); } 40% { transform: scale(1.06) translateY(-6px); } 100% { transform: scale(1); } }
+    .char-card { padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; -webkit-tap-highlight-color: transparent; }
+    .char-card:active { transform: scale(0.97); }
     .char-avatar {
       width: 68px; height: 68px; border-radius: 22px; margin-bottom: 10px;
       background: linear-gradient(135deg, var(--gold-soft), #FFFDF7);
       border: 2px solid rgba(220, 160, 40, 0.45);
       display: grid; place-items: center; font-size: 2.1rem;
-      box-shadow: 0 10px 22px rgba(220, 160, 40, 0.16);
     }
     .char-role { font-size: 0.65rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gourd); background: rgba(247, 232, 194, 0.7); padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
     .char-card h4 { font-family: 'Fraunces', serif; font-size: 1.12rem; color: var(--forest); margin-bottom: 4px; }
     .char-trait { font-size: 0.76rem; color: var(--sage); margin-bottom: 10px; }
     .char-bubble {
-      width: 100%; background: rgba(255, 255, 255, 0.9); border: 1px solid var(--glass-stroke);
+      width: 100%; background: #fff; border: 1px solid var(--glass-stroke);
       border-radius: 14px; padding: 8px 10px; font-size: 0.76rem; color: var(--forest);
       font-style: italic; line-height: 1.4; min-height: 54px; display: flex; align-items: center; justify-content: center;
     }
     .char-tap-hint { font-size: 0.68rem; font-weight: 800; color: var(--forest-mid); margin-top: 8px; }
 
-    /* 04: KAMUS MINI 3D */
+    /* 04: KAMUS MINI (TUKAR KAD 2D SEDERHANA & RINGAN) */
     .dict-toolbar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-    .dict-progress-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--glass-strong); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; color: var(--forest); box-shadow: 0 6px 16px rgba(23, 51, 37, 0.06), var(--specular); }
+    .dict-progress-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--glass-strong); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; color: var(--forest); box-shadow: 0 6px 14px rgba(23, 51, 37, 0.06); }
     .dict-progress-pill strong { color: var(--gourd); }
     .dict-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 14px; }
-    .flip-card { background: transparent; height: 174px; perspective: 1100px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-    .flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.62s var(--spring); transform-style: preserve-3d; }
-    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
-    .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 26px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .flip-front { background: var(--glass-strong); border: 1px solid var(--glass-border); box-shadow: var(--shadow-glass), var(--specular); }
-    .flip-card.discovered .flip-front { border-color: rgba(220, 160, 40, 0.55); }
-    .dict-icon { font-size: 1.7rem; margin-bottom: 6px; }
-    .flip-front h3 { font-family: 'Fraunces', serif; color: var(--forest); font-size: 1.28rem; margin-bottom: 2px; }
-    .dict-phonetic { font-size: 0.72rem; color: var(--sage); font-style: italic; margin-bottom: 6px; }
-    .flip-front span { font-size: 0.68rem; color: var(--gourd); font-weight: 800; }
-    .flip-back { background: linear-gradient(145deg, #2A5840, #173325); color: #FAF5EB; transform: rotateY(180deg); box-shadow: var(--shadow-lift); border: 1.5px solid rgba(247, 232, 194, 0.35); }
-    .flip-back strong { font-size: 0.98rem; margin-bottom: 4px; color: var(--gold-soft); }
-    .flip-back p { font-size: 0.8rem; opacity: 0.92; margin-bottom: 6px; }
-    .flip-back small { font-size: 0.68rem; background: rgba(255,255,255,0.12); padding: 3px 10px; border-radius: 999px; color: #DCE8D5; }
 
-    /* ================= 05: PENCERITAAN 3 BAHASA & 12 BABAK (PREMIUM SHOWCASE) ================= */
-    .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 42px; }
+    .dict-card {
+      position: relative; height: 170px; border-radius: 24px; cursor: pointer;
+      overflow: hidden; background: var(--glass-strong); border: 1.5px solid var(--glass-border);
+      box-shadow: var(--shadow-glass); -webkit-tap-highlight-color: transparent;
+      transition: transform 0.18s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .dict-card:active { transform: scale(0.97); }
+    .dict-card.discovered { border-color: rgba(220, 160, 40, 0.6); }
+    .dict-card.flipped { background: linear-gradient(145deg, #2A5840, #173325); border-color: rgba(247, 232, 194, 0.45); }
+
+    .dict-front, .dict-back {
+      position: absolute; inset: 0; padding: 16px; text-align: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.2s ease;
+    }
+    .dict-back { opacity: 0; pointer-events: none; color: #FAF5EB; }
+    .dict-card.flipped .dict-front { opacity: 0; pointer-events: none; }
+    .dict-card.flipped .dict-back { opacity: 1; pointer-events: auto; }
+
+    .dict-icon { font-size: 1.7rem; margin-bottom: 6px; }
+    .dict-front h3 { font-family: 'Fraunces', serif; color: var(--forest); font-size: 1.28rem; margin-bottom: 2px; }
+    .dict-phonetic { font-size: 0.72rem; color: var(--sage); font-style: italic; margin-bottom: 6px; }
+    .dict-front span { font-size: 0.68rem; color: var(--gourd); font-weight: 800; }
+    .dict-back strong { font-size: 0.98rem; margin-bottom: 4px; color: var(--gold-soft); }
+    .dict-back p { font-size: 0.8rem; opacity: 0.92; margin-bottom: 6px; }
+    .dict-back small { font-size: 0.68rem; background: rgba(255,255,255,0.14); padding: 3px 10px; border-radius: 999px; color: #DCE8D5; }
+
+    /* 05: PENCERITAAN 3 BAHASA & 12 BABAK */
+    .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 40px; }
     .lang-card {
       padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
       position: relative; overflow: hidden;
@@ -625,10 +533,9 @@
     .lang-card::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
-      opacity: 0.75; transition: opacity 0.25s;
+      opacity: 0.8;
     }
-    .lang-card.playing { border-color: var(--gold); box-shadow: 0 20px 44px -10px rgba(220, 160, 40, 0.28), var(--specular); }
-    .lang-card.playing::before { opacity: 1; }
+    .lang-card.playing { border-color: var(--gold); }
     .lang-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .lang-id-wrap { display: inline-flex; align-items: center; gap: 8px; }
     .lang-flag {
@@ -644,82 +551,74 @@
     .lang-card.playing .eq span { animation: bounceEq 0.55s ease-in-out infinite alternate; }
     .lang-card.playing .eq span:nth-child(2) { animation-delay: 0.15s; }
     .lang-card.playing .eq span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes bounceEq { from { height: 4px; } to { height: 18px; } }
+    @keyframes bounceEq { from { height: 4px; } to { height: 17px; } }
 
     .lang-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; margin-bottom: 5px; color: var(--forest); }
     .lang-card p { font-size: 0.84rem; color: var(--sage); margin-bottom: 15px; line-height: 1.55; }
     .sample-row {
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      background: rgba(255, 255, 255, 0.9); border: 1.5px solid var(--glass-stroke);
+      background: #fff; border: 1.5px solid var(--glass-stroke);
       border-radius: 15px; padding: 10px 14px; color: var(--forest);
       font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; width: 100%;
-      transition: transform 0.18s var(--spring), border-color 0.2s, background 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .sample-row:hover { border-color: var(--gold); background: #fff; }
-    .sample-row:active { transform: scale(0.97); }
+    .sample-row:hover { border-color: var(--gold); }
     .lang-card.playing .sample-row { background: var(--forest); color: var(--gold-soft); border-color: var(--forest); }
     .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .card-actions .btn-primary, .card-actions .btn-glass { padding: 9px 10px; font-size: 0.78rem; }
 
-    /* PENAPIS & GALERI 12 BABAK (KOMPAK & 3D LANGSUNG TEROPTIMUM) */
-    .filter-wrap { display: flex; justify-content: center; margin-bottom: 26px; }
+    .filter-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
     .filter-bar {
       display: inline-flex; justify-content: center; gap: 6px; flex-wrap: wrap;
       background: var(--glass-tint); border: 1px solid var(--glass-border);
       padding: 5px; border-radius: 999px;
-      box-shadow: var(--shadow-glass), var(--specular);
+      box-shadow: var(--shadow-glass);
     }
     .filter-btn {
       padding: 8px 16px; border-radius: 999px; border: none;
       background: transparent; color: var(--sage); font-weight: 700; font-size: 0.8rem;
       cursor: pointer; transition: 0.2s;
     }
-    .filter-btn.active { background: var(--forest); color: #FAF5EB; box-shadow: 0 4px 12px rgba(23, 51, 37, 0.2); }
+    .filter-btn.active { background: var(--forest); color: #FAF5EB; }
 
     .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 16px; }
     .page-card {
       position: relative; border-radius: 24px; overflow: hidden;
       background: var(--glass-strong); border: 1.5px solid var(--glass-border);
       text-decoration: none; color: var(--forest); display: flex; flex-direction: column;
-      box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.25s var(--spring), box-shadow 0.25s, border-color 0.25s;
+      box-shadow: var(--shadow-glass);
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .page-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lift); border-color: rgba(220, 160, 40, 0.55); }
-    .page-card.is-3d { border-color: rgba(220, 160, 40, 0.48); }
+    .page-card:hover { transform: translateY(-4px); border-color: rgba(220, 160, 40, 0.55); }
+    .page-card.is-3d { border-color: rgba(220, 160, 40, 0.5); }
     .page-card.is-3d::after {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3.5px; z-index: 6;
       background: repeating-linear-gradient(135deg, var(--gold) 0 8px, var(--gourd) 8px 14px, var(--forest) 14px 20px);
     }
 
     .page-media { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #EFE7D6; }
-    .page-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
-    .page-card:hover .page-media img { transform: scale(1.05); }
+    .page-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .page-3d-stage {
       position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
       background: radial-gradient(circle at 50% 56%, #285C42 0%, #0D2218 100%);
       cursor: pointer;
     }
-    .page-3d-stage::before {
-      content: ""; position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
-      width: 72%; height: 48px; border-radius: 50%; pointer-events: none; z-index: 1;
-      background: radial-gradient(circle, rgba(244, 196, 83, 0.36), transparent 72%);
-    }
     .mini-3d-hint {
       position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 5;
-      pointer-events: none; background: rgba(13, 34, 24, 0.78); color: var(--gold-soft);
+      pointer-events: none; background: rgba(13, 34, 24, 0.8); color: var(--gold-soft);
       border: 1px solid rgba(247, 232, 194, 0.25); font-size: 0.6rem; font-weight: 700;
       padding: 3px 9px; border-radius: 999px; white-space: nowrap;
     }
 
     .p-num {
       position: absolute; top: 9px; left: 9px; z-index: 5; width: 28px; height: 28px;
-      border-radius: 50%; background: rgba(255, 253, 248, 0.94); color: var(--forest);
+      border-radius: 50%; background: rgba(255, 253, 248, 0.95); color: var(--forest);
       font-weight: 800; font-size: 0.74rem; display: grid; place-items: center;
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
     }
     .p-badges { position: absolute; top: 9px; right: 9px; z-index: 5; display: flex; gap: 4px; }
-    .p-tag { padding: 3px 8px; border-radius: 999px; font-size: 0.63rem; font-weight: 800; box-shadow: 0 3px 8px rgba(0,0,0,0.16); }
+    .p-tag { padding: 3px 8px; border-radius: 999px; font-size: 0.63rem; font-weight: 800; }
     .tag-3d { background: linear-gradient(135deg, var(--gourd), var(--gold)); color: #fff; }
     .tag-sfx { background: var(--forest); color: var(--gold-soft); }
 
@@ -734,124 +633,100 @@
       padding-top: 6px; border-top: 1px dashed rgba(23, 51, 37, 0.1);
     }
 
-    /* 06: KUIZ 5 SOALAN & PRATONTON SIJIL BERKILAU */
-    .quiz-box { max-width: 760px; margin: 0 auto; padding: 34px 28px; }
+    /* 06: KUIZ 5 SOALAN & SIJIL */
+    .quiz-box { max-width: 760px; margin: 0 auto; padding: 32px 26px; }
     .quiz-top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.75rem; font-weight: 800; color: var(--gourd); letter-spacing: 1.2px; }
     .quiz-prog-track { width: 100%; height: 7px; background: rgba(23, 51, 37, 0.1); border-radius: 999px; overflow: hidden; margin-bottom: 22px; }
-    .quiz-prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd)); transition: width 0.35s ease; }
-    .quiz-q { font-family: 'Fraunces', serif; font-size: 1.22rem; font-weight: 700; color: var(--forest); margin-bottom: 18px; line-height: 1.35; }
+    .quiz-prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd)); transition: width 0.3s ease; }
+    .quiz-q { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: var(--forest); margin-bottom: 18px; line-height: 1.35; }
     .quiz-opts { display: grid; gap: 10px; }
     .quiz-opt {
-      background: rgba(255, 255, 255, 0.85); border: 1.5px solid var(--glass-stroke); color: var(--forest);
+      background: #fff; border: 1.5px solid var(--glass-stroke); color: var(--forest);
       padding: 14px 16px; border-radius: 16px; text-align: left; font-size: 0.92rem; font-weight: 600;
-      cursor: pointer; transition: transform 0.18s var(--spring), background 0.2s, border-color 0.2s;
+      cursor: pointer; transition: border-color 0.2s, background 0.2s;
     }
-    .quiz-opt:hover { border-color: var(--gold); background: #fff; transform: translateX(3px); }
-    .quiz-opt.correct { background: #DCFCE7; border-color: #22C55E; color: #14532D; transform: scale(1.01); }
+    .quiz-opt:hover { border-color: var(--gold); }
+    .quiz-opt.correct { background: #DCFCE7; border-color: #22C55E; color: #14532D; }
     .quiz-opt.wrong { background: #FEE2E2; border-color: #EF4444; color: #7F1D1D; }
-    .quiz-celebrate { animation: popIn 0.55s var(--spring); }
-    @keyframes popIn { 0% { opacity: 0; transform: scale(0.88); } 100% { opacity: 1; transform: scale(1); } }
-    .celebrate-trophy { font-size: 3.4rem; display: inline-block; animation: trophyBounce 1.4s ease-in-out infinite; }
-    @keyframes trophyBounce { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+    .celebrate-trophy { font-size: 3.2rem; display: inline-block; }
     .name-input { width: 100%; max-width: 340px; padding: 13px 18px; border-radius: 999px; border: 1.5px solid var(--forest-mid); background: #fff; color: var(--forest); font-size: 0.94rem; text-align: center; margin: 14px 0; outline: none; }
 
-    .cert-preview-wrap { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; animation: popIn 0.6s var(--spring); }
+    .cert-preview-wrap { margin-top: 22px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .cert-preview-frame {
-      position: relative; width: 100%; max-width: 580px; border-radius: 22px; overflow: hidden;
+      position: relative; width: 100%; max-width: 580px; border-radius: 20px; overflow: hidden;
       padding: 6px; background: linear-gradient(135deg, #DCA028, #FFF4CC, #BA5A28, #28523C);
-      box-shadow: 0 24px 54px -10px rgba(23, 51, 37, 0.28), 0 0 28px rgba(220, 160, 40, 0.26);
-      animation: certFloat 5s ease-in-out infinite;
+      box-shadow: 0 20px 44px -10px rgba(23, 51, 37, 0.26);
     }
-    @keyframes certFloat { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -5px, 0); } }
-    .cert-preview-frame img { width: 100%; height: auto; display: block; border-radius: 17px; }
-    .cert-preview-frame::after {
-      content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.45) 48%, rgba(255, 240, 184, 0.25) 54%, transparent 72%);
-      transform: translateX(-140%);
-      animation: foilSweep 4.5s ease-in-out infinite;
-    }
-
-    .confetti { position: fixed; width: 9px; height: 9px; z-index: 3000; pointer-events: none; animation: confettiDrop 2.4s ease-out forwards; }
-    @keyframes confettiDrop { 0% { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0,100vh,0) rotate(720deg); opacity: 0; } }
+    .cert-preview-frame img { width: 100%; height: auto; display: block; border-radius: 15px; }
 
     /* 07: SOALAN LAZIM (FAQ) */
     .faq-list { max-width: 800px; margin: 0 auto; display: grid; gap: 12px; }
     .faq-item {
       background: var(--glass-strong);
-      border: 1.5px solid var(--glass-border); border-radius: 24px;
-      box-shadow: var(--shadow-glass), var(--specular);
-      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--spring);
+      border: 1.5px solid var(--glass-border); border-radius: 22px;
+      box-shadow: var(--shadow-glass);
+      transition: border-color 0.2s;
     }
-    .faq-item.open { border-color: rgba(220, 160, 40, 0.55); box-shadow: var(--shadow-lift), var(--specular); }
+    .faq-item.open { border-color: rgba(220, 160, 40, 0.55); }
     .faq-q { width: 100%; background: transparent; border: none; color: var(--forest); padding: 18px 20px; font-size: 0.94rem; font-weight: 700; text-align: left; display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .faq-icon { width: 38px; height: 38px; border-radius: 14px; flex-shrink: 0; background: var(--gold-soft); display: grid; place-items: center; font-size: 1.1rem; }
     .faq-title { flex: 1; line-height: 1.35; }
-    .faq-chevron { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; background: rgba(23, 51, 37, 0.06); color: var(--gourd); display: grid; place-items: center; font-size: 1.2rem; font-weight: 700; transition: transform 0.3s var(--spring), background 0.2s, color 0.2s; }
+    .faq-chevron { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; background: rgba(23, 51, 37, 0.06); color: var(--gourd); display: grid; place-items: center; font-size: 1.2rem; font-weight: 700; transition: transform 0.25s ease, background 0.2s, color 0.2s; }
     .faq-item.open .faq-chevron { transform: rotate(45deg); background: var(--forest); color: #FAF5EB; }
-    .faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s ease; }
+    .faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.28s ease; }
     .faq-item.open .faq-body { grid-template-rows: 1fr; }
     .faq-inner { overflow: hidden; }
     .faq-a { padding: 0 22px 20px 72px; color: var(--sage); font-size: 0.9rem; line-height: 1.65; }
 
-    /* MODAL PASPORT & PELEKAT KOLEKTOR */
+    /* MODAL PASPORT */
     .glass-modal-overlay {
       position: fixed; inset: 0; z-index: 4000;
-      background: rgba(15, 34, 24, 0.58);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      background: rgba(15, 34, 24, 0.62);
       display: none; align-items: center; justify-content: center; padding: 18px;
-      opacity: 0; transition: opacity 0.28s ease;
     }
-    .glass-modal-overlay.open { display: flex; opacity: 1; }
+    .glass-modal-overlay.open { display: flex; }
     .glass-modal {
       width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto;
-      background: rgba(255, 253, 248, 0.97); border: 1.5px solid #fff;
-      border-radius: 32px; padding: 28px 24px; position: relative;
-      box-shadow: 0 28px 64px rgba(15, 34, 24, 0.35), var(--specular);
-      transform: scale(0.92); transition: transform 0.32s var(--spring);
+      background: #FFFDF8; border: 1.5px solid #fff;
+      border-radius: 30px; padding: 28px 24px; position: relative;
+      box-shadow: 0 24px 54px rgba(15, 34, 24, 0.35);
       text-align: center;
     }
-    .glass-modal-overlay.open .glass-modal { transform: scale(1); }
     .modal-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--glass-stroke); background: #fff; color: var(--forest); font-size: 1.15rem; font-weight: 700; cursor: pointer; display: grid; place-items: center; }
 
     .sticker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0; }
-    .sticker-slot { padding: 16px 12px; border-radius: 22px; background: rgba(23, 51, 37, 0.04); border: 1.5px dashed rgba(23, 51, 37, 0.18); transition: transform 0.3s var(--spring), background 0.3s, border-color 0.3s; }
-    .sticker-slot .s-ico { font-size: 2.1rem; filter: grayscale(1) opacity(0.38); transition: 0.35s; margin-bottom: 6px; }
+    .sticker-slot { padding: 16px 12px; border-radius: 20px; background: rgba(23, 51, 37, 0.04); border: 1.5px dashed rgba(23, 51, 37, 0.18); }
+    .sticker-slot .s-ico { font-size: 2rem; filter: grayscale(1) opacity(0.38); margin-bottom: 6px; }
     .sticker-slot h4 { font-size: 0.86rem; color: var(--sage); margin-bottom: 3px; }
     .sticker-slot p { font-size: 0.72rem; color: var(--sage); opacity: 0.8; line-height: 1.35; }
-    .sticker-slot.unlocked { background: linear-gradient(145deg, #FFFDF7, #F7E8C2); border: 1.5px solid var(--gold); box-shadow: 0 10px 24px rgba(220, 160, 40, 0.18); }
-    .sticker-slot.unlocked .s-ico { filter: none; transform: scale(1.1); }
+    .sticker-slot.unlocked { background: linear-gradient(145deg, #FFFDF7, #F7E8C2); border: 1.5px solid var(--gold); }
+    .sticker-slot.unlocked .s-ico { filter: none; }
     .sticker-slot.unlocked h4 { color: var(--forest); }
     .sticker-slot.unlocked p { color: var(--gourd); font-weight: 700; opacity: 1; }
 
     .master-reward-box {
-      display: none; margin: 14px 0 18px; padding: 18px 14px; border-radius: 24px;
+      display: none; margin: 14px 0 18px; padding: 18px 14px; border-radius: 22px;
       background: linear-gradient(145deg, #FFFDF7, #F7E8C2);
-      border: 2px solid var(--gold); box-shadow: 0 12px 28px rgba(220, 160, 40, 0.22);
-      animation: popIn 0.5s var(--spring);
+      border: 2px solid var(--gold);
     }
     .master-sticker-preview {
-      width: 175px; height: 175px; margin: 10px auto 12px; position: relative;
+      width: 170px; height: 170px; margin: 10px auto 12px;
       border-radius: 50%; overflow: hidden;
-      filter: drop-shadow(0 12px 22px rgba(23, 51, 37, 0.26));
-      animation: certFloat 4.2s ease-in-out infinite;
     }
     .master-sticker-preview img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
     #badge-toast {
       position: fixed; top: calc(max(12px, env(safe-area-inset-top)) + 58px); left: 50%;
-      transform: translate(-50%, -18px); z-index: 4500; opacity: 0; pointer-events: none;
+      transform: translate(-50%, -14px); z-index: 4500; opacity: 0; pointer-events: none;
       background: linear-gradient(135deg, #173325, #28523C); color: #FAF5EB;
       border: 1.5px solid var(--gold); border-radius: 999px;
       padding: 9px 18px; font-size: 0.78rem; font-weight: 800; white-space: nowrap;
-      box-shadow: 0 14px 32px rgba(23, 51, 37, 0.35);
-      transition: opacity 0.3s ease, transform 0.35s var(--spring);
+      box-shadow: 0 12px 26px rgba(23, 51, 37, 0.32);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
     #badge-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .reveal { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity 0.48s ease, transform 0.48s ease; }
-    .reveal.show { opacity: 1; transform: translate3d(0, 0, 0); }
-
-    footer { position: relative; z-index: 2; background: var(--forest); color: rgba(250, 245, 235, 0.8); padding: 50px 6% 74px; text-align: center; font-size: 0.86rem; }
+    footer { position: relative; z-index: 2; background: var(--forest); color: rgba(250, 245, 235, 0.8); padding: 48px 6% 72px; text-align: center; font-size: 0.86rem; }
     footer strong { color: var(--gold-soft); }
     .team-row { margin: 10px 0 12px; color: #fff; font-weight: 600; }
 
@@ -868,20 +743,20 @@
     }
 
     @media (max-width: 640px) {
-      section.wrap { padding: 64px 16px; }
-      .hero { padding: 84px 16px 54px; gap: 22px; }
+      section.wrap { padding: 60px 16px; }
+      .hero { padding: 84px 16px 52px; gap: 22px; }
       .navbar { padding: 6px 8px 6px 12px; }
       .brand { font-size: 0.84rem; gap: 6px; }
       .brand-emblem { width: 25px; height: 25px; font-size: 0.78rem; }
       .navbar .btn-primary { padding: 7px 11px; font-size: 0.72rem; }
       .passport-nav-btn { padding: 5px 9px; font-size: 0.68rem; }
       .lang-switch button { padding: 4px 7px; font-size: 0.66rem; }
-      .book-pedestal-wrap { padding: 22px 26px 16px; border-radius: 32px; }
+      .book-pedestal-wrap { padding: 22px 26px 16px; border-radius: 30px; }
       .genz-sticker { font-size: 0.64rem; padding: 5px 10px; }
       .st-1 { right: -6px; } .st-2 { left: -8px; } .st-3 { right: -8px; }
       .pedestal-grid, .lang-grid { grid-template-columns: 1fr; gap: 14px; }
       .lang-card { padding: 18px; }
-      .sompoton-studio { padding: 24px 16px; gap: 24px; }
+      .sompoton-studio { padding: 22px 16px; gap: 22px; }
       .story-box, .tab-panel, .quiz-box { padding: 22px 18px; }
       .kbd-hint { display: none; }
       .dict-grid, .pages-grid { grid-template-columns: repeat(2, 1fr); gap: 11px; }
@@ -893,27 +768,12 @@
       .sticker-grid { gap: 10px; }
       .faq-a { padding: 0 18px 18px 18px; }
       .ambient-fab { bottom: max(12px, env(safe-area-inset-bottom)); right: 12px; padding: 8px 13px; font-size: 0.72rem; }
-      #spatial-ios-btn { bottom: max(12px, env(safe-area-inset-bottom)); left: 12px; padding: 8px 13px; font-size: 0.72rem; }
-      .bg-note:nth-child(n+4) { display: none; }
-      .glass-card, .hero-metrics, .book-pedestal-wrap, .faq-item { background: rgba(255, 253, 248, 0.94); }
     }
   </style>
 </head>
 <body>
 
-  <div class="ambient-backdrop">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
-  <div class="music-notes-bg" aria-hidden="true">
-    <span class="bg-note" style="--x:7%; --dur:21s; --del:0s; --sz:1.5rem;">♪</span>
-    <span class="bg-note gold" style="--x:24%; --dur:25s; --del:-6s; --sz:1.9rem;">♫</span>
-    <span class="bg-note" style="--x:48%; --dur:20s; --del:-11s; --sz:1.35rem;">♩</span>
-    <span class="bg-note gold" style="--x:72%; --dur:24s; --del:-3s; --sz:1.7rem;">♬</span>
-    <span class="bg-note" style="--x:86%; --dur:22s; --del:-14s; --sz:1.45rem;">♪</span>
-    <span class="bg-note gold" style="--x:93%; --dur:26s; --del:-8s; --sz:1.8rem;">♫</span>
-  </div>
+  <div class="ambient-backdrop"></div>
   <div class="linangkit-pattern"></div>
 
   <div id="intro-curtain">
@@ -928,7 +788,6 @@
     <div class="amb-bars"><span></span><span></span><span></span></div>
     <span id="amb-label">Rimba: MATI</span>
   </button>
-  <button id="spatial-ios-btn" onclick="enableIosSpatial()">🧭 Mod Spatial 3D</button>
 
   <div class="nav-wrap">
     <nav class="navbar">
@@ -957,7 +816,7 @@
     </nav>
   </div>
 
-  <!-- HERO: BUKU 3D GEN-Z + KINABALU MORNING -->
+  <!-- HERO: BUKU 3D TERAPUNG SAHAJA (RINGAN & BERSIH) -->
   <div class="hero-wrapper">
     <svg class="hero-mountains" viewBox="0 0 1440 360" preserveAspectRatio="none">
       <path fill="#C1DCE0" d="M0,360 L0,235 L160,185 L320,220 L490,115 L580,140 L675,55 L745,92 L810,48 L890,112 L1020,165 L1220,135 L1440,205 L1440,360 Z"/>
@@ -987,18 +846,12 @@
       </div>
 
       <div class="hero-stage">
-        <div class="hero-toggle">
-          <button id="tog-book" class="active" onclick="switchHeroMode('book')">📖 Buku 3D</button>
-          <button id="tog-3d" onclick="switchHeroMode('3d')">✨ Diorama Hidup</button>
-        </div>
-
-        <div class="book-pedestal-wrap" id="magic-book-wrap">
-          <div class="book-glow-ring"></div>
+        <div class="book-pedestal-wrap">
           <span class="genz-sticker st-1">✨ WebAR 3D</span>
           <span class="genz-sticker st-2">🎧 3 Bahasa</span>
           <span class="genz-sticker st-3">🏔️ Sabah</span>
 
-          <div class="magic-book" id="magic-book" onclick="window.location.href='viewer.html?page=1'">
+          <div class="magic-book" onclick="window.location.href='viewer.html?page=1'">
             <div class="book-inside">
               <h4>Babak Pertama</h4>
               <p>"Pada zaman dahulu di Sabah, tinggal sepasang suami isteri warga emas yang penyayang bernama Aki dan Odu..."</p>
@@ -1009,13 +862,7 @@
             </div>
           </div>
           <div class="book-shadow"></div>
-          <div class="book-hover-tip" id="book-tip">👆 Ketik buku untuk mula membaca</div>
-        </div>
-
-        <div id="hero-3d-box">
-          <div id="hero-mv-slot" class="mv-slot" data-src="./models/page10.glb" data-orbit="35deg 68deg 108%">
-            <div class="mv-loader"><span>🧊</span><small>Memuatkan 3D...</small></div>
-          </div>
+          <div class="book-hover-tip">👆 Ketik buku untuk mula membaca</div>
         </div>
       </div>
     </header>
@@ -1040,8 +887,8 @@
   </div>
   <div class="linangkit-strip"></div>
 
-  <!-- 01: PENTAS 3 DIORAMA 3D (DYNAMIC MOUNTING ANTI-CRASH) -->
-  <section id="diorama" class="wrap reveal">
+  <!-- 01: PENTAS 3 DIORAMA 3D (ANIMASI SERENTAK + ANTI-CRASH) -->
+  <section id="diorama" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="d3_kicker">PENTAS DIORAMA ISOMETRIK</span>
       <h2 data-i18n="d3_title">Tiga Dunia 3D Hidup</h2>
@@ -1096,8 +943,8 @@
     </div>
   </section>
 
-  <!-- 02: STUDIO SOMPOTON MAYA -->
-  <section id="studio" class="wrap reveal">
+  <!-- 02: STUDIO SOMPOTON MAYA (NOT MUZIK SEDERHANA & RINGAN) -->
+  <section id="studio" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="st_kicker">PENGALAMAN BUNYI INTERAKTIF</span>
       <h2 data-i18n="st_title">Mainkan Sompoton Maya</h2>
@@ -1128,8 +975,6 @@
 
       <div class="instrument-box">
         <div class="studio-badge-top">✦ Studio Akustik Buluh Sabah ✦</div>
-        <div class="gourd-aura" id="gourd-aura"></div>
-        <canvas id="wave-canvas"></canvas>
         <div class="sompoton-body">
           <div class="pipes-stage" id="pipes-stage">
             <button class="pipe" data-key="a" style="height:186px;" onclick="playPipe(261.63, 'C4 — Lombohon', this)">C4<small>A</small></button>
@@ -1151,7 +996,7 @@
   </section>
 
   <!-- 03: SINOPSIS, WARISAN SABAH & KENALI WATAK -->
-  <section id="kisah" class="wrap reveal">
+  <section id="kisah" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="h_kicker">SINOPSIS & WARISAN SABAH</span>
       <h2 data-i18n="h_title">Lagenda Cinta di Kaki Gunung Kinabalu</h2>
@@ -1186,17 +1031,15 @@
           <button class="tab-btn" onclick="openTab('haiwan', this)">🦌 Haiwan Rimba</button>
         </div>
         <div class="glass-card tab-panel" id="tab-panel">
-          <div class="artifact-anim">
-            <div class="artifact-head">
-              <div class="artifact-emblem">👴🏽</div>
-              <div>
-                <span class="artifact-tag">Watak Utama · Simbol Kasih Sayang</span>
-                <h3>Aki & Odu</h3>
-              </div>
+          <div class="artifact-head">
+            <div class="artifact-emblem">👴🏽</div>
+            <div>
+              <span class="artifact-tag">Watak Utama · Simbol Kasih Sayang</span>
+              <h3>Aki & Odu</h3>
             </div>
-            <p>Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot).</p>
-            <div class="artifact-fact"><strong>✦ Fakta Budaya:</strong> Dalam bahasa Kadazandusun, <em>Aki</em> bermaksud datuk dan <em>Odu</em> bermaksud nenek.</div>
           </div>
+          <p>Pasangan warga emas Kadazandusun yang melambangkan kasih sayang dan kerjasama. Aki mengenakan sigar serta baju tradisi hitam bersulam emas, manakala Odu memakai baju tradisi bersama tali pinggang syiling perak (himpogot).</p>
+          <div class="artifact-fact"><strong>✦ Fakta Budaya:</strong> Dalam bahasa Kadazandusun, <em>Aki</em> bermaksud datuk dan <em>Odu</em> bermaksud nenek.</div>
         </div>
       </div>
     </div>
@@ -1207,7 +1050,7 @@
         <h3 style="font-family:'Fraunces',serif; font-size:clamp(1.35rem, 3.6vw, 1.95rem); color:var(--forest);" data-i18n="char_title">Ketik Watak untuk Mendengar Pesanan Mereka</h3>
       </div>
       <div class="char-grid">
-        <div class="glass-card char-card" onclick="interactChar('aki', this)">
+        <div class="glass-card char-card" onclick="interactChar('aki')">
           <div class="char-avatar">👴🏽</div>
           <span class="char-role">Wira Penyayang</span>
           <h4>Aki</h4>
@@ -1216,7 +1059,7 @@
           <div class="char-tap-hint">🔊 Ketik untuk sapaan</div>
         </div>
 
-        <div class="glass-card char-card" onclick="interactChar('odu', this)">
+        <div class="glass-card char-card" onclick="interactChar('odu')">
           <div class="char-avatar">👵🏽</div>
           <span class="char-role">Penganyam Mahir</span>
           <h4>Odu</h4>
@@ -1225,7 +1068,7 @@
           <div class="char-tap-hint">🔊 Ketik untuk sapaan</div>
         </div>
 
-        <div class="glass-card char-card" onclick="interactChar('payau', this)">
+        <div class="glass-card char-card" onclick="interactChar('payau')">
           <div class="char-avatar">🦌</div>
           <span class="char-role">Sahabat Rimba</span>
           <h4>Anak Rusa (Payau)</h4>
@@ -1234,7 +1077,7 @@
           <div class="char-tap-hint">🔊 Ketik untuk bunyi</div>
         </div>
 
-        <div class="glass-card char-card" onclick="interactChar('burung', this)">
+        <div class="glass-card char-card" onclick="interactChar('burung')">
           <div class="char-avatar">🐦</div>
           <span class="char-role">Pembimbing Magis</span>
           <h4>Burung Magis</h4>
@@ -1246,24 +1089,24 @@
     </div>
   </section>
 
-  <!-- 04: KAMUS MINI 3D FLIP -->
-  <section id="kamus" class="wrap reveal">
+  <!-- 04: KAMUS MINI (PERTUKARAN KAD SEDERHANA & RINGAN) -->
+  <section id="kamus" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="d_kicker">PEMELIHARAAN BAHASA IBUNDA</span>
       <h2 data-i18n="d_title">Kamus Mini Kadazandusun</h2>
-      <p data-i18n="d_sub">Ketik mana-mana kad untuk membalikkannya secara 3D beserta bunyi buluh interaktif.</p>
+      <p data-i18n="d_sub">Ketik mana-mana kad untuk melihat terjemahan Bahasa Melayu & Inggeris beserta bunyi buluh interaktif.</p>
     </div>
 
     <div class="dict-toolbar">
       <div class="dict-progress-pill">✨ Diteroka: <strong id="dict-count">0 / 8</strong></div>
-      <button class="btn-glass" style="padding:7px 15px; font-size:0.78rem;" onclick="flipAllDict()">↻ Balikkan Semua</button>
+      <button class="btn-glass" style="padding:7px 15px; font-size:0.78rem;" onclick="flipAllDict()">↻ Papar Semua Terjemahan</button>
     </div>
 
     <div class="dict-grid" id="dict-grid"></div>
   </section>
 
   <!-- 05: PENCERITAAN 3 BAHASA & 12 BABAK -->
-  <section id="halaman" class="wrap reveal">
+  <section id="halaman" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="l_kicker">PENCERITAAN 3 BAHASA & 12 BABAK</span>
       <h2 data-i18n="p_title">Setiap Halaman, Satu Dunia Kecil</h2>
@@ -1348,18 +1191,18 @@
     <div class="pages-grid" id="pages-grid"></div>
   </section>
 
-  <!-- 06: KUIZ 5 SOALAN & PRATONTON SIJIL PREMIUM -->
-  <section id="kuiz" class="wrap reveal">
+  <!-- 06: KUIZ 5 SOALAN & SIJIL DIGITAL -->
+  <section id="kuiz" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="q_kicker">CABARAN INTERAKTIF & SIJIL</span>
       <h2 data-i18n="q_title">Kuiz Warisan Sompoton</h2>
-      <p data-i18n="q_sub">Jawab 5 soalan ringkas, lihat pratonton berkilau Sijil Digital eksklusif anda, dan muat turun dalam format PNG.</p>
+      <p data-i18n="q_sub">Jawab 5 soalan ringkas, lihat pratonton Sijil Digital eksklusif anda, dan muat turun dalam format PNG.</p>
     </div>
     <div class="glass-card quiz-box" id="quiz-box"></div>
   </section>
 
   <!-- 07: SOALAN LAZIM (FAQ) -->
-  <section id="soalan" class="wrap reveal" style="padding-top:16px;">
+  <section id="soalan" class="wrap" style="padding-top:16px;">
     <div class="sec-head">
       <span class="sec-kicker">PANDUAN & BANTUAN</span>
       <h2>Soalan Lazim</h2>
@@ -1407,7 +1250,7 @@
   <!-- TOAST LENCANA -->
   <div id="badge-toast"></div>
 
-  <!-- MODAL PASPORT PENJELAJAH BORNEO (AUTO-RESET + PELEKAT KOLEKTOR PNG) -->
+  <!-- MODAL PASPORT PENJELAJAH BORNEO -->
   <div class="glass-modal-overlay" id="passport-modal" onclick="if(event.target===this) closePassport()">
     <div class="glass-modal">
       <button class="modal-close" onclick="closePassport()">×</button>
@@ -1460,11 +1303,11 @@
       setTimeout(() => {
         const curtain = document.getElementById('intro-curtain');
         if (curtain) curtain.classList.add('hide');
-      }, 550);
-      setTimeout(syncVisible3DSlots, 700);
+      }, 450);
+      setTimeout(syncVisible3DSlots, 600);
     });
 
-    /* ================= PENGURUS 3D DINAMIK (ANTI "AW, SNAP!" — MAKS 1 WEBGL DI TELEFON) ================= */
+    /* ================= PENGURUS 3D DINAMIK (ANTI-CRASH + ANIMASI SERENTAK) ================= */
     const progressEl = document.getElementById('scroll-progress');
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const MAX_MOUNTED_3D = isMobile ? 1 : 3;
@@ -1498,7 +1341,7 @@
         mv.removeAttribute('auto-rotate');
         if (typeof mv.pause === 'function') mv.pause();
         mv.removeAttribute('src');
-        mv.remove(); // Bebaskan WebGL context & RAM/VRAM serta-merta
+        mv.remove();
       }
       slot.classList.remove('loaded');
       const idx = mountedSlots.indexOf(slot);
@@ -1510,7 +1353,6 @@
       let mv = slot.querySelector('model-viewer');
 
       if (!mv) {
-        // Hadkan bilangan model-viewer hidup serentak supaya Chrome telefon tidak pernah crash
         while (mountedSlots.length >= MAX_MOUNTED_3D) {
           unmountModelFromSlot(mountedSlots[0]);
         }
@@ -1620,16 +1462,6 @@
       } else {
         ambAudio.pause(); fab.classList.remove('on'); lbl.textContent = 'Rimba: MATI';
       }
-    }
-
-    function switchHeroMode(mode) {
-      document.getElementById('tog-book').classList.toggle('active', mode === 'book');
-      document.getElementById('tog-3d').classList.toggle('active', mode === '3d');
-      document.getElementById('magic-book-wrap').style.display = mode === 'book' ? 'flex' : 'none';
-      document.getElementById('hero-3d-box').style.display = mode === '3d' ? 'block' : 'none';
-      const heroSlot = document.getElementById('hero-mv-slot');
-      if (mode === '3d') mountModelInSlot(heroSlot);
-      else unmountModelFromSlot(heroSlot);
     }
 
     /* ================= ENJIN WEB AUDIO ================= */
@@ -1816,7 +1648,6 @@
       showBadgeToast(`🎉 Pelekat Baharu: ${title}!`);
       if (Object.values(passport).every(Boolean)) {
         setTimeout(() => {
-          launchConfetti();
           showBadgeToast('🌟 4/4 Lengkap! Buka Pasport untuk muat turun Pelekat Kolektor!');
         }, 1200);
       }
@@ -1845,49 +1676,8 @@
       }).catch(() => {});
     }
 
-    /* ================= STUDIO SOMPOTON PREMIUM ================= */
-    let waveEnergy = 0, isMelodyPlaying = false, studioVisible = false, pipesPlayedCount = 0;
-    let autoRiffTimers = [], isAutoRiffRunning = false, selectedMelody = 'sumazau';
-    const gourdAura = document.getElementById('gourd-aura');
-
-    const waveCanvas = document.getElementById('wave-canvas'), wCtx = waveCanvas.getContext('2d');
-    let wavePhase = 0, waveRaf = null;
-
-    function wakeWave() {
-      if (!waveRaf && studioVisible) waveRaf = requestAnimationFrame(drawWave);
-    }
-
-    function drawWave() {
-      waveRaf = null;
-      if (!studioVisible || document.hidden || isScrollingNow) return;
-      const w = waveCanvas.width, h = waveCanvas.height;
-      wCtx.clearRect(0, 0, w, h);
-      wavePhase += 0.068;
-      waveEnergy += ((isMelodyPlaying ? 26 : 0) - waveEnergy) * 0.07;
-      for (let layer = 0; layer < 2; layer++) {
-        wCtx.beginPath();
-        const amp = Math.max(2, waveEnergy * (layer === 0 ? 1 : 0.58));
-        for (let x = 0; x <= w; x += 12) {
-          const y = h * 0.34 + Math.sin(x * 0.025 + wavePhase + layer * 1.6) * amp * Math.sin((x / w) * Math.PI);
-          if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y);
-        }
-        wCtx.strokeStyle = layer === 0 ? 'rgba(247, 232, 194, 0.72)' : 'rgba(74, 222, 128, 0.42)';
-        wCtx.lineWidth = layer === 0 ? 2.5 : 1.5; wCtx.stroke();
-      }
-      if (isMelodyPlaying || waveEnergy > 0.3) waveRaf = requestAnimationFrame(drawWave);
-    }
-
-    function resizeWave() {
-      waveCanvas.width = waveCanvas.parentElement.clientWidth;
-      waveCanvas.height = waveCanvas.parentElement.clientHeight;
-      if (studioVisible) wakeWave();
-    }
-    window.addEventListener('resize', resizeWave); setTimeout(resizeWave, 200);
-
-    new IntersectionObserver(entries => {
-      studioVisible = entries[0].isIntersecting;
-      if (studioVisible) wakeWave();
-    }, { threshold: 0.05 }).observe(document.getElementById('studio'));
+    /* ================= STUDIO SOMPOTON MAYA (RINGAN TANPA CANVAS) ================= */
+    let pipesPlayedCount = 0, autoRiffTimers = [], isAutoRiffRunning = false, selectedMelody = 'sumazau';
 
     function triggerPipeSound(freq, label, btn, duration = 0.72) {
       const ctx = ensureAudioUnlocked();
@@ -1926,21 +1716,17 @@
       if (ctx.state === 'suspended') ctx.resume().then(startTone).catch(() => {});
       else startTone();
 
-      waveEnergy = 46;
-      wakeWave();
-      gourdAura.classList.add('pulse');
-      setTimeout(() => gourdAura.classList.remove('pulse'), 220);
-
       if (btn) {
-        btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), Math.min(260, duration * 400));
+        btn.classList.add('active');
+        setTimeout(() => btn.classList.remove('active'), Math.min(240, duration * 380));
         const stage = document.getElementById('pipes-stage');
         const note = document.createElement('span');
         note.className = 'floating-note';
-        const icons = ['♪', '♫', '✦'];
-        note.textContent = icons[Math.floor(Math.random() * icons.length)];
-        note.style.left = (btn.offsetLeft + btn.offsetWidth / 2 - 8) + 'px';
-        note.style.top = (btn.offsetTop - 10) + 'px';
-        stage.appendChild(note); setTimeout(() => note.remove(), 950);
+        note.textContent = Math.random() > 0.5 ? '♪' : '♫';
+        note.style.left = (btn.offsetLeft + btn.offsetWidth / 2 - 6) + 'px';
+        note.style.top = (btn.offsetTop - 8) + 'px';
+        stage.appendChild(note);
+        setTimeout(() => note.remove(), 650);
       }
       document.getElementById('note-status').textContent = `🎶 Nada: ${label}`;
 
@@ -2027,13 +1813,13 @@
       ensureAudioUnlocked();
       const btn = document.getElementById('melody-btn');
       if (!realSompoton.paused) {
-        realSompoton.pause(); realSompoton.currentTime = 0; isMelodyPlaying = false;
+        realSompoton.pause(); realSompoton.currentTime = 0;
         btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)';
       } else {
         stopAutoRiff();
-        realSompoton.play().then(() => { isMelodyPlaying = true; wakeWave(); }).catch(() => {});
+        realSompoton.play().catch(() => {});
         btn.innerHTML = '⏹ Hentikan Rakaman';
-        realSompoton.onended = () => { isMelodyPlaying = false; btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)'; };
+        realSompoton.onended = () => { btn.innerHTML = '🎵 Rakaman Asli (Hal. 10)'; };
       }
     }
 
@@ -2050,14 +1836,12 @@
       btn.classList.add('active');
       const item = heritageData[key];
       document.getElementById('tab-panel').innerHTML = `
-        <div class="artifact-anim">
-          <div class="artifact-head">
-            <div class="artifact-emblem">${item.icon}</div>
-            <div><span class="artifact-tag">${item.tag}</span><h3>${item.t}</h3></div>
-          </div>
-          <p>${item.d}</p>
-          <div class="artifact-fact"><strong>✦ Fakta Budaya:</strong> ${item.fact}</div>
-        </div>`;
+        <div class="artifact-head">
+          <div class="artifact-emblem">${item.icon}</div>
+          <div><span class="artifact-tag">${item.tag}</span><h3>${item.t}</h3></div>
+        </div>
+        <p>${item.d}</p>
+        <div class="artifact-fact"><strong>✦ Fakta Budaya:</strong> ${item.fact}</div>`;
     }
 
     const charLines = {
@@ -2069,9 +1853,8 @@
     const charIdx = { aki: 0, odu: 0, payau: 0, burung: 0 };
     let birdPreview = makeLazyAudio('./sfx/pg6_burung.mp3');
 
-    function interactChar(id, cardEl) {
+    function interactChar(id) {
       ensureAudioUnlocked();
-      cardEl.classList.remove('tapped'); void cardEl.offsetWidth; cardEl.classList.add('tapped');
       charIdx[id] = (charIdx[id] + 1) % charLines[id].length;
       document.getElementById(`bubble-${id}`).textContent = charLines[id][charIdx[id]];
       if (id === 'burung') {
@@ -2082,7 +1865,7 @@
       unlockBadge('explorer', 'Peneroka 3D & Watak 🧊');
     }
 
-    /* ================= KAMUS MINI ================= */
+    /* ================= KAMUS MINI (PERTUKARAN KAD 2D RINGAN) ================= */
     const vocab = [
       { icon: "👴🏽", kdz: "Aki", ph: "/a-ki/", bm: "Datuk / Warga Emas Lelaki", en: "Grandfather" },
       { icon: "👵🏽", kdz: "Odu", ph: "/o-du/", bm: "Nenek / Warga Emas Wanita", en: "Grandmother" },
@@ -2097,21 +1880,25 @@
     const dictGrid = document.getElementById('dict-grid');
     vocab.forEach((v, idx) => {
       dictGrid.innerHTML += `
-        <div class="flip-card" data-idx="${idx}" onclick="flipDictCard(this, ${idx})">
-          <div class="flip-inner">
-            <div class="flip-front">
-              <div class="dict-icon">${v.icon}</div><h3>${v.kdz}</h3><div class="dict-phonetic">${v.ph}</div><span>Ketik untuk terjemahan ↻</span>
-            </div>
-            <div class="flip-back">
-              <strong>${v.bm}</strong><p>${v.en}</p><small>Kadazandusun · Sabah</small>
-            </div>
+        <div class="dict-card" data-idx="${idx}" onclick="flipDictCard(this, ${idx})">
+          <div class="dict-front">
+            <div class="dict-icon">${v.icon}</div>
+            <h3>${v.kdz}</h3>
+            <div class="dict-phonetic">${v.ph}</div>
+            <span>Ketik untuk terjemahan</span>
+          </div>
+          <div class="dict-back">
+            <strong>${v.bm}</strong>
+            <p>${v.en}</p>
+            <small>Kadazandusun · Sabah</small>
           </div>
         </div>`;
     });
 
     function flipDictCard(card, idx) {
       playUiChime('flip');
-      card.classList.toggle('flipped'); card.classList.add('discovered');
+      card.classList.toggle('flipped');
+      card.classList.add('discovered');
       discoveredSet.add(idx);
       document.getElementById('dict-count').textContent = `${discoveredSet.size} / ${vocab.length}`;
       if (discoveredSet.size >= 4) unlockBadge('scholar', 'Cendekiawan KDZ 📖');
@@ -2121,7 +1908,7 @@
     function flipAllDict() {
       playUiChime('flip');
       allFlipped = !allFlipped;
-      document.querySelectorAll('.flip-card').forEach((c, idx) => {
+      document.querySelectorAll('.dict-card').forEach((c, idx) => {
         c.classList.toggle('flipped', allFlipped);
         if (allFlipped) { c.classList.add('discovered'); discoveredSet.add(idx); }
       });
@@ -2129,7 +1916,7 @@
       if (discoveredSet.size >= 4) unlockBadge('scholar', 'Cendekiawan KDZ 📖');
     }
 
-    /* ================= 3 BAHASA & GALERI 12 BABAK (DYNAMIC 3D SLOT) ================= */
+    /* ================= 3 BAHASA & GALERI 12 BABAK ================= */
     let sampleAudio = makeLazyAudio(), playingCardId = null;
     function playSample(lang, cardId) {
       const card = document.getElementById(cardId);
@@ -2205,7 +1992,7 @@
     }
     renderPages('all');
 
-    /* ================= KUIZ 5 SOALAN + PRATONTON SIJIL DIRAJA ================= */
+    /* ================= KUIZ 5 SOALAN & SIJIL DIGITAL ================= */
     const quizData = [
       { q: "1. Mengapakah Odu kehilangan suaranya pada awal cerita?", opts: ["Terjatuh di hutan", "Akibat demam panas yang teruk", "Tersesat di sungai"], ans: 1 },
       { q: "2. Haiwan apakah yang membimbing Aki dan Odu ke hutan buluh magis?", opts: ["Burung kecil", "Kancil", "Rama-rama"], ans: 0 },
@@ -2218,12 +2005,11 @@
     function renderQuiz() {
       const box = document.getElementById('quiz-box');
       if (qIdx >= quizData.length) {
-        launchConfetti();
         playUiChime('fanfare');
         unlockBadge('champion', 'Juara Warisan 🏆');
         const msg = score === 5 ? "Luar biasa! Anda pakar warisan Sompoton!" : (score >= 3 ? "Hebat! Anda berjaya menamatkan cabaran warisan!" : "Tahniah kerana mencuba & meneroka warisan Sabah!");
         box.innerHTML = `
-          <div class="quiz-celebrate" style="text-align:center;">
+          <div style="text-align:center;">
             <div class="celebrate-trophy">🏆</div>
             <h3 style="font-family:'Fraunces',serif; color:var(--forest); font-size:1.55rem; margin-top:6px;">Tahniah! Kuiz Selesai</h3>
             <p style="color:var(--gourd); font-weight:800; font-size:1.02rem; margin-top:4px;">Skor Anda: ${score} / ${quizData.length} • ${msg}</p>
@@ -2248,20 +2034,7 @@
       const buttons = document.querySelectorAll('.quiz-opt'); buttons.forEach(b => b.disabled = true);
       if (choice === quizData[qIdx].ans) { btn.classList.add('correct'); score++; playUiChime('correct'); }
       else { btn.classList.add('wrong'); buttons[quizData[qIdx].ans].classList.add('correct'); playUiChime('wrong'); }
-      setTimeout(() => { qIdx++; renderQuiz(); }, 800);
-    }
-
-    function launchConfetti() {
-      const colors = ['#DCA028', '#BA5A28', '#28523C', '#F7E8C2', '#4ADE80'];
-      const count = isMobile ? 22 : 36;
-      for (let i = 0; i < count; i++) {
-        const c = document.createElement('div'); c.className = 'confetti';
-        c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-12px';
-        c.style.background = colors[Math.floor(Math.random() * colors.length)];
-        c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-        c.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
-        document.body.appendChild(c); setTimeout(() => c.remove(), 2900);
-      }
+      setTimeout(() => { qIdx++; renderQuiz(); }, 750);
     }
 
     function buildCertificateDataURL() {
@@ -2388,7 +2161,6 @@
       const inputEl = document.getElementById('player-name');
       savedWinner = (inputEl ? inputEl.value.trim() : '') || "Pembaca Hebat";
       latestCertUrl = buildCertificateDataURL();
-      launchConfetti();
       playUiChime('fanfare');
       document.getElementById('badge-area').innerHTML = `
         <div class="cert-preview-wrap">
@@ -2407,7 +2179,7 @@
     }
     renderQuiz();
 
-    /* ================= FAQ, DWIBAHASA & REVEAL ================= */
+    /* ================= FAQ & DWIBAHASA ================= */
     function toggleFaq(btn) {
       const item = btn.parentElement;
       const isOpen = item.classList.contains('open');
@@ -2426,9 +2198,9 @@
         st_kicker: "PENGALAMAN BUNYI INTERAKTIF", st_title: "Mainkan Sompoton Maya",
         h_kicker: "SINOPSIS & WARISAN SABAH", h_title: "Lagenda Cinta di Kaki Gunung Kinabalu",
         char_kicker: "KENALI WATAK CERITA", char_title: "Ketik Watak untuk Mendengar Pesanan Mereka",
-        d_kicker: "PEMELIHARAAN BAHASA IBUNDA", d_title: "Kamus Mini Kadazandusun", d_sub: "Ketik mana-mana kad untuk membalikkannya secara 3D beserta bunyi buluh interaktif.",
+        d_kicker: "PEMELIHARAAN BAHASA IBUNDA", d_title: "Kamus Mini Kadazandusun", d_sub: "Ketik mana-mana kad untuk melihat terjemahan Bahasa Melayu & Inggeris beserta bunyi buluh interaktif.",
         l_kicker: "PENCERITAAN 3 BAHASA & 12 BABAK", p_title: "Setiap Halaman, Satu Dunia Kecil", l_sub: "Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau putar terus diorama 3D pada Halaman 4, 6 & 10 di bawah.",
-        q_kicker: "CABARAN INTERAKTIF & SIJIL", q_title: "Kuiz Warisan Sompoton", q_sub: "Jawab 5 soalan ringkas, lihat pratonton berkilau Sijil Digital eksklusif anda, dan muat turun dalam format PNG."
+        q_kicker: "CABARAN INTERAKTIF & SIJIL", q_title: "Kuiz Warisan Sompoton", q_sub: "Jawab 5 soalan ringkas, lihat pratonton Sijil Digital eksklusif anda, dan muat turun dalam format PNG."
       },
       en: {
         nav_3d: "3D Stage", nav_studio: "Sompoton", nav_story: "Heritage", nav_dict: "Dictionary", nav_pages: "12 Scenes", nav_quiz: "Quiz", nav_scan: "Scan AR",
@@ -2440,84 +2212,15 @@
         st_kicker: "INTERACTIVE SOUND EXPERIENCE", st_title: "Play the Virtual Sompoton",
         h_kicker: "SYNOPSIS & SABAHAN HERITAGE", h_title: "A Legend of Love at Mount Kinabalu",
         char_kicker: "MEET THE CHARACTERS", char_title: "Tap Each Character to Hear Their Message",
-        d_kicker: "HERITAGE LANGUAGE PRESERVATION", d_title: "Kadazandusun Mini Dictionary", d_sub: "Tap any card to flip it in 3D with interactive bamboo chimes.",
+        d_kicker: "HERITAGE LANGUAGE PRESERVATION", d_title: "Kadazandusun Mini Dictionary", d_sub: "Tap any card to view its Malay & English translation with interactive bamboo chimes.",
         l_kicker: "TRILINGUAL NARRATION & 12 SCENES", p_title: "Every Page, a Living Miniature World", l_sub: "Preview trilingual narration with Smart SFX, or spin the live 3D dioramas on Pages 4, 6 & 10 below.",
-        q_kicker: "INTERACTIVE CHALLENGE & CERTIFICATE", q_title: "Sompoton Heritage Quiz", q_sub: "Answer 5 quick questions, preview your shimmering digital certificate, and download it as PNG."
+        q_kicker: "INTERACTIVE CHALLENGE & CERTIFICATE", q_title: "Sompoton Heritage Quiz", q_sub: "Answer 5 quick questions, preview your digital certificate, and download it as PNG."
       }
     };
     function setLang(l) {
       document.getElementById('btn-bm').classList.toggle('active', l === 'bm');
       document.getElementById('btn-en').classList.toggle('active', l === 'en');
       document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.getAttribute('data-i18n'); if (dict[l][k]) el.textContent = dict[l][k]; });
-    }
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); observer.unobserve(e.target); } });
-    }, { threshold: 0.06 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    /* ================= ENJIN SPATIAL 3D TEROPTIMUM (60 FPS) ================= */
-    const heroWrapper = document.querySelector('.hero-wrapper');
-    let targetSX = 0, targetSY = 0, currSX = 0, currSY = 0;
-    let spatialRaf = null, heroInView = true;
-
-    new IntersectionObserver(entries => {
-      heroInView = entries[0].isIntersecting;
-      if (heroInView && document.body.classList.contains('spatial-active')) wakeSpatial();
-    }, { threshold: 0.01 }).observe(heroWrapper);
-
-    function wakeSpatial() {
-      if (!spatialRaf && heroInView) spatialRaf = requestAnimationFrame(updateSpatial);
-    }
-
-    function updateSpatial() {
-      spatialRaf = null;
-      if (!heroInView || document.hidden || isScrollingNow) return;
-      currSX += (targetSX - currSX) * 0.1;
-      currSY += (targetSY - currSY) * 0.1;
-      heroWrapper.style.setProperty('--sx', currSX.toFixed(3));
-      heroWrapper.style.setProperty('--sy', currSY.toFixed(3));
-      if (Math.abs(targetSX - currSX) > 0.002 || Math.abs(targetSY - currSY) > 0.002) {
-        spatialRaf = requestAnimationFrame(updateSpatial);
-      }
-    }
-
-    function activateSpatial(x, y) {
-      targetSX = x; targetSY = y;
-      if (!document.body.classList.contains('spatial-active')) document.body.classList.add('spatial-active');
-      wakeSpatial();
-    }
-
-    function handleGyro(e) {
-      if (!heroInView || e.gamma === null || e.beta === null) return;
-      activateSpatial(Math.max(-30, Math.min(30, e.gamma)) / 30, Math.max(-30, Math.min(30, e.beta - 45)) / 30);
-    }
-
-    if (window.matchMedia('(pointer: fine)').matches) {
-      window.addEventListener('mousemove', e => {
-        if (!heroInView) return;
-        activateSpatial((e.clientX / window.innerWidth - 0.5) * 1.4, (e.clientY / window.innerHeight - 0.5) * 1.4);
-      }, { passive: true });
-    }
-
-    const iosSpatialBtn = document.getElementById('spatial-ios-btn');
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-      iosSpatialBtn.style.display = 'inline-flex';
-    } else if ('DeviceOrientationEvent' in window) {
-      window.addEventListener('deviceorientation', handleGyro, { passive: true });
-    }
-
-    async function enableIosSpatial() {
-      try {
-        const res = await DeviceOrientationEvent.requestPermission();
-        if (res === 'granted') {
-          playUiChime('flip');
-          window.addEventListener('deviceorientation', handleGyro, { passive: true });
-          iosSpatialBtn.classList.add('active');
-          iosSpatialBtn.textContent = '✨ Spatial: AKTIF';
-          setTimeout(() => { iosSpatialBtn.style.display = 'none'; }, 1800);
-        }
-      } catch (err) {}
     }
 
     document.addEventListener('visibilitychange', () => {
