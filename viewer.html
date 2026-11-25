@@ -51,6 +51,15 @@
       animation-play-state: paused !important;
     }
 
+    /* PENUNJUK MUATAN 3D RINGAN (TIADA GAMBAR 2D) */
+    .mv-loader {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold-soft); font-size: 2rem;
+    }
+    .mv-loader span { animation: pulse3DLoad 1.2s ease-in-out infinite alternate; }
+    @keyframes pulse3DLoad { from { opacity: 0.35; transform: scale(0.92); } to { opacity: 0.92; transform: scale(1.08); } }
+
     /* BAR KEMAJUAN CERITA (1-12) DI PALING ATAS */
     #story-progress {
       position: fixed; top: 0; left: 0; height: 3.5px; width: 100%; z-index: 1500;
@@ -216,8 +225,6 @@
     }
     .mini-3d-btn:active { transform: scale(0.9); }
     .mini-3d-btn.active { background: var(--gold); color: var(--forest); border-color: var(--gold-soft); }
-    #anim-select { outline: none; max-width: 135px; }
-    #anim-select option { background: #F8F4EA; color: #173325; }
 
     .stage-3d-hint {
       position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 5;
@@ -435,9 +442,10 @@
         <button class="mini-3d-btn" id="mood-btn" onclick="toggleStageMood()">🌙 Magis</button>
         <button class="mini-3d-btn" onclick="snap3D()">📸 Foto</button>
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
-        <select id="anim-select" class="mini-3d-btn" style="display:none;" onchange="changeAnim(this.value)"></select>
       </div>
-      <model-viewer id="mv" camera-controls auto-rotate autoplay shadow-intensity="0" exposure="1.15" camera-orbit="35deg 68deg 108%"></model-viewer>
+      <model-viewer id="mv" camera-controls auto-rotate autoplay shadow-intensity="0" interaction-prompt="none" exposure="1.15" camera-orbit="35deg 68deg 108%">
+        <div slot="poster" class="mv-loader"><span>🧊</span></div>
+      </model-viewer>
       <span class="stage-3d-hint" id="stage-3d-hint">👆 Seret 360° · Cubit Zum</span>
       <div class="art-wrap" id="art-wrap"><img id="img-stage" alt="Ilustrasi Halaman" /></div>
     </div>
@@ -541,7 +549,7 @@
     let currentPage = Math.min(Math.max(parseInt(params.get('page')) || 4, 1), 12);
     let currentLang = ['bm', 'en', 'kdz'].includes(params.get('lang')) ? params.get('lang') : 'bm';
 
-    const mv = document.getElementById('mv'), animSelect = document.getElementById('anim-select');
+    const mv = document.getElementById('mv');
     const artWrap = document.getElementById('art-wrap'), imgStage = document.getElementById('img-stage');
     const exhibitFrame = document.getElementById('exhibit-frame'), tools3D = document.getElementById('tools-3d');
     const badge3D = document.getElementById('badge-3d'), playBtn = document.getElementById('play-btn');
@@ -556,6 +564,32 @@
     if (!isMobile) mv.setAttribute('shadow-intensity', '0.5');
 
     let audio = new Audio(), sfxAudio = new Audio(), sfxEnabled = true, autoStory = false, toastTimer = null, isNightStage = false;
+
+    /* ================= MAINKAN SEMUA ANIMASI 3D SERENTAK (SEPERTI AR KAMERA) ================= */
+    function playAllAnimations(mvEl) {
+      try {
+        const sceneSym = Object.getOwnPropertySymbols(mvEl).find(s => s.description === 'scene');
+        const scene = sceneSym ? mvEl[sceneSym] : null;
+        if (!scene || !scene.mixer) return;
+        const clips = scene.animationsByName
+          ? Array.from(scene.animationsByName.values())
+          : (scene.currentGLTF && scene.currentGLTF.animations ? scene.currentGLTF.animations : []);
+        clips.forEach(clip => {
+          const action = scene.mixer.clipAction(clip);
+          if (action) {
+            action.enabled = true;
+            action.setEffectiveWeight(1);
+            action.play();
+          }
+        });
+      } catch (e) {}
+    }
+
+    mv.addEventListener('load', () => {
+      if (typeof mv.play === 'function') mv.play();
+      requestAnimationFrame(() => playAllAnimations(mv));
+      setTimeout(() => playAllAnimations(mv), 180);
+    });
 
     ['touchstart', 'pointerdown'].forEach(evt => {
       window.addEventListener(evt, () => {
@@ -651,17 +685,6 @@
       } catch (e) { showToast("⚠ Tangkapan foto tidak disokong pelayar ini"); }
     }
 
-    mv.addEventListener('load', () => {
-      const anims = mv.availableAnimations || [];
-      if (anims.length > 0) {
-        animSelect.innerHTML = anims.map((name, i) => `<option value="${name}">Anim ${i}: ${name}</option>`).join('');
-        animSelect.style.display = anims.length > 1 ? 'inline-block' : 'none';
-        const chosen = (/t[-_ ]?pose|rest/i.test(anims[0]) && anims.length > 1) ? anims[1] : anims[0];
-        mv.animationName = chosen; animSelect.value = chosen; mv.play();
-      } else animSelect.style.display = 'none';
-    });
-    function changeAnim(name) { mv.animationName = name; mv.play(); showToast(`🎬 Animasi: ${name}`); }
-
     function launchConfetti() {
       const colors = ['#DCA028', '#BA5A28', '#28523C', '#F7E8C2', '#4ADE80'];
       const count = isMobile ? 22 : 36;
@@ -676,7 +699,7 @@
     }
 
     function loadPage(num, autoPlayNow = false) {
-      currentPage = num; stopAudio(); animSelect.style.display = 'none';
+      currentPage = num; stopAudio();
       exhibitFrame.classList.add('switching');
       setTimeout(() => {
         const data = pages[num - 1];
@@ -692,12 +715,13 @@
 
         if (data.glb) {
           exhibitFrame.classList.remove('mode-2d');
-          mv.setAttribute('poster', `./images/page${num}.jpg`);
+          mv.removeAttribute('poster');
           if (mv.getAttribute('src') !== data.glb) mv.setAttribute('src', data.glb);
           mv.style.display = 'block'; artWrap.style.display = 'none';
           tools3D.style.display = 'flex'; badge3D.style.display = 'inline-block';
           stage3dHint.style.display = 'block'; stage3dHint.classList.remove('faded');
           if (typeof mv.play === 'function') mv.play();
+          setTimeout(() => playAllAnimations(mv), 150);
         } else {
           // Bebaskan memori GPU 3D apabila beralih ke halaman 2D (elak lag & restart)
           if (typeof mv.pause === 'function') mv.pause();
@@ -796,8 +820,9 @@
         if (!audio.paused) toggleAudio();
         sfxAudio.pause();
         if (typeof mv.pause === 'function') mv.pause();
-      } else if (mv.getAttribute('src') && typeof mv.play === 'function') {
-        mv.play();
+      } else if (mv.getAttribute('src')) {
+        if (typeof mv.play === 'function') mv.play();
+        playAllAnimations(mv);
       }
     });
 
