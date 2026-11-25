@@ -18,12 +18,12 @@
       --gold-soft: #F7E8C2;
       --gourd: #BA5A28;
 
-      --glass-tint: rgba(255, 253, 248, 0.68);
-      --glass-strong: rgba(255, 253, 248, 0.85);
-      --glass-border: rgba(255, 255, 255, 0.82);
+      --glass-tint: rgba(255, 253, 248, 0.86);
+      --glass-strong: rgba(255, 253, 248, 0.94);
+      --glass-border: rgba(255, 255, 255, 0.86);
       --glass-stroke: rgba(23, 51, 37, 0.11);
       --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(23, 51, 37, 0.05);
-      --shadow-glass: 0 14px 34px -8px rgba(23, 51, 37, 0.14), 0 4px 12px rgba(23, 51, 37, 0.05);
+      --shadow-glass: 0 12px 28px -8px rgba(23, 51, 37, 0.14), 0 4px 10px rgba(23, 51, 37, 0.05);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
       /* Warna Suasana Dinamik (berubah mengikut babak) */
@@ -45,6 +45,12 @@
       user-select: none; -webkit-user-select: none;
     }
 
+    /* JEDA ANIMASI LATAR SEMASA INTERAKSI 3D (60 FPS) */
+    body.interacting-3d .v-orb,
+    body.interacting-3d .bg-note {
+      animation-play-state: paused !important;
+    }
+
     /* BAR KEMAJUAN CERITA (1-12) DI PALING ATAS */
     #story-progress {
       position: fixed; top: 0; left: 0; height: 3.5px; width: 100%; z-index: 1500;
@@ -53,24 +59,24 @@
     #story-progress-fill {
       height: 100%; width: 8.33%;
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
-      transition: width 0.4s var(--spring);
+      transition: width 0.35s var(--spring);
     }
 
     /* LATAR AMBIENT DINAMIK, NOT MUZIK TERAPUNG & TENUNAN LINANGKIT */
     .v-orb {
       position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-      transition: background 0.8s ease; will-change: transform; backface-visibility: hidden;
-      animation: orbDrift 18s ease-in-out infinite alternate;
+      transition: background 0.8s ease; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      animation: orbDrift 20s ease-in-out infinite alternate;
     }
     .vo-1 { width: 440px; height: 440px; top: -120px; right: -120px; background: radial-gradient(circle, var(--orb-a) 0%, transparent 70%); }
     .vo-2 { width: 400px; height: 400px; bottom: -100px; left: -110px; background: radial-gradient(circle, var(--orb-b) 0%, transparent 70%); animation-delay: -6s; }
-    @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(20px, 16px, 0); } }
+    @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(18px, 14px, 0); } }
 
     .music-notes-bg { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
     .bg-note {
       position: absolute; bottom: -40px; left: var(--x);
       font-size: var(--sz); color: rgba(23, 51, 37, 0.085); font-weight: 700;
-      will-change: transform, opacity; backface-visibility: hidden;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
       animation: bgNoteDrift var(--dur) linear var(--del) infinite;
     }
     .bg-note.gold { color: rgba(220, 160, 40, 0.15); }
@@ -78,7 +84,7 @@
       0% { transform: translate3d(0, 0, 0) rotate(-10deg); opacity: 0; }
       14% { opacity: 1; }
       85% { opacity: 0.9; }
-      100% { transform: translate3d(24px, -110vh, 0) rotate(14deg); opacity: 0; }
+      100% { transform: translate3d(22px, -110vh, 0) rotate(14deg); opacity: 0; }
     }
 
     .viewer-linangkit {
@@ -92,7 +98,7 @@
       pointer-events: none; z-index: 0; opacity: 0.78;
     }
 
-    /* BAR ATAS (TINTED GLASS) */
+    /* BAR ATAS (TINTED GLASS RINGAN) */
     .top-bar {
       position: relative; z-index: 20;
       display: flex; justify-content: space-between; align-items: center; gap: 6px;
@@ -105,12 +111,11 @@
       background: var(--glass-strong); color: var(--forest); text-decoration: none;
       border: 1px solid var(--glass-border); display: grid; place-items: center;
       font-size: 1.15rem; cursor: pointer;
-      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.22s var(--spring), border-color 0.2s, background 0.2s;
+      transition: transform 0.2s var(--spring), border-color 0.2s, background 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
-    .icon-btn:hover { border-color: var(--gold); background: rgba(255, 255, 255, 0.96); }
+    .icon-btn:hover { border-color: var(--gold); background: #fff; }
     .icon-btn:active { transform: scale(0.88); }
     .icon-btn.muted { opacity: 0.45; }
 
@@ -119,7 +124,6 @@
       background: var(--glass-strong); padding: 6px 14px; border-radius: 999px;
       border: 1px solid var(--glass-border); font-size: 0.8rem; font-weight: 700;
       color: var(--forest);
-      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
     .page-pill strong { color: var(--gourd); font-family: 'Fraunces', serif; font-size: 0.96rem; }
@@ -150,7 +154,7 @@
       color: #FAF5EB; text-decoration: none; font-weight: 700; font-size: 0.76rem;
       padding: 8px 14px; border-radius: 999px; white-space: nowrap;
       box-shadow: 0 8px 20px rgba(23, 51, 37, 0.24), inset 0 1px 1px rgba(255,255,255,0.26);
-      transition: transform 0.22s var(--spring);
+      transition: transform 0.2s var(--spring);
     }
     .ar-jump:active { transform: scale(0.92); }
 
@@ -167,9 +171,9 @@
       display: flex; align-items: center; justify-content: center; border-radius: 28px;
       background: radial-gradient(circle at 50% 56%, #285C42 0%, #0E2218 100%);
       border: 2.5px solid rgba(255, 255, 255, 0.88);
-      box-shadow: 0 24px 54px -12px rgba(23, 51, 37, 0.26), inset 0 1px 1px rgba(255,255,255,0.25);
+      box-shadow: 0 22px 48px -12px rgba(23, 51, 37, 0.26), inset 0 1px 1px rgba(255,255,255,0.25);
       overflow: hidden;
-      transition: opacity 0.22s ease, transform 0.26s var(--spring), background 0.5s ease;
+      transition: opacity 0.2s ease, transform 0.24s var(--spring), background 0.45s ease;
     }
     .exhibit-frame.night-stage {
       background: radial-gradient(circle at 50% 52%, #1B3945 0%, #07131A 100%);
@@ -183,16 +187,16 @@
       width: 68%; height: 68px; border-radius: 50%; pointer-events: none; z-index: 1;
       background: radial-gradient(circle, rgba(244, 196, 83, 0.34), transparent 72%);
     }
-    .exhibit-frame.switching { opacity: 0.28; transform: scale(0.975); }
+    .exhibit-frame.switching { opacity: 0.3; transform: scale(0.98); }
 
-    /* Bingkai Fit Ngam-Ngam untuk Gambar 2D (Hal. 1,2,3,5,7,8,9,11,12) */
+    /* Bingkai Fit Ngam-Ngam untuk Gambar 2D */
     .exhibit-frame.mode-2d {
       flex: 0 1 auto;
       width: fit-content; height: fit-content;
       max-width: 94%; max-height: 45dvh;
       border-radius: 22px; background: transparent;
       border: 3px solid rgba(255, 255, 255, 0.92);
-      box-shadow: 0 20px 46px -8px rgba(23, 51, 37, 0.24);
+      box-shadow: 0 18px 40px -8px rgba(23, 51, 37, 0.22);
     }
     .exhibit-frame.mode-2d::before,
     .exhibit-frame.mode-2d::after { display: none; }
@@ -205,11 +209,10 @@
     }
     .mini-3d-btn {
       background: var(--glass-strong); color: var(--forest);
-      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       border: 1px solid var(--glass-border); border-radius: 999px;
       padding: 6px 11px; font-size: 0.69rem; font-weight: 700; cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22), var(--specular);
-      transition: transform 0.2s var(--spring), background 0.2s;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2), var(--specular);
+      transition: transform 0.18s var(--spring), background 0.2s;
     }
     .mini-3d-btn:active { transform: scale(0.9); }
     .mini-3d-btn.active { background: var(--gold); color: var(--forest); border-color: var(--gold-soft); }
@@ -219,8 +222,8 @@
     .stage-3d-hint {
       position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 5;
       display: none; pointer-events: none;
-      background: rgba(13, 34, 24, 0.72); color: var(--gold-soft);
-      border: 1px solid rgba(247, 232, 194, 0.26); backdrop-filter: blur(8px);
+      background: rgba(13, 34, 24, 0.78); color: var(--gold-soft);
+      border: 1px solid rgba(247, 232, 194, 0.26);
       font-size: 0.68rem; font-weight: 700; padding: 5px 13px; border-radius: 999px;
       white-space: nowrap; transition: opacity 0.4s ease;
     }
@@ -233,7 +236,7 @@
     .art-wrap::after {
       content: ""; position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.28) 50%, transparent 65%);
-      transform: translateX(-140%); will-change: transform;
+      transform: translateX(-140%);
       animation: pageSheen 6s ease-in-out infinite;
     }
     @keyframes pageSheen { 0%, 72% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
@@ -256,7 +259,6 @@
       position: relative; overflow: hidden;
       width: 100%; background: var(--glass-tint); border: 1.5px solid var(--glass-border);
       border-radius: 22px; padding: 12px 16px 10px;
-      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
       transition: border-color 0.25s ease;
     }
@@ -279,7 +281,7 @@
     @keyframes eqBounce { from { height: 3px; } to { height: 10px; } }
     #viewer-sub {
       font-size: clamp(0.84rem, 3vw, 0.98rem); color: #2B4537; line-height: 1.48; font-weight: 600;
-      animation: subFade 0.28s ease;
+      animation: subFade 0.25s ease;
     }
     @keyframes subFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -308,14 +310,13 @@
       display: flex; gap: 6px; justify-content: center;
       background: var(--glass-tint); padding: 6px 11px; border-radius: 999px;
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
     .num-btn {
       width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--glass-stroke);
-      background: rgba(255, 255, 255, 0.8); color: var(--sage);
+      background: rgba(255, 255, 255, 0.9); color: var(--sage);
       font-weight: 700; font-size: 0.76rem; cursor: pointer; position: relative;
-      transition: transform 0.2s var(--spring), background 0.2s, color 0.2s;
+      transition: transform 0.18s var(--spring), background 0.2s, color 0.2s;
     }
     .num-btn:active { transform: scale(0.86); }
     .num-btn.has-3d { border-color: rgba(220, 160, 40, 0.7); color: var(--gourd); }
@@ -332,18 +333,17 @@
       background: linear-gradient(135deg, #2A5840 0%, #173325 100%);
       color: #FAF5EB; font-size: 1.2rem; font-weight: 800; cursor: pointer;
       box-shadow: 0 10px 24px rgba(23, 51, 37, 0.28), inset 0 1px 1px rgba(255,255,255,0.28);
-      transition: transform 0.22s var(--spring);
+      transition: transform 0.2s var(--spring);
     }
     .play-main:active { transform: scale(0.9); }
     .play-main.playing { animation: pulsePlay 1.8s infinite; }
     @keyframes pulsePlay { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 160, 40, 0.55); } 50% { box-shadow: 0 0 0 10px rgba(220, 160, 40, 0); } }
     .auto-btn {
       padding: 9px 14px; border-radius: 999px; background: var(--glass-strong);
-      backdrop-filter: blur(16px) saturate(165%); -webkit-backdrop-filter: blur(16px) saturate(165%);
       border: 1px solid var(--glass-border); color: var(--forest);
       font-size: 0.74rem; font-weight: 700; cursor: pointer;
       box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.2s var(--spring), background 0.2s;
+      transition: transform 0.18s var(--spring), background 0.2s;
     }
     .auto-btn:active { transform: scale(0.92); }
     .auto-btn.on { background: var(--gold-soft); border-color: var(--gold); color: var(--gourd); }
@@ -355,19 +355,19 @@
       border: 1.5px solid var(--gold);
       border-radius: 999px; padding: 7px 16px; font-size: 0.74rem; font-weight: 700;
       box-shadow: 0 10px 24px rgba(23, 51, 37, 0.25);
-      transition: opacity 0.25s ease, transform 0.25s var(--spring); white-space: nowrap;
+      transition: opacity 0.22s ease, transform 0.22s var(--spring); white-space: nowrap;
     }
     #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
-    .confetti { position: fixed; width: 9px; height: 9px; z-index: 2500; pointer-events: none; will-change: transform; animation: confettiDrop 2.4s ease-out forwards; }
+    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+    .confetti { position: fixed; width: 9px; height: 9px; z-index: 2500; pointer-events: none; animation: confettiDrop 2.4s ease-out forwards; }
     @keyframes confettiDrop { 0% { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0,100vh,0) rotate(720deg); opacity: 0; } }
 
-    /* TELEFON & PENGOPTIMUMAN PRESTASI 60 FPS */
-    @media (max-width: 768px) {
+    /* Blur hanya diaktifkan pada desktop/laptop supaya telefon kekal 60 FPS */
+    @media (min-width: 769px) {
       .icon-btn, .page-pill, .subtitle-card, .num-bar, .auto-btn, .mini-3d-btn {
-        backdrop-filter: blur(10px) saturate(145%);
-        -webkit-backdrop-filter: blur(10px) saturate(145%);
+        backdrop-filter: blur(14px) saturate(155%);
+        -webkit-backdrop-filter: blur(14px) saturate(155%);
       }
     }
     @media (max-width: 600px) {
@@ -377,6 +377,7 @@
       .page-pill { padding: 5px 11px; font-size: 0.74rem; }
       .lang-pill { padding: 4px 7px; font-size: 0.68rem; }
       .mini-3d-btn { padding: 5px 9px; font-size: 0.65rem; }
+      .bg-note:nth-child(n+4) { display: none; }
       .num-bar {
         display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
         border-radius: 22px; padding: 8px 12px; width: 100%; max-width: 305px; justify-items: center;
@@ -394,9 +395,9 @@
   <div class="v-orb vo-2"></div>
   <div class="music-notes-bg" aria-hidden="true">
     <span class="bg-note" style="--x:9%; --dur:21s; --del:0s; --sz:1.45rem;">♪</span>
-    <span class="bg-note gold" style="--x:26%; --dur:25s; --del:-6s; --sz:1.85rem;">♫</span>
-    <span class="bg-note" style="--x:50%; --dur:19s; --del:-11s; --sz:1.35rem;">♩</span>
-    <span class="bg-note gold" style="--x:74%; --dur:24s; --del:-3s; --sz:1.7rem;">♬</span>
+    <span class="bg-note gold" style="--x:28%; --dur:25s; --del:-6s; --sz:1.85rem;">♫</span>
+    <span class="bg-note" style="--x:54%; --dur:19s; --del:-11s; --sz:1.35rem;">♩</span>
+    <span class="bg-note gold" style="--x:76%; --dur:24s; --del:-3s; --sz:1.7rem;">♬</span>
     <span class="bg-note" style="--x:90%; --dur:22s; --del:-14s; --sz:1.5rem;">♪</span>
   </div>
   <div class="viewer-linangkit"></div>
@@ -436,7 +437,7 @@
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
         <select id="anim-select" class="mini-3d-btn" style="display:none;" onchange="changeAnim(this.value)"></select>
       </div>
-      <model-viewer id="mv" camera-controls auto-rotate autoplay shadow-intensity="0.85" exposure="1.15" camera-orbit="35deg 68deg 108%"></model-viewer>
+      <model-viewer id="mv" camera-controls auto-rotate autoplay shadow-intensity="0" exposure="1.15" camera-orbit="35deg 68deg 108%"></model-viewer>
       <span class="stage-3d-hint" id="stage-3d-hint">👆 Seret 360° · Cubit Zum</span>
       <div class="art-wrap" id="art-wrap"><img id="img-stage" alt="Ilustrasi Halaman" /></div>
     </div>
@@ -475,6 +476,8 @@
   </div>
 
   <script>
+    const isMobile = window.innerWidth <= 768;
+
     /* ================= ENJIN BUNYI UI HALUS (WEB AUDIO API) ================= */
     let uiCtx = null;
     function playChime(type = 'flip') {
@@ -550,6 +553,8 @@
     const stage3dHint = document.getElementById('stage-3d-hint'), quizCtaPill = document.getElementById('quiz-cta-pill');
     const toastEl = document.getElementById('toast');
 
+    if (!isMobile) mv.setAttribute('shadow-intensity', '0.5');
+
     let audio = new Audio(), sfxAudio = new Audio(), sfxEnabled = true, autoStory = false, toastTimer = null, isNightStage = false;
 
     ['touchstart', 'pointerdown'].forEach(evt => {
@@ -560,7 +565,13 @@
       }, { once: true, passive: true });
     });
 
-    mv.addEventListener('pointerdown', () => stage3dHint.classList.add('faded'));
+    // Jeda animasi latar semasa pengguna memutar/zum 3D untuk FPS penuh
+    mv.addEventListener('pointerdown', () => {
+      stage3dHint.classList.add('faded');
+      document.body.classList.add('interacting-3d');
+    });
+    window.addEventListener('pointerup', () => document.body.classList.remove('interacting-3d'), { passive: true });
+    window.addEventListener('pointercancel', () => document.body.classList.remove('interacting-3d'), { passive: true });
 
     function showToast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400); }
     function fmtTime(sec) { if (!sec || isNaN(sec)) return "0:00"; return `${Math.floor(sec / 60)}:${Math.floor(sec % 60).toString().padStart(2, '0')}`; }
@@ -622,7 +633,6 @@
           ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
           ctx.drawImage(img, 0, 0);
 
-          // Bingkai emas berganda selari dengan ar.html & sijil
           ctx.strokeStyle = '#173325'; ctx.lineWidth = Math.max(8, c.width * 0.012);
           ctx.strokeRect(5, 5, c.width - 10, c.height - 10);
           ctx.strokeStyle = '#DCA028'; ctx.lineWidth = Math.max(3, c.width * 0.005);
@@ -654,13 +664,14 @@
 
     function launchConfetti() {
       const colors = ['#DCA028', '#BA5A28', '#28523C', '#F7E8C2', '#4ADE80'];
-      for (let i = 0; i < 38; i++) {
+      const count = isMobile ? 22 : 36;
+      for (let i = 0; i < count; i++) {
         const c = document.createElement('div'); c.className = 'confetti';
         c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-12px';
         c.style.background = colors[Math.floor(Math.random() * colors.length)];
         c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-        c.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
-        document.body.appendChild(c); setTimeout(() => c.remove(), 3000);
+        c.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
+        document.body.appendChild(c); setTimeout(() => c.remove(), 2900);
       }
     }
 
@@ -681,22 +692,26 @@
 
         if (data.glb) {
           exhibitFrame.classList.remove('mode-2d');
-          mv.removeAttribute('poster');
-          mv.src = data.glb;
+          mv.setAttribute('poster', `./images/page${num}.jpg`);
+          if (mv.getAttribute('src') !== data.glb) mv.setAttribute('src', data.glb);
           mv.style.display = 'block'; artWrap.style.display = 'none';
           tools3D.style.display = 'flex'; badge3D.style.display = 'inline-block';
           stage3dHint.style.display = 'block'; stage3dHint.classList.remove('faded');
+          if (typeof mv.play === 'function') mv.play();
         } else {
-          exhibitFrame.classList.add('mode-2d');
+          // Bebaskan memori GPU 3D apabila beralih ke halaman 2D (elak lag & restart)
+          if (typeof mv.pause === 'function') mv.pause();
+          if (mv.getAttribute('src')) mv.removeAttribute('src');
           mv.style.display = 'none'; tools3D.style.display = 'none'; badge3D.style.display = 'none';
           stage3dHint.style.display = 'none';
+          exhibitFrame.classList.add('mode-2d');
           imgStage.src = `./images/page${num}.jpg`; imgStage.onerror = () => { imgStage.src = './images/cover.jpg'; };
           artWrap.style.display = 'block';
         }
         exhibitFrame.classList.remove('switching');
         playPageSfx(num);
         if (autoPlayNow) startAudioPlayback();
-      }, 150);
+      }, 140);
     }
 
     function stepPage(delta) {
@@ -773,6 +788,17 @@
       if (e.key === 'ArrowRight') stepPage(1);
       else if (e.key === 'ArrowLeft') stepPage(-1);
       else if (e.code === 'Space') { e.preventDefault(); toggleAudio(); }
+    });
+
+    // Jeda audio & 3D apabila pengguna keluar/tukar tab
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (!audio.paused) toggleAudio();
+        sfxAudio.pause();
+        if (typeof mv.pause === 'function') mv.pause();
+      } else if (mv.getAttribute('src') && typeof mv.play === 'function') {
+        mv.play();
+      }
     });
 
     updateLangUI();

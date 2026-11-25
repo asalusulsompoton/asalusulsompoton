@@ -23,12 +23,12 @@
       --gold-soft: #F7E8C2;
       --gourd: #BA5A28;
 
-      --glass-tint: rgba(255, 253, 248, 0.68);
-      --glass-strong: rgba(255, 253, 248, 0.86);
-      --glass-border: rgba(255, 255, 255, 0.82);
+      --glass-tint: rgba(255, 253, 248, 0.82);
+      --glass-strong: rgba(255, 253, 248, 0.94);
+      --glass-border: rgba(255, 255, 255, 0.86);
       --glass-stroke: rgba(23, 51, 37, 0.12);
       --specular: inset 0 1.5px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(23, 51, 37, 0.06);
-      --shadow-glass: 0 16px 36px -8px rgba(23, 51, 37, 0.16), 0 4px 12px rgba(23, 51, 37, 0.06);
+      --shadow-glass: 0 14px 30px -8px rgba(23, 51, 37, 0.16), 0 4px 10px rgba(23, 51, 37, 0.06);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -48,16 +48,15 @@
     .a-enter-ar,
     .a-enter-ar-button { display: none !important; }
 
-    /* BUTANG KEMBALI (TINTED GLASS) */
+    /* BUTANG KEMBALI (TINTED GLASS RINGAN) */
     .back-circle {
       position: fixed; top: max(14px, env(safe-area-inset-top)); left: 14px; z-index: 2200;
       width: 44px; height: 44px; border-radius: 50%;
       background: var(--glass-strong); color: var(--forest); text-decoration: none;
       border: 1px solid var(--glass-border);
       display: grid; place-items: center; font-size: 1.45rem; line-height: 1;
-      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.22s var(--spring);
+      transition: transform 0.2s var(--spring);
     }
     .back-circle:active { transform: scale(0.9); }
 
@@ -69,7 +68,7 @@
       align-items: center; justify-content: center;
       padding: max(54px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
       text-align: center; overflow-y: auto;
-      transition: opacity 0.42s ease, transform 0.42s ease;
+      transition: opacity 0.38s ease, transform 0.38s ease;
     }
     #start-screen.fade-out { opacity: 0; transform: scale(1.03); pointer-events: none; }
 
@@ -80,18 +79,18 @@
     }
     .start-orb {
       position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-      will-change: transform; animation: orbDrift 18s ease-in-out infinite alternate;
+      animation: orbDrift 20s ease-in-out infinite alternate;
     }
     .so-1 { width: 380px; height: 380px; top: -100px; right: -110px; background: radial-gradient(circle, rgba(247, 224, 168, 0.56) 0%, transparent 70%); }
     .so-2 { width: 360px; height: 360px; bottom: -80px; left: -100px; background: radial-gradient(circle, rgba(173, 212, 185, 0.48) 0%, transparent 70%); animation-delay: -6s; }
-    @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(18px, 14px, 0); } }
+    @keyframes orbDrift { from { transform: translate3d(0,0,0); } to { transform: translate3d(16px, 12px, 0); } }
 
     /* NOT MUZIK TERAPUNG DI LATAR (GPU OPTIMIZED) */
     .music-notes-bg { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
     .bg-note {
       position: absolute; bottom: -40px; left: var(--x);
       font-size: var(--sz); color: rgba(23, 51, 37, 0.09); font-weight: 700;
-      will-change: transform, opacity; backface-visibility: hidden;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
       animation: bgNoteDrift var(--dur) linear var(--del) infinite;
     }
     .bg-note.gold { color: rgba(220, 160, 40, 0.16); }
@@ -99,7 +98,7 @@
       0% { transform: translate3d(0, 0, 0) rotate(-10deg); opacity: 0; }
       15% { opacity: 1; }
       85% { opacity: 0.9; }
-      100% { transform: translate3d(24px, -110vh, 0) rotate(14deg); opacity: 0; }
+      100% { transform: translate3d(22px, -110vh, 0) rotate(14deg); opacity: 0; }
     }
 
     .start-mountains {
@@ -112,11 +111,10 @@
       display: flex; flex-direction: column; align-items: center;
     }
 
-    /* PENTAS KULIT BUKU GEN-Z DENGAN HOLOGRAPHIC FOIL */
+    /* PENTAS KULIT BUKU GEN-Z */
     .cover-stage {
       position: relative; padding: 16px 26px; border-radius: 30px; margin-bottom: 14px;
-      background: linear-gradient(145deg, rgba(255, 253, 248, 0.62), rgba(231, 243, 245, 0.4));
-      backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+      background: linear-gradient(145deg, rgba(255, 253, 248, 0.78), rgba(231, 243, 245, 0.56));
       border: 1.5px solid var(--glass-border);
       box-shadow: var(--shadow-glass), var(--specular);
       display: grid; place-items: center;
@@ -128,12 +126,12 @@
     .cover-frame {
       position: relative; width: 114px; border-radius: 6px 15px 15px 6px; overflow: hidden;
       box-shadow: -8px 16px 30px rgba(23, 51, 37, 0.25), 0 0 0 2px #fff;
-      will-change: transform; animation: floatCover 4.8s ease-in-out infinite;
+      animation: floatCover 4.8s ease-in-out infinite;
     }
     .cover-frame::after {
       content: ""; position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.45) 48%, rgba(247, 232, 194, 0.25) 54%, transparent 72%);
-      transform: translateX(-140%); will-change: transform;
+      transform: translateX(-140%);
       animation: foilSweep 5s ease-in-out infinite;
     }
     @keyframes foilSweep { 0%, 65% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
@@ -145,10 +143,10 @@
 
     .mini-sticker {
       position: absolute; z-index: 4; pointer-events: none;
-      background: rgba(255, 253, 248, 0.92); border: 1px solid #fff;
+      background: rgba(255, 253, 248, 0.94); border: 1px solid #fff;
       padding: 4px 10px; border-radius: 999px; font-size: 0.62rem; font-weight: 800;
       box-shadow: 0 8px 18px rgba(23, 51, 37, 0.14);
-      will-change: transform; animation: stickerBob 4s ease-in-out infinite;
+      animation: stickerBob 4s ease-in-out infinite;
     }
     .ms-1 { top: 10px; right: -12px; color: var(--gourd); }
     .ms-2 { bottom: 12px; left: -14px; background: var(--forest); color: var(--gold-soft); border-color: rgba(255,255,255,0.22); animation-delay: -1.8s; }
@@ -187,7 +185,7 @@
 
     #cam-error-box {
       display: none; width: 100%; max-width: 325px; margin-bottom: 12px;
-      background: rgba(254, 226, 226, 0.94); border: 1px solid #EF4444;
+      background: rgba(254, 226, 226, 0.96); border: 1px solid #EF4444;
       color: #7F1D1D; font-size: 0.77rem; line-height: 1.45;
       padding: 10px 14px; border-radius: 16px; text-align: left;
     }
@@ -198,7 +196,7 @@
       color: #FAF5EB; font-weight: 700; font-size: 0.94rem;
       cursor: pointer; margin-bottom: 10px;
       box-shadow: 0 12px 28px rgba(23, 51, 37, 0.26), inset 0 1px 1px rgba(255,255,255,0.28);
-      transition: transform 0.24s var(--spring);
+      transition: transform 0.22s var(--spring);
     }
     .btn-scan:disabled { opacity: 0.7; cursor: wait; }
     .btn-scan:active { transform: scale(0.95); }
@@ -206,11 +204,10 @@
     .btn-3d-alt {
       width: 100%; max-width: 325px; padding: 11px; border-radius: 999px;
       border: 1px solid var(--glass-border); background: var(--glass-strong);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       color: var(--forest); text-decoration: none; font-weight: 700; font-size: 0.83rem;
       display: block; margin-bottom: 14px;
       box-shadow: 0 6px 18px rgba(23, 51, 37, 0.08), var(--specular);
-      transition: transform 0.24s var(--spring);
+      transition: transform 0.22s var(--spring);
     }
     .btn-3d-alt:active { transform: scale(0.95); }
 
@@ -220,24 +217,20 @@
     }
     .tip-chip {
       background: var(--glass-tint);
-      backdrop-filter: blur(12px) saturate(145%); -webkit-backdrop-filter: blur(12px) saturate(145%);
       border: 1px solid var(--glass-border); border-radius: 18px; padding: 10px 6px;
       box-shadow: 0 6px 16px rgba(23, 51, 37, 0.07), var(--specular);
     }
     .tip-chip span { display: block; font-size: 1.15rem; margin-bottom: 3px; }
     .tip-chip strong { display: block; font-size: 0.65rem; color: var(--forest); line-height: 1.25; }
 
-    /* ================= BINGKAI PENGIMBAS AR PREMIUM ================= */
+    /* ================= BINGKAI PENGIMBAS AR (GPU OPTIMIZED) ================= */
     #scan-frame {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: min(68vw, 250px); height: min(68vw, 250px); z-index: 900; pointer-events: none; display: none;
     }
     .corner {
       position: absolute; width: 36px; height: 36px; border-color: var(--gold-bright); border-style: solid;
-      filter: drop-shadow(0 2px 8px rgba(244, 196, 83, 0.45));
-      animation: cornerPulse 2.2s ease-in-out infinite alternate;
     }
-    @keyframes cornerPulse { from { opacity: 0.72; } to { opacity: 1; } }
     .tl { top: 0; left: 0; border-width: 3.5px 0 0 3.5px; border-radius: 14px 0 0 0; }
     .tr { top: 0; right: 0; border-width: 3.5px 3.5px 0 0; border-radius: 0 14px 0 0; }
     .bl { bottom: 0; left: 0; border-width: 0 0 3.5px 3.5px; border-radius: 0 0 0 14px; }
@@ -246,8 +239,6 @@
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 54px; height: 54px; border-radius: 50%;
       border: 1.5px dashed rgba(244, 196, 83, 0.78);
-      box-shadow: inset 0 0 18px rgba(244, 196, 83, 0.22);
-      will-change: transform, opacity;
       animation: pulseCore 2.4s ease-in-out infinite;
     }
     @keyframes pulseCore {
@@ -257,8 +248,7 @@
     .scan-line {
       position: absolute; left: 12px; right: 12px; height: 2.5px; border-radius: 99px;
       background: linear-gradient(90deg, transparent, #FFF4C2, var(--gold-bright), transparent);
-      box-shadow: 0 0 14px var(--gold-bright);
-      will-change: transform, opacity;
+      box-shadow: 0 0 10px var(--gold-bright);
       animation: scanMove 2.2s ease-in-out infinite;
     }
     @keyframes scanMove {
@@ -268,19 +258,17 @@
     .scan-caption {
       position: absolute; bottom: -44px; left: 50%; transform: translateX(-50%);
       background: var(--glass-strong); color: var(--forest);
-      backdrop-filter: blur(12px) saturate(155%); -webkit-backdrop-filter: blur(12px) saturate(155%);
       font-size: 0.68rem; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase;
       padding: 6px 15px; border-radius: 999px; border: 1.5px solid var(--glass-border);
       white-space: nowrap; box-shadow: var(--shadow-glass), var(--specular);
     }
 
-    /* ================= HUD KAMERA TINTED GLASS ================= */
+    /* ================= HUD KAMERA (RINGAN UNTUK FPS TINGGI) ================= */
     #top-controls {
       position: fixed; top: max(14px, env(safe-area-inset-top)); right: 14px; z-index: 1000;
       display: none; align-items: center; gap: 6px;
       background: var(--glass-strong); padding: 4px 6px; border-radius: 999px;
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
     }
     #lang-select {
@@ -291,7 +279,7 @@
     #lang-select option { background: #F8F4EA; color: #173325; }
     .hud-btn {
       width: 35px; height: 35px; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.88); color: var(--forest);
+      background: #fff; color: var(--forest);
       border: 1px solid var(--glass-stroke); font-size: 0.95rem;
       display: grid; place-items: center; cursor: pointer;
       transition: transform 0.2s var(--spring);
@@ -305,7 +293,6 @@
       max-width: 92vw; background: var(--glass-strong); color: var(--forest);
       padding: 7px 15px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
       border: 1.5px solid var(--glass-border);
-      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       transition: border-color 0.25s ease;
@@ -335,9 +322,8 @@
       background: var(--glass-strong); color: var(--forest);
       border: 1.5px solid var(--glass-border); border-radius: 24px;
       padding: 13px 16px 12px; text-align: center;
-      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
-      animation: subPop 0.3s var(--spring);
+      animation: subPop 0.28s var(--spring);
     }
     #subtitle-box::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
@@ -361,9 +347,8 @@
       z-index: 999; display: none; gap: 8px; align-items: center;
       background: var(--glass-strong); padding: 8px 12px; border-radius: 999px;
       border: 1.5px solid var(--glass-border);
-      backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow: var(--shadow-glass), var(--specular);
-      animation: dockUp 0.35s var(--spring);
+      animation: dockUp 0.3s var(--spring);
     }
     @keyframes dockUp { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
     .img-btn {
@@ -375,11 +360,22 @@
     .img-btn:active { transform: scale(0.88); }
     .img-btn.active-lang {
       border-color: var(--gold);
-      box-shadow: 0 0 16px rgba(220, 160, 40, 0.65);
+      box-shadow: 0 0 14px rgba(220, 160, 40, 0.6);
       transform: translateY(-3px) scale(1.04);
     }
 
-    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
+    #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+
+    /* Blur hanya diaktifkan pada komputer/desktop sahaja supaya telefon kekal 60 FPS */
+    @media (min-width: 769px) {
+      .back-circle, .cover-stage, #top-controls, #page-indicator, #subtitle-box, #ui-container {
+        backdrop-filter: blur(12px) saturate(150%);
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+      }
+    }
+    @media (max-width: 640px) {
+      .bg-note:nth-child(n+4) { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -392,10 +388,10 @@
     <div class="start-orb so-2"></div>
     <div class="music-notes-bg" aria-hidden="true">
       <span class="bg-note" style="--x:8%; --dur:20s; --del:0s; --sz:1.45rem;">♪</span>
-      <span class="bg-note gold" style="--x:24%; --dur:24s; --del:-5s; --sz:1.85rem;">♫</span>
-      <span class="bg-note" style="--x:45%; --dur:19s; --del:-10s; --sz:1.35rem;">♩</span>
-      <span class="bg-note gold" style="--x:68%; --dur:23s; --del:-3s; --sz:1.7rem;">♬</span>
-      <span class="bg-note" style="--x:86%; --dur:21s; --del:-13s; --sz:1.5rem;">♪</span>
+      <span class="bg-note gold" style="--x:28%; --dur:24s; --del:-5s; --sz:1.85rem;">♫</span>
+      <span class="bg-note" style="--x:55%; --dur:19s; --del:-10s; --sz:1.35rem;">♩</span>
+      <span class="bg-note gold" style="--x:76%; --dur:23s; --del:-3s; --sz:1.7rem;">♬</span>
+      <span class="bg-note" style="--x:88%; --dur:21s; --del:-13s; --sz:1.5rem;">♪</span>
     </div>
     <div class="start-linangkit"></div>
     <svg class="start-mountains" viewBox="0 0 1440 320" preserveAspectRatio="none">
@@ -481,13 +477,13 @@
     <button class="img-btn" onclick="stopAudio()"><img src="./ui/btn_stop.png" alt="Stop" /></button>
   </div>
 
-  <!-- BABAK WEBAR -->
+  <!-- BABAK WEBAR (TEROPTIMUM: MODEL 3D DIMUAT SECARA ON-DEMAND) -->
   <a-scene
     loading-screen="enabled: false"
     mindar-image="imageTargetSrc: ./asalusulsompoton.mind; autoStart: false; uiScanning: no; uiLoading: no; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 5; missTolerance: 5;"
     gltf-model="dracoDecoderPath: https://www.gstatic.com/draco/versioned/decoders/1.5.6/;"
     color-space="sRGB"
-    renderer="colorManagement: true; alpha: true; preserveDrawingBuffer: true;"
+    renderer="colorManagement: true; alpha: true; antialias: false; precision: mediump; powerPreference: high-performance; preserveDrawingBuffer: true;"
     vr-mode-ui="enabled: false"
     xr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
@@ -500,14 +496,15 @@
     <a-entity id="target-pg2" mindar-image-target="targetIndex: 1"></a-entity>
     <a-entity id="target-pg3" mindar-image-target="targetIndex: 2"></a-entity>
 
+    <!-- Model 3D hanya dimuatkan ke GPU apabila halaman diimbas (jimat VRAM & elak crash) -->
     <a-entity id="target-pg4" mindar-image-target="targetIndex: 3">
-      <a-gltf-model id="gltf-pg4" src="./models/page4.glb" position="0 -0.55 0" rotation="0 0 0" scale="0.005 0.005 0.005" animation-mixer></a-gltf-model>
+      <a-entity id="gltf-pg4" data-src="./models/page4.glb" position="0 -0.15 0.05" rotation="0 0 0" scale="0.015 0.015 0.015"></a-entity>
     </a-entity>
 
     <a-entity id="target-pg5" mindar-image-target="targetIndex: 4"></a-entity>
 
     <a-entity id="target-pg6" mindar-image-target="targetIndex: 5">
-      <a-gltf-model id="gltf-pg6" src="./models/page6.glb" position="0 -0.55 0" rotation="0 0 0" scale="0.005 0.005 0.005" animation-mixer></a-gltf-model>
+      <a-entity id="gltf-pg6" data-src="./models/page6.glb" position="0 -0.15 0.05" rotation="0 0 0" scale="0.18 0.18 0.18"></a-entity>
     </a-entity>
 
     <a-entity id="target-pg7" mindar-image-target="targetIndex: 6"></a-entity>
@@ -515,7 +512,7 @@
     <a-entity id="target-pg9" mindar-image-target="targetIndex: 8"></a-entity>
 
     <a-entity id="target-pg10" mindar-image-target="targetIndex: 9">
-      <a-gltf-model id="gltf-pg10" src="./models/page10.glb" position="0 -0.55 0" rotation="0 90 0" scale="0.005 0.005 0.005" animation-mixer></a-gltf-model>
+      <a-entity id="gltf-pg10" data-src="./models/page10.glb" position="0 -0.15 0.05" rotation="0 90 0" scale="0.015 0.015 0.015"></a-entity>
     </a-entity>
 
     <a-entity id="target-pg11" mindar-image-target="targetIndex: 10"></a-entity>
@@ -570,7 +567,7 @@
       b.classList.toggle('active', b.dataset.lang === selectedLang);
     });
 
-    let currentPage = null, activeModel = null;
+    let currentPage = null, activeModel = null, loaded3DPage = null;
     let currentAudio = new Audio(), currentSfx = new Audio();
 
     const sfxList = {
@@ -644,6 +641,79 @@
       }
     };
 
+    /* ================= TETAPAN SAIZ & PENGURUS MEMORI GPU 3D (ANTI-CRASH) ================= */
+    const modelConfig = {
+      pg4:  { scale: 0.015, posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
+      pg6:  { scale: 0.18,  posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
+      pg10: { scale: 0.015, posX: 0, posY: -0.15, posZ: 0.05, rotY: 90 }
+    };
+
+    function applyModelConfig(pageCode, modelEl) {
+      const cfg = modelConfig[pageCode];
+      if (!cfg || !modelEl) return;
+      modelEl.object3D.position.set(cfg.posX, cfg.posY, cfg.posZ);
+      modelEl.object3D.rotation.set(0, THREE.MathUtils.degToRad(cfg.rotY), 0);
+      modelEl.object3D.scale.set(cfg.scale, cfg.scale, cfg.scale);
+      modelEl.dataset.defaultScale = cfg.scale;
+    }
+
+    // Bebaskan memori GPU model 3D lama sebelum memuat model baharu
+    function dispose3DModel(pageCode) {
+      const el = document.getElementById(`gltf-${pageCode}`);
+      if (!el) return;
+      const mesh = el.getObject3D('mesh');
+      if (mesh) {
+        mesh.traverse(node => {
+          if (node.isMesh) {
+            if (node.geometry) node.geometry.dispose();
+            const mats = Array.isArray(node.material) ? node.material : [node.material];
+            mats.forEach(m => {
+              if (!m) return;
+              ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap'].forEach(k => {
+                if (m[k]) m[k].dispose();
+              });
+              m.dispose();
+            });
+          }
+        });
+      }
+      el.removeAttribute('animation-mixer');
+      el.removeAttribute('gltf-model');
+    }
+
+    function activate3DModel(pageCode, modelEl) {
+      if (!modelEl) return;
+      if (loaded3DPage && loaded3DPage !== pageCode) {
+        dispose3DModel(loaded3DPage);
+        loaded3DPage = null;
+      }
+      if (loaded3DPage !== pageCode) {
+        showToast("⏳ Memuatkan diorama 3D...");
+        modelEl.setAttribute('gltf-model', modelEl.dataset.src);
+        modelEl.setAttribute('animation-mixer', 'timeScale: 1');
+        loaded3DPage = pageCode;
+      } else {
+        modelEl.setAttribute('animation-mixer', 'timeScale: 1');
+        showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
+      }
+    }
+
+    ['pg4', 'pg6', 'pg10'].forEach(code => {
+      const el = document.getElementById(`gltf-${code}`);
+      if (!el) return;
+      el.addEventListener('model-loaded', () => {
+        applyModelConfig(code, el);
+        if (currentPage === code) showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
+      });
+    });
+
+    function resetModelTransform() {
+      if (!activeModel || !currentPage) return;
+      playUiChime('flip');
+      applyModelConfig(currentPage, activeModel);
+      showToast("↺ Kedudukan 3D ditetapkan semula");
+    }
+
     function showToast(msg) {
       toastEl.textContent = msg;
       toastEl.classList.add('show');
@@ -703,7 +773,8 @@
       startArBtn.textContent = '✨ Membuka pengimbas AR...';
       const startScreen = document.getElementById('start-screen');
       startScreen.classList.add('fade-out');
-      setTimeout(() => { startScreen.style.display = 'none'; }, 440);
+      // Nyahaktifkan keseluruhan skrin mula untuk jimat 100% GPU
+      setTimeout(() => { startScreen.remove(); }, 420);
 
       document.getElementById('top-controls').style.display = 'flex';
       pageIndicator.style.display = 'flex';
@@ -731,9 +802,10 @@
         resetBtn.style.display = activeModel ? 'grid' : 'none';
         playUiChime('found');
         playSfx(pageCode);
-        if (activeModel) showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
+        if (activeModel) activate3DModel(pageCode, activeModel);
       });
       el.addEventListener("targetLost", () => {
+        if (activeModel) activeModel.setAttribute('animation-mixer', 'timeScale: 0');
         currentPage = null; activeModel = null;
         uiContainer.style.display = "none";
         resetBtn.style.display = "none";
@@ -757,15 +829,6 @@
     setupTarget("target-pg10", "gltf-pg10", "pg10", "Hal. 10 · Melodi Ajaib Sompoton (3D)");
     setupTarget("target-pg11", null, "pg11", "Hal. 11 · Nyanyian Odu Bergema");
     setupTarget("target-pg12", null, "pg12", "Hal. 12 · Sompoton, Simbol Cinta Sejati");
-
-    function resetModelTransform() {
-      if (!activeModel) return;
-      playUiChime('flip');
-      const defaultRotY = currentPage === 'pg10' ? (Math.PI / 2) : 0;
-      activeModel.object3D.rotation.set(0, defaultRotY, 0);
-      activeModel.object3D.scale.set(0.005, 0.005, 0.005);
-      showToast("↺ Kedudukan 3D ditetapkan semula");
-    }
 
     function playSfx(pageCode) {
       stopSfx();
@@ -846,8 +909,8 @@
       showToast("📸 Gambar AR berjaya disimpan!");
     }
 
-    // Interaksi Sentuh 3D
-    let isDragging = false, prevX = 0, prevY = 0, initPinch = null, initScale = 0.005;
+    // Interaksi Sentuh 3D (Zum Dinamik Mengikut Saiz Model)
+    let isDragging = false, prevX = 0, prevY = 0, initPinch = null, initScale = 1;
     window.addEventListener("mousedown", e => {
       if (!activeModel || e.target.closest("#ui-container") || e.target.closest("#top-controls")) return;
       isDragging = true; prevX = e.clientX; prevY = e.clientY;
@@ -861,14 +924,16 @@
     window.addEventListener("mouseup", () => isDragging = false);
     window.addEventListener("wheel", e => {
       if (!activeModel) return;
-      let s = Math.min(Math.max(activeModel.object3D.scale.x - e.deltaY * 0.000005, 0.002), 0.02);
+      const base = parseFloat(activeModel.dataset.defaultScale) || 0.015;
+      const factor = e.deltaY > 0 ? 0.92 : 1.08;
+      const s = Math.min(Math.max(activeModel.object3D.scale.x * factor, base * 0.35), base * 3.0);
       activeModel.object3D.scale.set(s, s, s);
-    });
+    }, { passive: true });
     window.addEventListener("touchstart", e => {
       if (!activeModel || e.target.closest("#ui-container") || e.target.closest("#top-controls")) return;
       if (e.touches.length === 1) { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; }
       else if (e.touches.length === 2) { isDragging = false; initPinch = getDist(e.touches); initScale = activeModel.object3D.scale.x; }
-    });
+    }, { passive: true });
     window.addEventListener("touchmove", e => {
       if (!activeModel) return;
       if (e.touches.length === 1 && isDragging) {
@@ -876,12 +941,23 @@
         activeModel.object3D.rotation.x += (e.touches[0].clientY - prevY) * 0.01;
         prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
       } else if (e.touches.length === 2 && initPinch) {
-        let s = Math.min(Math.max(initScale * (getDist(e.touches) / initPinch), 0.002), 0.02);
+        const base = parseFloat(activeModel.dataset.defaultScale) || 0.015;
+        let s = Math.min(Math.max(initScale * (getDist(e.touches) / initPinch), base * 0.35), base * 3.0);
         activeModel.object3D.scale.set(s, s, s);
       }
-    });
-    window.addEventListener("touchend", () => { isDragging = false; initPinch = null; });
+    }, { passive: true });
+    window.addEventListener("touchend", () => { isDragging = false; initPinch = null; }, { passive: true });
     function getDist(t) { return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
+
+    // Jeda audio & animasi apabila pengguna tukar tab
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAudio();
+        if (activeModel) activeModel.setAttribute('animation-mixer', 'timeScale: 0');
+      } else if (activeModel) {
+        activeModel.setAttribute('animation-mixer', 'timeScale: 1');
+      }
+    });
   </script>
 </body>
 </html>
