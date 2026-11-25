@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Teater 3D — Asal Usul Sompoton</title>
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -56,7 +55,7 @@
       transition: width 0.3s var(--ease);
     }
 
-    /* LATAR STATIK RINGAN (TIADA ANIMASI ORB / NOT MUZIK LATAR) */
+    /* LATAR STATIK RINGAN */
     .viewer-backdrop {
       position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
@@ -362,7 +361,7 @@
 
   <div class="top-bar">
     <div class="left-tools">
-      <a href="index.html" class="icon-btn" title="Kembali ke Pameran">‹</a>
+      <a href="index.html" class="icon-btn nav-leave" title="Kembali ke Pameran">‹</a>
       <div class="page-pill">
         <span>Hal.</span> <strong id="curr-num">4</strong> <span style="opacity:0.55">/ 12</span>
         <span class="badge-3d-live" id="badge-3d">3D</span>
@@ -376,7 +375,7 @@
         <button class="lang-pill" data-lang="en" onclick="changeLang('en')">EN</button>
         <button class="lang-pill" data-lang="kdz" onclick="changeLang('kdz')">KDZ</button>
       </div>
-      <a href="ar.html" id="ar-jump-link" class="ar-jump" title="Buka Pengimbas AR">📷 <span>Imbas AR</span></a>
+      <a href="ar.html" id="ar-jump-link" class="ar-jump nav-leave" title="Buka Pengimbas AR">📷 <span>Imbas AR</span></a>
     </div>
   </div>
 
@@ -389,9 +388,9 @@
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
       </div>
 
-      <!-- Slot 3D Dinamik (dicipta hanya bila halaman 3D dibuka & dipadam bila beralih ke 2D) -->
+      <!-- Slot 3D Dinamik (dicipta hanya bila halaman 3D dibuka & dibersihkan bila keluar/Back) -->
       <div class="mv-slot" id="mv-slot">
-        <div class="mv-loader"><span>🧊</span><small>Memuatkan Diorama 3D...</small></div>
+        <div class="mv-loader"><span>🧊</span><small id="mv-loader-txt">Memuatkan Diorama 3D...</small></div>
       </div>
 
       <span class="stage-3d-hint" id="stage-3d-hint">👆 Seret 360° · Cubit Zum</span>
@@ -407,7 +406,7 @@
           <div class="sub-eq"><span></span><span></span><span></span></div>
         </div>
         <div id="viewer-sub"></div>
-        <a href="index.html#kuiz" id="quiz-cta-pill" class="quiz-cta-pill">🏆 Tamat Cerita! Jawab Kuiz & Jana Sijil ›</a>
+        <a href="index.html#kuiz" id="quiz-cta-pill" class="quiz-cta-pill nav-leave">🏆 Tamat Cerita! Jawab Kuiz & Jana Sijil ›</a>
       </div>
     </div>
   </div>
@@ -495,7 +494,7 @@
     let currentPage = Math.min(Math.max(parseInt(params.get('page')) || 4, 1), 12);
     let currentLang = ['bm', 'en', 'kdz'].includes(params.get('lang')) ? params.get('lang') : 'bm';
 
-    const mvSlot = document.getElementById('mv-slot');
+    const mvSlot = document.getElementById('mv-slot'), mvLoaderTxt = document.getElementById('mv-loader-txt');
     const artWrap = document.getElementById('art-wrap'), imgStage = document.getElementById('img-stage');
     const exhibitFrame = document.getElementById('exhibit-frame'), tools3D = document.getElementById('tools-3d');
     const badge3D = document.getElementById('badge-3d'), playBtn = document.getElementById('play-btn');
@@ -510,9 +509,24 @@
     let audio = new Audio(); audio.preload = 'none';
     let sfxAudio = new Audio(); sfxAudio.preload = 'none';
     let sfxEnabled = true, autoStory = false, toastTimer = null, isNightStage = false, autoRotateEnabled = true;
+    let mvScriptPromise = null, activeMountToken = 0;
 
-    /* ================= PENGURUS 3D DINAMIK + ANIMASI SERENTAK (ANTI-CRASH) ================= */
+    /* ================= PENGURUS 3D DINAMIK + PEMBERSIHAN BACK-BUTTON (ANTI-CRASH) ================= */
     function getMV() { return mvSlot.querySelector('model-viewer'); }
+
+    function ensureModelViewerLoaded() {
+      if (customElements.get('model-viewer')) return Promise.resolve();
+      if (mvScriptPromise) return mvScriptPromise;
+      mvScriptPromise = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.type = 'module';
+        s.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js';
+        s.onload = () => customElements.whenDefined('model-viewer').then(resolve);
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return mvScriptPromise;
+    }
 
     function playAllAnimations(mvEl) {
       if (!mvEl) return;
@@ -535,18 +549,29 @@
     }
 
     function unmount3D() {
+      activeMountToken++;
       const mv = getMV();
       if (mv) {
-        mv.removeAttribute('auto-rotate');
-        if (typeof mv.pause === 'function') mv.pause();
+        try {
+          mv.removeAttribute('auto-rotate');
+          if (typeof mv.pause === 'function') mv.pause();
+          const canvas = mv.shadowRoot && mv.shadowRoot.querySelector('canvas');
+          if (canvas) {
+            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+            if (gl) {
+              const lose = gl.getExtension('WEBGL_lose_context');
+              if (lose) lose.loseContext();
+            }
+          }
+        } catch (e) {}
         mv.removeAttribute('src');
-        mv.remove(); // Bebaskan WebGL context & memori GPU serta-merta
+        mv.remove();
       }
       mvSlot.classList.remove('loaded');
       mvSlot.style.display = 'none';
     }
 
-    function mount3D(glbSrc) {
+    async function mount3D(glbSrc) {
       const existing = getMV();
       if (existing && existing.getAttribute('src') === glbSrc) {
         mvSlot.style.display = 'flex';
@@ -556,7 +581,17 @@
       }
 
       unmount3D();
+      const myToken = ++activeMountToken;
+      mvLoaderTxt.textContent = 'Memuatkan Diorama 3D...';
       mvSlot.style.display = 'flex';
+
+      try {
+        await ensureModelViewerLoaded();
+      } catch (e) {
+        if (myToken === activeMountToken) mvLoaderTxt.textContent = '⚠ Gagal memuatkan enjin 3D';
+        return;
+      }
+      if (myToken !== activeMountToken || document.hidden) return;
 
       const mv = document.createElement('model-viewer');
       mv.setAttribute('src', glbSrc);
@@ -570,6 +605,7 @@
 
       mv.addEventListener('pointerdown', () => stage3dHint.classList.add('faded'), { passive: true });
       mv.addEventListener('load', () => {
+        if (myToken !== activeMountToken) return;
         mvSlot.classList.add('loaded');
         if (!document.hidden) {
           if (typeof mv.play === 'function') mv.play();
@@ -577,9 +613,42 @@
           setTimeout(() => playAllAnimations(mv), 160);
         }
       });
+      mv.addEventListener('error', () => {
+        if (myToken !== activeMountToken) return;
+        mvLoaderTxt.textContent = '⚠ Gagal memuatkan model 3D';
+      });
 
       mvSlot.appendChild(mv);
     }
+
+    function cleanupBeforeLeave() {
+      stopAudio();
+      sfxAudio.pause();
+      sfxAudio.currentTime = 0;
+      unmount3D();
+    }
+
+    // Pastikan butang Kembali & pautan keluar sentiasa responsif tanpa crash memori
+    function navigateSafely(url) {
+      cleanupBeforeLeave();
+      setTimeout(() => { window.location.href = url; }, 35);
+    }
+
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a.nav-leave');
+      if (!link) return;
+      e.preventDefault();
+      navigateSafely(link.getAttribute('href'));
+    });
+
+    window.addEventListener('pagehide', cleanupBeforeLeave);
+    window.addEventListener('beforeunload', cleanupBeforeLeave);
+    window.addEventListener('pageshow', e => {
+      if (e.persisted) {
+        const data = pages[currentPage - 1];
+        if (data && data.glb) mount3D(data.glb);
+      }
+    });
 
     ['touchstart', 'pointerdown'].forEach(evt => {
       window.addEventListener(evt, () => {

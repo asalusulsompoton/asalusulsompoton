@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <style>
     :root {
       --paper: #F8F4EA;
@@ -18,8 +17,8 @@
       --gold-soft: #F7E8C2;
       --gourd: #BA5A28;
 
-      --glass-tint: rgba(255, 253, 248, 0.86);
-      --glass-strong: rgba(255, 253, 248, 0.94);
+      --glass-tint: rgba(255, 253, 248, 0.88);
+      --glass-strong: rgba(255, 253, 248, 0.95);
       --glass-border: rgba(255, 255, 255, 0.88);
       --glass-stroke: rgba(23, 51, 37, 0.1);
       --specular: inset 0 1px 1px rgba(255, 255, 255, 0.88);
@@ -71,12 +70,12 @@
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
     }
 
-    /* TIRAI PEMBUKAAN PANTAS & LICIN */
+    /* TIRAI PEMBUKAAN PANTAS */
     #intro-curtain {
       position: fixed; inset: 0; z-index: 10000; padding: 24px; text-align: center;
       background: linear-gradient(180deg, #CBE6F0 0%, #F8F4EA 100%);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-      transition: transform 0.45s var(--ease), opacity 0.35s ease;
+      transition: transform 0.4s var(--ease), opacity 0.3s ease;
     }
     #intro-curtain.hide { transform: translateY(-100%); opacity: 0; pointer-events: none; }
     .curtain-kicker { font-size: 0.7rem; font-weight: 800; letter-spacing: 3px; color: var(--gourd); text-transform: uppercase; }
@@ -87,7 +86,7 @@
     .ambient-fab {
       position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); right: 16px; z-index: 950;
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255, 253, 248, 0.95);
+      background: rgba(255, 253, 248, 0.96);
       border: 1px solid var(--glass-border); color: var(--forest); padding: 10px 16px; border-radius: 999px;
       font-size: 0.76rem; font-weight: 700; cursor: pointer;
       box-shadow: var(--shadow-glass), var(--specular);
@@ -105,7 +104,7 @@
     /* NAVBAR */
     .nav-wrap { position: fixed; top: max(10px, env(safe-area-inset-top)); left: 0; right: 0; z-index: 1000; display: flex; justify-content: center; padding: 0 12px; }
     .navbar {
-      width: 100%; max-width: 1180px; background: rgba(255, 253, 248, 0.94);
+      width: 100%; max-width: 1180px; background: rgba(255, 253, 248, 0.95);
       border: 1px solid var(--glass-border); border-radius: 999px;
       padding: 7px 9px 7px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
       box-shadow: 0 10px 26px rgba(23, 51, 37, 0.09), var(--specular);
@@ -154,7 +153,7 @@
     .btn-glass:hover { transform: translateY(-2px); background: #fff; border-color: var(--gold); }
     .btn-glass:active { transform: scale(0.96); }
 
-    /* ================= HERO & BUKU 3D TERAPUNG RINGKAS ================= */
+    /* ================= HERO & BUKU 3D TERAPUNG ================= */
     .hero-wrapper {
       position: relative; overflow: hidden; z-index: 2;
       background: linear-gradient(180deg, rgba(199, 227, 237, 0.84) 0%, rgba(234, 244, 241, 0.65) 48%, rgba(248, 244, 234, 0) 100%);
@@ -285,7 +284,7 @@
       .glass-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift), var(--specular); }
     }
 
-    /* SLOT 3D STATIK (ANTI-CRASH, TIADA ANIMASI BERGERAK) */
+    /* SLOT 3D ON-DEMAND (SIFAR MEMORI SEMASA SCROLL, ANTI-CRASH) */
     .mv-slot {
       position: relative; width: 100%; height: 100%; z-index: 2;
       display: flex; align-items: center; justify-content: center;
@@ -294,16 +293,29 @@
       position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
       --poster-color: transparent;
     }
-    .mv-loader {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
-      color: var(--gold-soft); font-size: 1.5rem; pointer-events: none;
-      transition: opacity 0.2s ease;
+    .mv-trigger {
+      position: relative; z-index: 3;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      background: transparent; border: none; color: var(--gold-soft); cursor: pointer;
+      padding: 14px; text-align: center; width: 100%; height: 100%;
     }
-    .mv-loader small { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.8; }
-    .mv-slot.loaded .mv-loader { opacity: 0; }
+    .mv-trigger-ico {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(247, 232, 194, 0.14);
+      border: 1.5px solid rgba(247, 232, 194, 0.45);
+      display: grid; place-items: center; font-size: 1.55rem;
+      transition: transform 0.2s ease, background 0.2s;
+    }
+    .mv-trigger:hover .mv-trigger-ico { transform: scale(1.08); background: rgba(247, 232, 194, 0.24); }
+    .mv-trigger span {
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.6px;
+      background: rgba(13, 34, 24, 0.78); color: #FFE8A3;
+      border: 1px solid rgba(247, 232, 194, 0.3);
+      padding: 4px 12px; border-radius: 999px;
+    }
+    .mv-slot.loaded .mv-trigger { display: none; }
 
-    /* 01: STUDIO SOMPOTON MAYA (NOT MUZIK SEDERHANA & RINGAN) */
+    /* 01: STUDIO SOMPOTON MAYA */
     .sompoton-studio { padding: 34px 30px; display: grid; grid-template-columns: 0.92fr 1.18fr; gap: 32px; align-items: center; }
     .melody-picker { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 18px; }
     .mel-chip {
@@ -376,7 +388,6 @@
     .gourd-label { font-family: 'Fraunces', serif; font-size: 0.84rem; letter-spacing: 3px; color: #FFF0BE; font-weight: 800; }
     .gourd-sub { font-size: 0.6rem; letter-spacing: 1.5px; color: rgba(255, 240, 190, 0.78); text-transform: uppercase; font-weight: 700; margin-top: 1px; }
 
-    /* NOT MUZIK SEDERHANA & RINGAN */
     .floating-note {
       position: absolute; pointer-events: none; font-size: 1.25rem; color: #FFE8A3; font-weight: 800;
       animation: noteRiseSimple 0.65s ease-out forwards; z-index: 10;
@@ -563,13 +574,6 @@
     .page-3d-stage {
       position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
       background: radial-gradient(circle at 50% 56%, #285C42 0%, #0D2218 100%);
-      cursor: pointer;
-    }
-    .mini-3d-hint {
-      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 5;
-      pointer-events: none; background: rgba(13, 34, 24, 0.8); color: var(--gold-soft);
-      border: 1px solid rgba(247, 232, 194, 0.25); font-size: 0.6rem; font-weight: 700;
-      padding: 3px 9px; border-radius: 999px; white-space: nowrap;
     }
 
     .p-num {
@@ -768,7 +772,7 @@
           <button id="btn-bm" class="active" onclick="setLang('bm')">BM</button>
           <button id="btn-en" onclick="setLang('en')">EN</button>
         </div>
-        <a href="ar.html" class="btn-primary" data-i18n="nav_scan">Imbas AR</a>
+        <a href="ar.html" class="btn-primary nav-leave" data-i18n="nav_scan">Imbas AR</a>
       </div>
     </nav>
   </div>
@@ -792,8 +796,8 @@
           Hidupkan lagenda cinta sejati Aki dan Odu dari kaki Gunung Kinabalu. Imbas halaman buku menggunakan telefon pintar untuk meneroka diorama 3D isometrik, penceritaan 3 bahasa, sari kata langsung, dan alunan asli Sompoton tanpa aplikasi.
         </p>
         <div class="hero-actions">
-          <a href="ar.html" class="btn-primary">📷 <span data-i18n="btn_scan">Mula Imbas Buku (AR)</span></a>
-          <a href="viewer.html?page=4" class="btn-glass">🧊 <span data-i18n="btn_3d">Mod 3D Tanpa Buku</span></a>
+          <a href="ar.html" class="btn-primary nav-leave">📷 <span data-i18n="btn_scan">Mula Imbas Buku (AR)</span></a>
+          <a href="viewer.html?page=4" class="btn-glass nav-leave">🧊 <span data-i18n="btn_3d">Mod 3D Tanpa Buku</span></a>
         </div>
         <div class="hero-metrics">
           <div class="metric"><strong>12</strong><span data-i18n="m_pages">Halaman AR</span></div>
@@ -808,7 +812,7 @@
           <span class="genz-sticker st-2">🎧 3 Bahasa</span>
           <span class="genz-sticker st-3">🏔️ Sabah</span>
 
-          <div class="magic-book" onclick="window.location.href='viewer.html?page=1'">
+          <div class="magic-book" onclick="navigateSafely('viewer.html?page=1')">
             <div class="book-inside">
               <h4>Babak Pertama</h4>
               <p>"Pada zaman dahulu di Sabah, tinggal sepasang suami isteri warga emas yang penyayang bernama Aki dan Odu..."</p>
@@ -1006,12 +1010,12 @@
     <div class="dict-grid" id="dict-grid"></div>
   </section>
 
-  <!-- 04: PENCERITAAN 3 BAHASA & 12 BABAK (MODEL 3D STATIK RINGAN) -->
+  <!-- 04: PENCERITAAN 3 BAHASA & 12 BABAK (3D ON-DEMAND ANTI-CRASH) -->
   <section id="halaman" class="wrap">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="l_kicker">PENCERITAAN 3 BAHASA & 12 BABAK</span>
       <h2 data-i18n="p_title">Setiap Halaman, Satu Dunia Kecil</h2>
-      <p data-i18n="l_sub">Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau lihat paparan diorama 3D pada Halaman 4, 6 & 10 di bawah.</p>
+      <p data-i18n="l_sub">Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau ketik kad 3D pada Halaman 4, 6 & 10 untuk memaparkan model 3D.</p>
     </div>
 
     <div class="lang-grid">
@@ -1032,8 +1036,8 @@
           </button>
         </div>
         <div class="card-actions">
-          <a href="ar.html?lang=bm" class="btn-primary">📷 Imbas AR</a>
-          <a href="viewer.html?lang=bm&page=4" class="btn-glass">🧊 Lihat 3D</a>
+          <a href="ar.html?lang=bm" class="btn-primary nav-leave">📷 Imbas AR</a>
+          <a href="viewer.html?lang=bm&page=4" class="btn-glass nav-leave">🧊 Lihat 3D</a>
         </div>
       </div>
 
@@ -1054,8 +1058,8 @@
           </button>
         </div>
         <div class="card-actions">
-          <a href="ar.html?lang=en" class="btn-primary">📷 Scan AR</a>
-          <a href="viewer.html?lang=en&page=4" class="btn-glass">🧊 View 3D</a>
+          <a href="ar.html?lang=en" class="btn-primary nav-leave">📷 Scan AR</a>
+          <a href="viewer.html?lang=en&page=4" class="btn-glass nav-leave">🧊 View 3D</a>
         </div>
       </div>
 
@@ -1076,8 +1080,8 @@
           </button>
         </div>
         <div class="card-actions">
-          <a href="ar.html?lang=kdz" class="btn-primary">📷 Imbas AR</a>
-          <a href="viewer.html?lang=kdz&page=4" class="btn-glass">🧊 Lihat 3D</a>
+          <a href="ar.html?lang=kdz" class="btn-primary nav-leave">📷 Imbas AR</a>
+          <a href="viewer.html?lang=kdz&page=4" class="btn-glass nav-leave">🧊 Lihat 3D</a>
         </div>
       </div>
     </div>
@@ -1151,7 +1155,7 @@
   <!-- TOAST LENCANA -->
   <div id="badge-toast"></div>
 
-  <!-- MODAL PASPORT PENJELAJAH BORNEO (3 MISI + PELEKAT DISATUKAN DENGAN SIJIL) -->
+  <!-- MODAL PASPORT PENJELAJAH BORNEO (3 MISI) -->
   <div class="glass-modal-overlay" id="passport-modal" onclick="if(event.target===this) closePassport()">
     <div class="glass-modal">
       <button class="modal-close" onclick="closePassport()">×</button>
@@ -1195,100 +1199,129 @@
   </footer>
 
   <script>
-    /* ================= PEMBUKAAN LAMAN PANTAS & SELAMAT ================= */
+    /* ================= PEMBUKAAN LAMAN PANTAS & BERSIH ================= */
     function dismissIntroCurtain() {
       const curtain = document.getElementById('intro-curtain');
       if (!curtain || curtain.dataset.closing) return;
       curtain.dataset.closing = '1';
       curtain.classList.add('hide');
-      setTimeout(() => { if (curtain.parentNode) curtain.remove(); }, 500);
+      setTimeout(() => { if (curtain.parentNode) curtain.remove(); }, 450);
     }
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(dismissIntroCurtain, 380);
-      setTimeout(syncVisible3DSlots, 550);
-    });
-    window.addEventListener('load', () => setTimeout(dismissIntroCurtain, 120));
+    document.addEventListener('DOMContentLoaded', () => setTimeout(dismissIntroCurtain, 350));
+    window.addEventListener('load', () => setTimeout(dismissIntroCurtain, 100));
 
-    /* ================= PENGURUS 3D STATIK (ANTI-CRASH — TIADA ANIMASI BERGERAK) ================= */
+    /* ================= PENGURUS 3D ON-DEMAND & PEMBERSIHAN BACK-BUTTON (ANTI-CRASH iOS/ANDROID) ================= */
     const progressEl = document.getElementById('scroll-progress');
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    const MAX_MOUNTED_3D = isMobile ? 1 : 3;
-    const mountedSlots = [];
+    let active3DSlot = null, mvScriptPromise = null;
     let scrollTicking = false, scrollEndTimer = null, isScrollingNow = false;
 
-    function unmountModelFromSlot(slot) {
+    // Muat perpustakaan model-viewer HANYA apabila pengguna menekan kad 3D (jimat RAM 100% masa buka)
+    function ensureModelViewerLoaded() {
+      if (customElements.get('model-viewer')) return Promise.resolve();
+      if (mvScriptPromise) return mvScriptPromise;
+      mvScriptPromise = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.type = 'module';
+        s.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js';
+        s.onload = () => customElements.whenDefined('model-viewer').then(resolve);
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return mvScriptPromise;
+    }
+
+    function unmountSlot(slot) {
       if (!slot) return;
       const mv = slot.querySelector('model-viewer');
       if (mv) {
-        if (typeof mv.pause === 'function') mv.pause();
+        try {
+          if (typeof mv.pause === 'function') mv.pause();
+          const canvas = mv.shadowRoot && mv.shadowRoot.querySelector('canvas');
+          if (canvas) {
+            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+            if (gl) {
+              const lose = gl.getExtension('WEBGL_lose_context');
+              if (lose) lose.loseContext();
+            }
+          }
+        } catch (e) {}
         mv.removeAttribute('src');
         mv.remove();
       }
       slot.classList.remove('loaded');
-      const idx = mountedSlots.indexOf(slot);
-      if (idx > -1) mountedSlots.splice(idx, 1);
+      const lbl = slot.querySelector('.mv-trigger span');
+      if (lbl) lbl.textContent = 'Ketik Papar 3D';
+      if (active3DSlot === slot) active3DSlot = null;
     }
 
-    function mountModelInSlot(slot) {
-      if (!slot || !slot.dataset.src) return;
-      let mv = slot.querySelector('model-viewer');
+    function cleanupAll3D() {
+      document.querySelectorAll('.mv-slot').forEach(slot => unmountSlot(slot));
+      active3DSlot = null;
+    }
 
-      if (!mv) {
-        while (mountedSlots.length >= MAX_MOUNTED_3D) {
-          unmountModelFromSlot(mountedSlots[0]);
-        }
+    async function load3DOnTap(btn) {
+      const slot = btn.closest('.mv-slot');
+      if (!slot || !slot.dataset.src || slot.querySelector('model-viewer')) return;
 
-        // Model 3D kekal statik (tiada auto-rotate & tiada autoplay) supaya sangat ringan
-        mv = document.createElement('model-viewer');
-        mv.setAttribute('src', slot.dataset.src);
-        mv.setAttribute('camera-controls', '');
-        mv.setAttribute('disable-zoom', '');
-        mv.setAttribute('shadow-intensity', '0');
-        mv.setAttribute('interaction-prompt', 'none');
-        mv.setAttribute('exposure', '1.15');
-        mv.setAttribute('camera-orbit', slot.dataset.orbit || '35deg 66deg 114%');
+      const lbl = btn.querySelector('span');
+      if (lbl) lbl.textContent = '⏳ Memuatkan...';
 
-        mv.addEventListener('load', () => {
-          slot.classList.add('loaded');
-          if (typeof mv.pause === 'function') mv.pause();
-        });
-
-        slot.appendChild(mv);
-        mountedSlots.push(slot);
-      } else {
-        const idx = mountedSlots.indexOf(slot);
-        if (idx > -1) { mountedSlots.splice(idx, 1); mountedSlots.push(slot); }
+      // Tutup model 3D lain dahulu supaya hanya 1 model wujud dalam memori
+      if (active3DSlot && active3DSlot !== slot) {
+        unmountSlot(active3DSlot);
       }
-    }
 
-    function mountSlotNow(container) {
-      const slot = container.querySelector('.mv-slot');
-      if (slot) mountModelInSlot(slot);
-    }
+      try {
+        await ensureModelViewerLoaded();
+      } catch (e) {
+        if (lbl) lbl.textContent = '⚠ Gagal muat, cuba lagi';
+        return;
+      }
 
-    function syncVisible3DSlots() {
-      if (isScrollingNow || document.hidden) return;
-      const vh = window.innerHeight;
-      const visible = [];
+      const mv = document.createElement('model-viewer');
+      mv.setAttribute('src', slot.dataset.src);
+      mv.setAttribute('camera-controls', '');
+      mv.setAttribute('disable-zoom', '');
+      mv.setAttribute('shadow-intensity', '0');
+      mv.setAttribute('interaction-prompt', 'none');
+      mv.setAttribute('exposure', '1.15');
+      mv.setAttribute('camera-orbit', slot.dataset.orbit || '35deg 66deg 114%');
 
-      document.querySelectorAll('.mv-slot').forEach(slot => {
-        if (slot.offsetParent === null) {
-          if (slot.querySelector('model-viewer')) unmountModelFromSlot(slot);
-          return;
-        }
-        const rect = slot.getBoundingClientRect();
-        const inView = rect.bottom > 20 && rect.top < vh - 20;
-        if (inView) {
-          const dist = Math.abs((rect.top + rect.bottom) / 2 - vh / 2);
-          visible.push({ slot, dist });
-        } else if (slot.querySelector('model-viewer')) {
-          unmountModelFromSlot(slot);
-        }
+      mv.addEventListener('load', () => {
+        slot.classList.add('loaded');
+        if (typeof mv.pause === 'function') mv.pause(); // Kekal statik (tiada animasi berat)
+      });
+      mv.addEventListener('error', () => {
+        unmountSlot(slot);
+        if (lbl) lbl.textContent = '⚠ Cuba lagi';
       });
 
-      visible.sort((a, b) => a.dist - b.dist);
-      visible.slice(0, MAX_MOUNTED_3D).forEach(item => mountModelInSlot(item.slot));
+      slot.appendChild(mv);
+      active3DSlot = slot;
     }
+
+    // Bersihkan memori WebGL sebelum beralih ke ar.html atau viewer.html (elak crash bila tekan Back)
+    function navigateSafely(url) {
+      cleanupAll3D();
+      if (!ambAudio.paused) ambAudio.pause();
+      if (!sampleAudio.paused) sampleAudio.pause();
+      if (!realSompoton.paused) realSompoton.pause();
+      setTimeout(() => { window.location.href = url; }, 40);
+    }
+
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a.nav-leave');
+      if (!link) return;
+      e.preventDefault();
+      navigateSafely(link.getAttribute('href'));
+    });
+
+    window.addEventListener('pagehide', () => cleanupAll3D());
+    window.addEventListener('pageshow', e => {
+      dismissIntroCurtain();
+      if (e.persisted) cleanupAll3D();
+    });
 
     window.addEventListener('scroll', () => {
       if (!isScrollingNow) {
@@ -1299,8 +1332,12 @@
       scrollEndTimer = setTimeout(() => {
         isScrollingNow = false;
         document.body.classList.remove('is-scrolling');
-        syncVisible3DSlots();
-      }, 240);
+        // Lepaskan memori model 3D jika ia sudah jauh di luar skrin
+        if (active3DSlot) {
+          const r = active3DSlot.getBoundingClientRect();
+          if (r.bottom < -120 || r.top > window.innerHeight + 120) unmountSlot(active3DSlot);
+        }
+      }, 220);
 
       if (!scrollTicking) {
         requestAnimationFrame(() => {
@@ -1682,7 +1719,7 @@
       if (discoveredSet.size >= 4) unlockBadge('scholar', 'Cendekiawan KDZ 📖');
     }
 
-    /* ================= 3 BAHASA & GALERI 12 BABAK (3D STATIK) ================= */
+    /* ================= 3 BAHASA & GALERI 12 BABAK (3D ON-DEMAND) ================= */
     let sampleAudio = makeLazyAudio(), playingCardId = null;
     function playSample(lang, cardId) {
       const card = document.getElementById(cardId);
@@ -1715,32 +1752,34 @@
         playUiChime('flip');
       }
       const grid = document.getElementById('pages-grid');
-      grid.querySelectorAll('.mv-slot').forEach(slot => unmountModelFromSlot(slot));
+      cleanupAll3D();
       grid.innerHTML = '';
 
       pages.filter(p => filter === 'all' || (filter === '3d' && p.d3) || (filter === 'sfx' && p.sfx)).forEach(p => {
         if (p.d3 && p.glb) {
           grid.innerHTML += `
             <div class="page-card is-3d">
-              <div class="page-3d-stage" onclick="mountSlotNow(this)">
+              <div class="page-3d-stage">
                 <span class="p-num">${p.n}</span>
                 <div class="p-badges">
                   <span class="p-tag tag-3d">✨ 3D</span>
                   ${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}
                 </div>
                 <div class="mv-slot" data-src="${p.glb}" data-orbit="35deg 66deg 114%">
-                  <div class="mv-loader"><span>🧊</span><small>3D</small></div>
+                  <button type="button" class="mv-trigger" onclick="load3DOnTap(this)">
+                    <div class="mv-trigger-ico">🧊</div>
+                    <span>Ketik Papar 3D</span>
+                  </button>
                 </div>
-                <span class="mini-3d-hint">🧊 Model 3D</span>
               </div>
-              <a href="viewer.html?page=${p.n}" class="p-body">
+              <a href="viewer.html?page=${p.n}" class="p-body nav-leave">
                 <h4>${p.t}</h4>
                 <div class="p-foot"><span>Buka Teater 3D</span><span>›</span></div>
               </a>
             </div>`;
         } else {
           grid.innerHTML += `
-            <a href="viewer.html?page=${p.n}" class="page-card">
+            <a href="viewer.html?page=${p.n}" class="page-card nav-leave">
               <div class="page-media">
                 <span class="p-num">${p.n}</span>
                 <div class="p-badges">${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}</div>
@@ -1753,8 +1792,6 @@
             </a>`;
         }
       });
-
-      setTimeout(syncVisible3DSlots, 140);
     }
     renderPages('all');
 
@@ -1803,23 +1840,19 @@
       setTimeout(() => { qIdx++; renderQuiz(); }, 750);
     }
 
-    // Lukis Pelekat Digital Sompoton terus ke atas Sijil (1400x960)
     function drawCollectorStickerOnCert(g, cx, cy, isMaster) {
       g.save();
       g.translate(cx, cy);
 
-      // Bingkai putih luar pelekat
       g.beginPath(); g.arc(0, 0, 108, 0, Math.PI * 2);
       g.fillStyle = '#FFFDF7'; g.fill();
       g.shadowColor = 'rgba(23, 51, 37, 0.28)'; g.shadowBlur = 16; g.shadowOffsetY = 6;
 
-      // Latar zamrud pelekat
       const bg = g.createRadialGradient(0, -24, 14, 0, 0, 100);
       bg.addColorStop(0, '#2E6649'); bg.addColorStop(0.68, '#173325'); bg.addColorStop(1, '#0B1D14');
       g.beginPath(); g.arc(0, 0, 100, 0, Math.PI * 2); g.fillStyle = bg; g.fill();
       g.shadowBlur = 0; g.shadowOffsetY = 0;
 
-      // Lingkaran emas & tenunan titik
       const goldRing = g.createLinearGradient(-95, -95, 95, 95);
       goldRing.addColorStop(0, '#FFF0B8'); goldRing.addColorStop(0.5, '#DCA028'); goldRing.addColorStop(1, '#BA5A28');
       g.strokeStyle = goldRing; g.lineWidth = 4.5;
@@ -1827,7 +1860,6 @@
       g.lineWidth = 1.5;
       g.beginPath(); g.arc(0, 0, 84, 0, Math.PI * 2); g.stroke();
 
-      // Ilustrasi mini Sompoton di dalam pelekat
       const pipeHeights = [36, 31, 26, 21, 17];
       pipeHeights.forEach((h, i) => {
         const px = -19 + i * 8, py = -8 - h;
@@ -1841,7 +1873,6 @@
       g.beginPath(); g.ellipse(0, 0, 23, 13, 0, 0, Math.PI * 2); g.fill();
       g.strokeStyle = '#FFE8A3'; g.lineWidth = 1.2; g.stroke();
 
-      // Reben pelekat
       g.fillStyle = '#BA5A28';
       drawRoundRect(g, -74, 18, 148, 22, 11); g.fill();
       g.strokeStyle = '#FFE8A3'; g.lineWidth = 1.4; g.stroke();
@@ -1939,7 +1970,6 @@
       g.fillStyle = '#BA5A28'; g.font = 'bold 21px sans-serif';
       g.fillText(`PENCAPAIAN SKOR: ${score} / ${quizData.length}`, 700, 621);
 
-      // Pelekat Digital Eksklusif diterap terus pada Sijil
       drawCollectorStickerOnCert(g, 700, 746, isMaster);
 
       g.strokeStyle = 'rgba(23, 51, 37, 0.35)'; g.lineWidth = 1.5;
@@ -2005,7 +2035,7 @@
         h_kicker: "SINOPSIS & WARISAN SABAH", h_title: "Lagenda Cinta di Kaki Gunung Kinabalu",
         char_kicker: "KENALI WATAK CERITA", char_title: "Ketik Watak untuk Mendengar Pesanan Mereka",
         d_kicker: "PEMELIHARAAN BAHASA IBUNDA", d_title: "Kamus Mini Kadazandusun", d_sub: "Ketik mana-mana kad untuk melihat terjemahan Bahasa Melayu & Inggeris beserta bunyi buluh interaktif.",
-        l_kicker: "PENCERITAAN 3 BAHASA & 12 BABAK", p_title: "Setiap Halaman, Satu Dunia Kecil", l_sub: "Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau lihat paparan diorama 3D pada Halaman 4, 6 & 10 di bawah.",
+        l_kicker: "PENCERITAAN 3 BAHASA & 12 BABAK", p_title: "Setiap Halaman, Satu Dunia Kecil", l_sub: "Dengar contoh penceritaan 3 bahasa dengan Smart SFX, atau ketik kad 3D pada Halaman 4, 6 & 10 untuk memaparkan model 3D.",
         q_kicker: "CABARAN INTERAKTIF & SIJIL", q_title: "Kuiz Warisan Sompoton", q_sub: "Jawab 5 soalan ringkas untuk menjana Sijil Digital berserta Pelekat Digital eksklusif anda dalam satu muat turun PNG."
       },
       en: {
@@ -2018,7 +2048,7 @@
         h_kicker: "SYNOPSIS & SABAHAN HERITAGE", h_title: "A Legend of Love at Mount Kinabalu",
         char_kicker: "MEET THE CHARACTERS", char_title: "Tap Each Character to Hear Their Message",
         d_kicker: "HERITAGE LANGUAGE PRESERVATION", d_title: "Kadazandusun Mini Dictionary", d_sub: "Tap any card to view its Malay & English translation with interactive bamboo chimes.",
-        l_kicker: "TRILINGUAL NARRATION & 12 SCENES", p_title: "Every Page, a Living Miniature World", l_sub: "Preview trilingual narration with Smart SFX, or view the 3D diorama previews on Pages 4, 6 & 10 below.",
+        l_kicker: "TRILINGUAL NARRATION & 12 SCENES", p_title: "Every Page, a Living Miniature World", l_sub: "Preview trilingual narration with Smart SFX, or tap the 3D cards on Pages 4, 6 & 10 to load the 3D model.",
         q_kicker: "INTERACTIVE CHALLENGE & CERTIFICATE", q_title: "Sompoton Heritage Quiz", q_sub: "Answer 5 quick questions to generate your digital certificate with the embedded collector sticker in one PNG download."
       }
     };
@@ -2030,11 +2060,7 @@
 
     document.addEventListener('visibilitychange', () => {
       document.body.classList.toggle('tab-hidden', document.hidden);
-      if (document.hidden) {
-        [...mountedSlots].forEach(slot => unmountModelFromSlot(slot));
-      } else {
-        setTimeout(syncVisible3DSlots, 150);
-      }
+      if (document.hidden) cleanupAll3D();
     });
   </script>
 </body>

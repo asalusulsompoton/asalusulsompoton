@@ -321,7 +321,7 @@
 </head>
 <body>
 
-  <a href="index.html" class="back-circle" title="Kembali ke Pameran">‹</a>
+  <a href="index.html" class="back-circle nav-leave" title="Kembali ke Pameran">‹</a>
 
   <!-- SKRIN MULA (RINGAN TANPA ANIMASI LATAR BERAT) -->
   <div id="start-screen">
@@ -355,7 +355,7 @@
       <div id="cam-error-box"></div>
 
       <button class="btn-scan" id="start-ar-btn" onclick="startAR()">📷 Mula Imbas Buku (AR)</button>
-      <a href="viewer.html?page=4" class="btn-3d-alt">🧊 Tiada buku? Teroka Mod 3D</a>
+      <a href="viewer.html?page=4" class="btn-3d-alt nav-leave">🧊 Tiada buku? Teroka Mod 3D</a>
 
       <div class="tips-grid">
         <div class="tip-chip"><span>📷</span><strong>Tekan Allow Kamera</strong></div>
@@ -408,7 +408,7 @@
     <button class="img-btn" onclick="stopAudio()"><img src="./ui/btn_stop.png" alt="Stop" /></button>
   </div>
 
-  <!-- BABAK WEBAR (ANTI "AW, SNAP!": preserveDrawingBuffer: false + MAKS 1 MODEL 3D DALAM VRAM) -->
+  <!-- BABAK WEBAR (ANTI-CRASH: preserveDrawingBuffer: false + MAKS 1 MODEL 3D DALAM VRAM) -->
   <a-scene
     loading-screen="enabled: false"
     mindar-image="imageTargetSrc: ./asalusulsompoton.mind; autoStart: false; maxTrack: 1; uiScanning: no; uiLoading: no; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 5; missTolerance: 5;"
@@ -427,7 +427,7 @@
     <a-entity id="target-pg2" mindar-image-target="targetIndex: 1"></a-entity>
     <a-entity id="target-pg3" mindar-image-target="targetIndex: 2"></a-entity>
 
-    <!-- Model 3D hanya dimuat bila halaman diimbas (elak lonjakan memori RAM telefon) -->
+    <!-- Model 3D hanya dimuat bila halaman diimbas -->
     <a-entity id="target-pg4" mindar-image-target="targetIndex: 3">
       <a-entity id="gltf-pg4" data-src="./models/page4.glb" position="0 -0.15 0.05" rotation="0 0 0" scale="0.015 0.015 0.015"></a-entity>
     </a-entity>
@@ -452,6 +452,7 @@
 
   <script>
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    let arStarted = false;
 
     /* ================= ENJIN BUNYI UI HALUS (WEB AUDIO API) ================= */
     let uiCtx = null;
@@ -575,7 +576,7 @@
       }
     };
 
-    /* ================= TETAPAN SAIZ & PENGURUS MEMORI GPU 3D (ANTI "AW, SNAP!") ================= */
+    /* ================= TETAPAN SAIZ & PENGURUS MEMORI GPU 3D ================= */
     const modelConfig = {
       pg4:  { scale: 0.015, posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
       pg6:  { scale: 0.18,  posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
@@ -591,7 +592,6 @@
       modelEl.dataset.defaultScale = cfg.scale;
     }
 
-    // Ringankan tekstur model 3D di telefon (jimat ~33% VRAM untuk elak "Aw, Snap!")
     function optimizeMeshForMobile(modelEl) {
       if (!isMobile || !modelEl) return;
       const mesh = modelEl.getObject3D('mesh');
@@ -615,7 +615,6 @@
       });
     }
 
-    // Bebaskan memori GPU & RAM model 3D lama sepenuhnya sebelum memuat model baharu
     function dispose3DModel(pageCode) {
       const el = document.getElementById(`gltf-${pageCode}`);
       if (!el) return;
@@ -675,6 +674,67 @@
       });
     });
 
+    /* ================= PEMBERSIHAN KAMERA & MEMORI (RESPONSIF BILA TEKAN BACK) ================= */
+    function cleanupBeforeLeave() {
+      try { stopAudio(); } catch (e) {}
+
+      // 1. Lepaskan memori model 3D aktif
+      if (loaded3DPage) {
+        try { dispose3DModel(loaded3DPage); } catch (e) {}
+        loaded3DPage = null;
+      }
+
+      // 2. Hentikan MindAR & suapan kamera serta-merta
+      const sceneEl = document.querySelector('a-scene');
+      if (arStarted && sceneEl) {
+        try {
+          const arSystem = sceneEl.systems["mindar-image-system"];
+          if (arSystem && typeof arSystem.stop === 'function') arSystem.stop();
+        } catch (e) {}
+        arStarted = false;
+      }
+
+      // 3. Tutup semua aliran video kamera supaya RAM & perkakasan dilepaskan segera
+      document.querySelectorAll('video').forEach(v => {
+        try {
+          if (v.srcObject && v.srcObject.getTracks) {
+            v.srcObject.getTracks().forEach(t => t.stop());
+          }
+          v.pause();
+          v.srcObject = null;
+        } catch (e) {}
+      });
+
+      // 4. Lepaskan konteks WebGL supaya halaman sebelumnya tidak crash bila tekan Back
+      if (sceneEl && sceneEl.canvas) {
+        try {
+          const gl = sceneEl.canvas.getContext('webgl2') || sceneEl.canvas.getContext('webgl');
+          if (gl) {
+            const lose = gl.getExtension('WEBGL_lose_context');
+            if (lose) lose.loseContext();
+          }
+        } catch (e) {}
+      }
+    }
+
+    function navigateSafely(url) {
+      cleanupBeforeLeave();
+      setTimeout(() => { window.location.href = url; }, 50);
+    }
+
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a.nav-leave');
+      if (!link) return;
+      e.preventDefault();
+      navigateSafely(link.getAttribute('href'));
+    });
+
+    window.addEventListener('pagehide', cleanupBeforeLeave);
+    window.addEventListener('beforeunload', cleanupBeforeLeave);
+    window.addEventListener('pageshow', e => {
+      if (e.persisted) window.location.reload();
+    });
+
     function resetModelTransform() {
       if (!activeModel || !currentPage) return;
       playUiChime('flip');
@@ -725,7 +785,6 @@
       }
 
       try {
-        // Ujian kebenaran kamera guna resolusi kecil (jimat RAM semasa mula)
         const testStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: 'environment' }, width: { ideal: 320 }, height: { ideal: 240 } },
           audio: false
@@ -751,7 +810,6 @@
       const sceneEl = document.querySelector('a-scene');
       const launch = () => {
         if (sceneEl.renderer) {
-          // Kunci pixelRatio = 1 di telefon (potong penggunaan VRAM grafik sehingga 60%)
           sceneEl.renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
         }
         if (sceneEl.canvas) {
@@ -761,7 +819,10 @@
           });
         }
         const arSystem = sceneEl.systems["mindar-image-system"];
-        if (arSystem) arSystem.start();
+        if (arSystem) {
+          arStarted = true;
+          arSystem.start();
+        }
       };
       if (sceneEl.hasLoaded) launch();
       else sceneEl.addEventListener('loaded', launch);
@@ -856,7 +917,6 @@
       const aCanvas = sceneEl ? sceneEl.canvas : null;
       if (!video || !aCanvas) return;
 
-      // Render bingkai 3D serta-merta sebelum tangkap gambar (kerana preserveDrawingBuffer: false)
       if (sceneEl.renderer && sceneEl.object3D && sceneEl.camera) {
         sceneEl.renderer.render(sceneEl.object3D, sceneEl.camera);
       }
