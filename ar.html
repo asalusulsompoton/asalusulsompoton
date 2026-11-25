@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Imbas AR — Asal Usul Sompoton</title>
 
-  <!-- Pramuat fail 3D ke cache storan pelayar (pantas dibuka tanpa penuhkan RAM/VRAM) -->
-  <link rel="prefetch" href="./models/page4.glb" as="fetch" crossorigin>
-  <link rel="prefetch" href="./models/page6.glb" as="fetch" crossorigin>
-  <link rel="prefetch" href="./models/page10.glb" as="fetch" crossorigin>
-
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -413,13 +408,13 @@
     <button class="img-btn" onclick="stopAudio()"><img src="./ui/btn_stop.png" alt="Stop" /></button>
   </div>
 
-  <!-- BABAK WEBAR (ANTI-CRASH: MAKS 1 MODEL 3D DALAM GPU + SEMUA ANIMASI SERENTAK) -->
+  <!-- BABAK WEBAR (ANTI "AW, SNAP!": preserveDrawingBuffer: false + MAKS 1 MODEL 3D DALAM VRAM) -->
   <a-scene
     loading-screen="enabled: false"
     mindar-image="imageTargetSrc: ./asalusulsompoton.mind; autoStart: false; maxTrack: 1; uiScanning: no; uiLoading: no; filterMinCF: 0.0001; filterBeta: 0.001; warmupTolerance: 5; missTolerance: 5;"
     gltf-model="dracoDecoderPath: https://www.gstatic.com/draco/versioned/decoders/1.5.6/;"
     color-space="sRGB"
-    renderer="colorManagement: true; alpha: true; antialias: false; precision: mediump; powerPreference: high-performance; preserveDrawingBuffer: true;"
+    renderer="colorManagement: true; alpha: true; antialias: false; precision: mediump; powerPreference: default; preserveDrawingBuffer: false;"
     vr-mode-ui="enabled: false"
     xr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
@@ -432,7 +427,7 @@
     <a-entity id="target-pg2" mindar-image-target="targetIndex: 1"></a-entity>
     <a-entity id="target-pg3" mindar-image-target="targetIndex: 2"></a-entity>
 
-    <!-- Model 3D hanya dimuat ke VRAM bila halaman diimbas; fail sudah di-prefetch supaya keluar pantas -->
+    <!-- Model 3D hanya dimuat bila halaman diimbas (elak lonjakan memori RAM telefon) -->
     <a-entity id="target-pg4" mindar-image-target="targetIndex: 3">
       <a-entity id="gltf-pg4" data-src="./models/page4.glb" position="0 -0.15 0.05" rotation="0 0 0" scale="0.015 0.015 0.015"></a-entity>
     </a-entity>
@@ -580,7 +575,7 @@
       }
     };
 
-    /* ================= TETAPAN SAIZ & PENGURUS MEMORI GPU 3D (ANTI-CRASH) ================= */
+    /* ================= TETAPAN SAIZ & PENGURUS MEMORI GPU 3D (ANTI "AW, SNAP!") ================= */
     const modelConfig = {
       pg4:  { scale: 0.015, posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
       pg6:  { scale: 0.18,  posX: 0, posY: -0.15, posZ: 0.05, rotY: 0 },
@@ -596,7 +591,31 @@
       modelEl.dataset.defaultScale = cfg.scale;
     }
 
-    // Bebaskan memori GPU model 3D lama sepenuhnya sebelum memuat model baharu
+    // Ringankan tekstur model 3D di telefon (jimat ~33% VRAM untuk elak "Aw, Snap!")
+    function optimizeMeshForMobile(modelEl) {
+      if (!isMobile || !modelEl) return;
+      const mesh = modelEl.getObject3D('mesh');
+      if (!mesh) return;
+      mesh.traverse(node => {
+        if (node.isMesh) {
+          node.castShadow = false;
+          node.receiveShadow = false;
+          const mats = Array.isArray(node.material) ? node.material : [node.material];
+          mats.forEach(m => {
+            if (!m) return;
+            ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap'].forEach(k => {
+              if (m[k]) {
+                m[k].generateMipmaps = false;
+                m[k].minFilter = THREE.LinearFilter;
+                m[k].needsUpdate = true;
+              }
+            });
+          });
+        }
+      });
+    }
+
+    // Bebaskan memori GPU & RAM model 3D lama sepenuhnya sebelum memuat model baharu
     function dispose3DModel(pageCode) {
       const el = document.getElementById(`gltf-${pageCode}`);
       if (!el) return;
@@ -619,6 +638,7 @@
       }
       el.removeAttribute('animation-mixer');
       el.removeAttribute('gltf-model');
+      if (window.THREE && THREE.Cache) THREE.Cache.clear();
       const sceneEl = document.querySelector('a-scene');
       if (sceneEl && sceneEl.renderer && sceneEl.renderer.renderLists) {
         sceneEl.renderer.renderLists.dispose();
@@ -647,6 +667,7 @@
       if (!el) return;
       el.addEventListener('model-loaded', () => {
         applyModelConfig(code, el);
+        optimizeMeshForMobile(el);
         if (currentPage === code) {
           el.setAttribute('animation-mixer', 'clip: *; loop: repeat; timeScale: 1');
           showToast("✨ Diorama 3D aktif — Seret putar, cubit zum");
@@ -704,8 +725,9 @@
       }
 
       try {
+        // Ujian kebenaran kamera guna resolusi kecil (jimat RAM semasa mula)
         const testStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' } },
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 320 }, height: { ideal: 240 } },
           audio: false
         });
         testStream.getTracks().forEach(track => track.stop());
@@ -729,7 +751,8 @@
       const sceneEl = document.querySelector('a-scene');
       const launch = () => {
         if (sceneEl.renderer) {
-          sceneEl.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5));
+          // Kunci pixelRatio = 1 di telefon (potong penggunaan VRAM grafik sehingga 60%)
+          sceneEl.renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
         }
         if (sceneEl.canvas) {
           sceneEl.canvas.addEventListener('webglcontextlost', e => {
@@ -829,8 +852,14 @@
 
     function takeSnapshot() {
       const video = document.querySelector('video');
-      const aCanvas = document.querySelector('a-scene').canvas;
+      const sceneEl = document.querySelector('a-scene');
+      const aCanvas = sceneEl ? sceneEl.canvas : null;
       if (!video || !aCanvas) return;
+
+      // Render bingkai 3D serta-merta sebelum tangkap gambar (kerana preserveDrawingBuffer: false)
+      if (sceneEl.renderer && sceneEl.object3D && sceneEl.camera) {
+        sceneEl.renderer.render(sceneEl.object3D, sceneEl.camera);
+      }
 
       const flash = document.getElementById('flash-overlay');
       flash.style.opacity = '0.85';
