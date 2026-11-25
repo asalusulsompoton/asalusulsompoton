@@ -59,14 +59,25 @@
       animation-play-state: paused !important;
     }
 
-    /* PENUNJUK RINGAN SEMASA MODEL 3D SEDANG DIMUATKAN (TIADA GAMBAR 2D) */
-    .mv-loader {
-      width: 100%; height: 100%;
+    /* SLOT 3D DINAMIK (ANTI-CRASH MEMORI) */
+    .mv-slot {
+      position: relative; width: 100%; height: 100%; z-index: 2;
       display: flex; align-items: center; justify-content: center;
-      color: var(--gold-soft); font-size: 1.5rem;
     }
+    .mv-slot model-viewer {
+      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
+      --poster-color: transparent;
+    }
+    .mv-loader {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      color: var(--gold-soft); font-size: 1.6rem; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .mv-loader small { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.8; }
     .mv-loader span { animation: pulse3DLoad 1.2s ease-in-out infinite alternate; }
-    @keyframes pulse3DLoad { from { opacity: 0.35; transform: scale(0.92); } to { opacity: 0.9; transform: scale(1.08); } }
+    .mv-slot.loaded .mv-loader { opacity: 0; }
+    @keyframes pulse3DLoad { from { opacity: 0.4; transform: scale(0.92); } to { opacity: 0.95; transform: scale(1.08); } }
 
     /* LATAR AMBIENT & NOT MUZIK TERAPUNG (GPU OPTIMIZED) */
     .ambient-backdrop { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
@@ -332,7 +343,6 @@
       border-radius: 32px; background: radial-gradient(circle at center, #224B36, #0E2318);
       border: 3px solid rgba(255, 255, 255, 0.85); box-shadow: var(--shadow-lift); overflow: hidden;
     }
-    #hero-3d-box model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 
     /* ENJIN SPATIAL 3D */
     .spatial-active .book-pedestal-wrap { transform: rotateY(calc(var(--sx) * 4deg)) rotateX(calc(var(--sy) * -3deg)); }
@@ -393,13 +403,13 @@
       height: 255px; border-radius: 22px; overflow: hidden; position: relative;
       background: radial-gradient(circle at 50% 58%, #285C42 0%, #0D2218 100%);
       margin-bottom: 14px; box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.38);
+      cursor: pointer;
     }
     .pedestal-stage::before {
       content: ""; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
       width: 70%; height: 60px; border-radius: 50%; pointer-events: none; z-index: 1;
       background: radial-gradient(circle, rgba(244, 196, 83, 0.35), transparent 70%);
     }
-    .pedestal-stage model-viewer { width: 100%; height: 100%; position: relative; z-index: 2; --poster-color: transparent; }
     .pedestal-tag {
       position: absolute; top: 10px; left: 10px; z-index: 5;
       background: rgba(255, 253, 248, 0.92);
@@ -688,13 +698,13 @@
     .page-3d-stage {
       position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
       background: radial-gradient(circle at 50% 56%, #285C42 0%, #0D2218 100%);
+      cursor: pointer;
     }
     .page-3d-stage::before {
       content: ""; position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
       width: 72%; height: 48px; border-radius: 50%; pointer-events: none; z-index: 1;
       background: radial-gradient(circle, rgba(244, 196, 83, 0.36), transparent 72%);
     }
-    .page-3d-stage model-viewer { width: 100%; height: 100%; position: relative; z-index: 2; --poster-color: transparent; }
     .mini-3d-hint {
       position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 5;
       pointer-events: none; background: rgba(13, 34, 24, 0.78); color: var(--gold-soft);
@@ -884,7 +894,7 @@
       .faq-a { padding: 0 18px 18px 18px; }
       .ambient-fab { bottom: max(12px, env(safe-area-inset-bottom)); right: 12px; padding: 8px 13px; font-size: 0.72rem; }
       #spatial-ios-btn { bottom: max(12px, env(safe-area-inset-bottom)); left: 12px; padding: 8px 13px; font-size: 0.72rem; }
-      .bg-note:nth-child(n+5) { display: none; }
+      .bg-note:nth-child(n+4) { display: none; }
       .glass-card, .hero-metrics, .book-pedestal-wrap, .faq-item { background: rgba(255, 253, 248, 0.94); }
     }
   </style>
@@ -1003,9 +1013,9 @@
         </div>
 
         <div id="hero-3d-box">
-          <model-viewer id="hero-mv" data-src="./models/page10.glb" camera-controls autoplay shadow-intensity="0" interaction-prompt="none" exposure="1.15" camera-orbit="35deg 68deg 108%">
-            <div slot="poster" class="mv-loader"><span>🧊</span></div>
-          </model-viewer>
+          <div id="hero-mv-slot" class="mv-slot" data-src="./models/page10.glb" data-orbit="35deg 68deg 108%">
+            <div class="mv-loader"><span>🧊</span><small>Memuatkan 3D...</small></div>
+          </div>
         </div>
       </div>
     </header>
@@ -1030,7 +1040,7 @@
   </div>
   <div class="linangkit-strip"></div>
 
-  <!-- 01: PENTAS 3 DIORAMA 3D (KEKAL 3D PENUH & ANIMASI SERENTAK) -->
+  <!-- 01: PENTAS 3 DIORAMA 3D (DYNAMIC MOUNTING ANTI-CRASH) -->
   <section id="diorama" class="wrap reveal">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="d3_kicker">PENTAS DIORAMA ISOMETRIK</span>
@@ -1040,12 +1050,12 @@
 
     <div class="pedestal-grid">
       <div class="glass-card pedestal-card">
-        <div class="pedestal-stage">
+        <div class="pedestal-stage" onclick="mountSlotNow(this)">
           <span class="pedestal-tag">Halaman 4 · 3D</span>
-          <button class="stage-sfx-btn" onclick="toggleDioramaSfx('./sfx/pg4_sungai.mp3', this)" title="Dengar Bunyi Sungai">🔊</button>
-          <model-viewer class="smart-mv" data-src="./models/page4.glb" camera-controls autoplay shadow-intensity="0" interaction-prompt="none" exposure="1.15" camera-orbit="35deg 66deg 112%">
-            <div slot="poster" class="mv-loader"><span>🧊</span></div>
-          </model-viewer>
+          <button class="stage-sfx-btn" onclick="event.stopPropagation(); toggleDioramaSfx('./sfx/pg4_sungai.mp3', this)" title="Dengar Bunyi Sungai">🔊</button>
+          <div class="mv-slot" data-src="./models/page4.glb" data-orbit="35deg 66deg 112%">
+            <div class="mv-loader"><span>🧊</span><small>Memuatkan 3D...</small></div>
+          </div>
           <span class="stage-hint">👆 Seret 360° · Cubit Zum</span>
         </div>
         <div class="pedestal-chapter">Babak 04 · Pertemuan di Rimba</div>
@@ -1055,12 +1065,12 @@
       </div>
 
       <div class="glass-card pedestal-card">
-        <div class="pedestal-stage">
+        <div class="pedestal-stage" onclick="mountSlotNow(this)">
           <span class="pedestal-tag">Halaman 6 · 3D</span>
-          <button class="stage-sfx-btn" onclick="toggleDioramaSfx('./sfx/pg6_burung.mp3', this)" title="Dengar Bunyi Burung">🔊</button>
-          <model-viewer class="smart-mv" data-src="./models/page6.glb" camera-controls autoplay shadow-intensity="0" interaction-prompt="none" exposure="1.15" camera-orbit="35deg 66deg 112%">
-            <div slot="poster" class="mv-loader"><span>🧊</span></div>
-          </model-viewer>
+          <button class="stage-sfx-btn" onclick="event.stopPropagation(); toggleDioramaSfx('./sfx/pg6_burung.mp3', this)" title="Dengar Bunyi Burung">🔊</button>
+          <div class="mv-slot" data-src="./models/page6.glb" data-orbit="35deg 66deg 112%">
+            <div class="mv-loader"><span>🧊</span><small>Memuatkan 3D...</small></div>
+          </div>
           <span class="stage-hint">👆 Seret 360° · Cubit Zum</span>
         </div>
         <div class="pedestal-chapter">Babak 06 · Petunjuk Magis</div>
@@ -1070,12 +1080,12 @@
       </div>
 
       <div class="glass-card pedestal-card">
-        <div class="pedestal-stage">
+        <div class="pedestal-stage" onclick="mountSlotNow(this)">
           <span class="pedestal-tag">Halaman 10 · 3D</span>
-          <button class="stage-sfx-btn" onclick="toggleDioramaSfx('./sfx/pg10_sompoton.mp3', this)" title="Dengar Alunan Sompoton">🔊</button>
-          <model-viewer class="smart-mv" data-src="./models/page10.glb" camera-controls autoplay shadow-intensity="0" interaction-prompt="none" exposure="1.15" camera-orbit="35deg 66deg 112%">
-            <div slot="poster" class="mv-loader"><span>🧊</span></div>
-          </model-viewer>
+          <button class="stage-sfx-btn" onclick="event.stopPropagation(); toggleDioramaSfx('./sfx/pg10_sompoton.mp3', this)" title="Dengar Alunan Sompoton">🔊</button>
+          <div class="mv-slot" data-src="./models/page10.glb" data-orbit="35deg 66deg 112%">
+            <div class="mv-loader"><span>🧊</span><small>Memuatkan 3D...</small></div>
+          </div>
           <span class="stage-hint">👆 Seret 360° · Cubit Zum</span>
         </div>
         <div class="pedestal-chapter">Babak 10 · Kemuncak Lagenda</div>
@@ -1086,7 +1096,7 @@
     </div>
   </section>
 
-  <!-- 02: STUDIO SOMPOTON MAYA (PENTAS AKUSTIK ZAMRUD-EMAS) -->
+  <!-- 02: STUDIO SOMPOTON MAYA -->
   <section id="studio" class="wrap reveal">
     <div class="sec-head">
       <span class="sec-kicker" data-i18n="st_kicker">PENGALAMAN BUNYI INTERAKTIF</span>
@@ -1451,15 +1461,16 @@
         const curtain = document.getElementById('intro-curtain');
         if (curtain) curtain.classList.add('hide');
       }, 550);
+      setTimeout(syncVisible3DSlots, 700);
     });
 
-    /* ================= ENJIN ANIMASI 3D SERENTAK & PENGURUS MEMORI (60 FPS) ================= */
+    /* ================= PENGURUS 3D DINAMIK (ANTI "AW, SNAP!" — MAKS 1 WEBGL DI TELEFON) ================= */
     const progressEl = document.getElementById('scroll-progress');
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    const inViewMvs = new Set();
+    const MAX_MOUNTED_3D = isMobile ? 1 : 3;
+    const mountedSlots = [];
     let scrollTicking = false, scrollEndTimer = null, isScrollingNow = false;
 
-    // Mainkan SEMUA klip animasi 3D secara serentak (seperti ar.html)
     function playAllAnimations(mvEl) {
       if (!mvEl) return;
       try {
@@ -1480,84 +1491,109 @@
       } catch (e) {}
     }
 
-    function bindAllAnimListener(mv) {
-      if (!mv || mv.dataset.animBound) return;
-      mv.dataset.animBound = '1';
-      mv.addEventListener('load', () => {
-        if (!isScrollingNow && !document.hidden) {
-          if (typeof mv.play === 'function') mv.play();
-          requestAnimationFrame(() => playAllAnimations(mv));
-          setTimeout(() => playAllAnimations(mv), 160);
-        }
-      });
+    function unmountModelFromSlot(slot) {
+      if (!slot) return;
+      const mv = slot.querySelector('model-viewer');
+      if (mv) {
+        mv.removeAttribute('auto-rotate');
+        if (typeof mv.pause === 'function') mv.pause();
+        mv.removeAttribute('src');
+        mv.remove(); // Bebaskan WebGL context & RAM/VRAM serta-merta
+      }
+      slot.classList.remove('loaded');
+      const idx = mountedSlots.indexOf(slot);
+      if (idx > -1) mountedSlots.splice(idx, 1);
     }
 
-    // 1. Pramuat model 3D secara seimbang sebelum masuk skrin, dan lepaskan VRAM bila jauh di luar skrin
-    const mvLoadObs = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        const mv = entry.target;
-        if (entry.isIntersecting) {
-          if (!mv.getAttribute('src') && mv.dataset.src) {
-            mv.setAttribute('src', mv.dataset.src);
-          }
-        } else {
-          mv.removeAttribute('auto-rotate');
-          if (typeof mv.pause === 'function') mv.pause();
-          if (mv.getAttribute('src')) mv.removeAttribute('src');
-        }
-      });
-    }, { rootMargin: isMobile ? '220px 0px' : '400px 0px' });
+    function mountModelInSlot(slot) {
+      if (!slot || !slot.dataset.src) return;
+      let mv = slot.querySelector('model-viewer');
 
-    // 2. Kawal putaran & animasi serentak hanya bila kelihatan di skrin
-    const mvPlayObs = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        const mv = entry.target;
-        if (entry.isIntersecting) {
-          inViewMvs.add(mv);
+      if (!mv) {
+        // Hadkan bilangan model-viewer hidup serentak supaya Chrome telefon tidak pernah crash
+        while (mountedSlots.length >= MAX_MOUNTED_3D) {
+          unmountModelFromSlot(mountedSlots[0]);
+        }
+
+        mv = document.createElement('model-viewer');
+        mv.setAttribute('src', slot.dataset.src);
+        mv.setAttribute('camera-controls', '');
+        mv.setAttribute('auto-rotate', '');
+        mv.setAttribute('autoplay', '');
+        mv.setAttribute('shadow-intensity', '0');
+        mv.setAttribute('interaction-prompt', 'none');
+        mv.setAttribute('exposure', '1.15');
+        mv.setAttribute('camera-orbit', slot.dataset.orbit || '35deg 66deg 112%');
+
+        mv.addEventListener('load', () => {
+          slot.classList.add('loaded');
           if (!isScrollingNow && !document.hidden) {
-            mv.setAttribute('auto-rotate', '');
             if (typeof mv.play === 'function') mv.play();
-            playAllAnimations(mv);
+            requestAnimationFrame(() => playAllAnimations(mv));
+            setTimeout(() => playAllAnimations(mv), 160);
           }
-        } else {
-          inViewMvs.delete(mv);
-          mv.removeAttribute('auto-rotate');
-          if (typeof mv.pause === 'function') mv.pause();
+        });
+
+        slot.appendChild(mv);
+        mountedSlots.push(slot);
+      } else {
+        const idx = mountedSlots.indexOf(slot);
+        if (idx > -1) { mountedSlots.splice(idx, 1); mountedSlots.push(slot); }
+        if (!isScrollingNow && !document.hidden) {
+          mv.setAttribute('auto-rotate', '');
+          if (typeof mv.play === 'function') mv.play();
+          playAllAnimations(mv);
+        }
+      }
+    }
+
+    function mountSlotNow(container) {
+      const slot = container.querySelector('.mv-slot');
+      if (slot) mountModelInSlot(slot);
+    }
+
+    function syncVisible3DSlots() {
+      if (isScrollingNow || document.hidden) return;
+      const vh = window.innerHeight;
+      const visible = [];
+
+      document.querySelectorAll('.mv-slot').forEach(slot => {
+        if (slot.offsetParent === null) {
+          if (slot.querySelector('model-viewer')) unmountModelFromSlot(slot);
+          return;
+        }
+        const rect = slot.getBoundingClientRect();
+        const inView = rect.bottom > 20 && rect.top < vh - 20;
+        if (inView) {
+          const dist = Math.abs((rect.top + rect.bottom) / 2 - vh / 2);
+          visible.push({ slot, dist });
+        } else if (slot.querySelector('model-viewer')) {
+          unmountModelFromSlot(slot);
         }
       });
-    }, { threshold: 0.05 });
 
-    function observeSmart3D(root = document) {
-      root.querySelectorAll('.smart-mv').forEach(mv => {
-        bindAllAnimListener(mv);
-        mvLoadObs.observe(mv);
-        mvPlayObs.observe(mv);
-      });
+      visible.sort((a, b) => a.dist - b.dist);
+      visible.slice(0, MAX_MOUNTED_3D).forEach(item => mountModelInSlot(item.slot));
     }
-    observeSmart3D();
-    bindAllAnimListener(document.getElementById('hero-mv'));
 
     window.addEventListener('scroll', () => {
       if (!isScrollingNow) {
         isScrollingNow = true;
         document.body.classList.add('is-scrolling');
-        inViewMvs.forEach(mv => {
-          mv.removeAttribute('auto-rotate');
-          if (typeof mv.pause === 'function') mv.pause();
+        mountedSlots.forEach(slot => {
+          const mv = slot.querySelector('model-viewer');
+          if (mv) {
+            mv.removeAttribute('auto-rotate');
+            if (typeof mv.pause === 'function') mv.pause();
+          }
         });
       }
       clearTimeout(scrollEndTimer);
       scrollEndTimer = setTimeout(() => {
         isScrollingNow = false;
         document.body.classList.remove('is-scrolling');
-        if (!document.hidden) {
-          inViewMvs.forEach(mv => {
-            mv.setAttribute('auto-rotate', '');
-            if (typeof mv.play === 'function') mv.play();
-            playAllAnimations(mv);
-          });
-        }
-      }, 150);
+        syncVisible3DSlots();
+      }, 240);
 
       if (!scrollTicking) {
         requestAnimationFrame(() => {
@@ -1591,17 +1627,9 @@
       document.getElementById('tog-3d').classList.toggle('active', mode === '3d');
       document.getElementById('magic-book-wrap').style.display = mode === 'book' ? 'flex' : 'none';
       document.getElementById('hero-3d-box').style.display = mode === '3d' ? 'block' : 'none';
-      const heroMv = document.getElementById('hero-mv');
-      if (mode === '3d') {
-        if (!heroMv.getAttribute('src')) heroMv.setAttribute('src', heroMv.dataset.src);
-        heroMv.setAttribute('auto-rotate', '');
-        if (typeof heroMv.play === 'function') heroMv.play();
-        setTimeout(() => playAllAnimations(heroMv), 150);
-      } else {
-        heroMv.removeAttribute('auto-rotate');
-        if (typeof heroMv.pause === 'function') heroMv.pause();
-        if (heroMv.getAttribute('src')) heroMv.removeAttribute('src');
-      }
+      const heroSlot = document.getElementById('hero-mv-slot');
+      if (mode === '3d') mountModelInSlot(heroSlot);
+      else unmountModelFromSlot(heroSlot);
     }
 
     /* ================= ENJIN WEB AUDIO ================= */
@@ -1659,7 +1687,6 @@
       else run();
     }
 
-    /* ================= HELPER ROUNDRECT (SELAMAT SEMUA PELAYAR) ================= */
     function drawRoundRect(g, x, y, w, h, r) {
       if (typeof g.roundRect === 'function') {
         g.beginPath(); g.roundRect(x, y, w, h, r);
@@ -1672,7 +1699,7 @@
       }
     }
 
-    /* ================= PASPORT PENJELAJAH BORNEO (RESET SETIAP REFRESH + PELEKAT PNG) ================= */
+    /* ================= PASPORT PENJELAJAH BORNEO ================= */
     let passport = { musician: false, scholar: false, explorer: false, champion: false };
     let masterStickerUrl = null;
     let badgeToastTimer = null;
@@ -1818,7 +1845,7 @@
       }).catch(() => {});
     }
 
-    /* ================= STUDIO SOMPOTON PREMIUM (REED TIMBRE + 3 MELODI BERIRAMA) ================= */
+    /* ================= STUDIO SOMPOTON PREMIUM ================= */
     let waveEnergy = 0, isMelodyPlaying = false, studioVisible = false, pipesPlayedCount = 0;
     let autoRiffTimers = [], isAutoRiffRunning = false, selectedMelody = 'sumazau';
     const gourdAura = document.getElementById('gourd-aura');
@@ -2102,7 +2129,7 @@
       if (discoveredSet.size >= 4) unlockBadge('scholar', 'Cendekiawan KDZ 📖');
     }
 
-    /* ================= 3 BAHASA & GALERI 12 BABAK (HAL. 4, 6 & 10 KEKAL 3D + ANIMASI SERENTAK) ================= */
+    /* ================= 3 BAHASA & GALERI 12 BABAK (DYNAMIC 3D SLOT) ================= */
     let sampleAudio = makeLazyAudio(), playingCardId = null;
     function playSample(lang, cardId) {
       const card = document.getElementById(cardId);
@@ -2135,28 +2162,22 @@
         playUiChime('flip');
       }
       const grid = document.getElementById('pages-grid');
-      grid.querySelectorAll('.smart-mv').forEach(mv => {
-        mvLoadObs.unobserve(mv);
-        mvPlayObs.unobserve(mv);
-        inViewMvs.delete(mv);
-        if (typeof mv.pause === 'function') mv.pause();
-        if (mv.getAttribute('src')) mv.removeAttribute('src');
-      });
+      grid.querySelectorAll('.mv-slot').forEach(slot => unmountModelFromSlot(slot));
       grid.innerHTML = '';
 
       pages.filter(p => filter === 'all' || (filter === '3d' && p.d3) || (filter === 'sfx' && p.sfx)).forEach(p => {
         if (p.d3 && p.glb) {
           grid.innerHTML += `
             <div class="page-card is-3d">
-              <div class="page-3d-stage">
+              <div class="page-3d-stage" onclick="mountSlotNow(this)">
                 <span class="p-num">${p.n}</span>
                 <div class="p-badges">
                   <span class="p-tag tag-3d">✨ 3D</span>
                   ${p.sfx ? '<span class="p-tag tag-sfx">🎵 SFX</span>' : ''}
                 </div>
-                <model-viewer class="smart-mv" data-src="${p.glb}" camera-controls autoplay shadow-intensity="0" interaction-prompt="none" exposure="1.15" camera-orbit="35deg 66deg 114%">
-                  <div slot="poster" class="mv-loader"><span>🧊</span></div>
-                </model-viewer>
+                <div class="mv-slot" data-src="${p.glb}" data-orbit="35deg 66deg 114%">
+                  <div class="mv-loader"><span>🧊</span><small>3D</small></div>
+                </div>
                 <span class="mini-3d-hint">👆 Putar 360°</span>
               </div>
               <a href="viewer.html?page=${p.n}" class="p-body">
@@ -2180,11 +2201,11 @@
         }
       });
 
-      observeSmart3D(grid);
+      setTimeout(syncVisible3DSlots, 140);
     }
     renderPages('all');
 
-    /* ================= KUIZ 5 SOALAN + PRATONTON SIJIL DIRAJA (1400×960) ================= */
+    /* ================= KUIZ 5 SOALAN + PRATONTON SIJIL DIRAJA ================= */
     const quizData = [
       { q: "1. Mengapakah Odu kehilangan suaranya pada awal cerita?", opts: ["Terjatuh di hutan", "Akibat demam panas yang teruk", "Tersesat di sungai"], ans: 1 },
       { q: "2. Haiwan apakah yang membimbing Aki dan Odu ke hutan buluh magis?", opts: ["Burung kecil", "Kancil", "Rama-rama"], ans: 0 },
@@ -2502,13 +2523,9 @@
     document.addEventListener('visibilitychange', () => {
       document.body.classList.toggle('tab-hidden', document.hidden);
       if (document.hidden) {
-        inViewMvs.forEach(mv => { if (typeof mv.pause === 'function') mv.pause(); });
+        [...mountedSlots].forEach(slot => unmountModelFromSlot(slot));
       } else {
-        inViewMvs.forEach(mv => {
-          mv.setAttribute('auto-rotate', '');
-          if (typeof mv.play === 'function') mv.play();
-          playAllAnimations(mv);
-        });
+        setTimeout(syncVisible3DSlots, 150);
       }
     });
   </script>
