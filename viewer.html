@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Teater 3D — Asal Usul Sompoton</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -25,7 +26,6 @@
       --shadow-glass: 0 10px 24px -8px rgba(23, 51, 37, 0.13), 0 4px 10px rgba(23, 51, 37, 0.05);
       --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-      /* Warna Suasana Dinamik (statik, ringan pada GPU) */
       --orb-a: rgba(247, 224, 168, 0.44);
       --orb-b: rgba(169, 214, 229, 0.38);
     }
@@ -147,7 +147,7 @@
       border: 2.5px solid rgba(255, 255, 255, 0.88);
       box-shadow: 0 20px 42px -12px rgba(23, 51, 37, 0.24);
       overflow: hidden;
-      transition: opacity 0.18s ease, background 0.35s ease;
+      transition: opacity 0.16s ease, background 0.35s ease;
     }
     .exhibit-frame.night-stage {
       background: radial-gradient(circle at 50% 52%, #1B3945 0%, #07131A 100%);
@@ -156,7 +156,7 @@
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 8;
       background: repeating-linear-gradient(135deg, var(--forest) 0 8px, var(--gold) 8px 13px, var(--gourd) 13px 18px, var(--forest) 18px 24px);
     }
-    .exhibit-frame.switching { opacity: 0.35; }
+    .exhibit-frame.switching { opacity: 0.4; }
 
     /* Bingkai Fit Ngam-Ngam untuk Gambar 2D */
     .exhibit-frame.mode-2d {
@@ -169,7 +169,7 @@
     }
     .exhibit-frame.mode-2d::before { display: none; }
 
-    /* SLOT 3D DINAMIK (ANTI-CRASH MEMORI) */
+    /* SLOT 3D DINAMIK (RESOLUSI PENUH + ANTI-CRASH) */
     .mv-slot {
       position: relative; width: 100%; height: 100%; z-index: 2;
       display: none; align-items: center; justify-content: center;
@@ -180,11 +180,18 @@
     }
     .mv-loader {
       position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-      color: var(--gold-soft); font-size: 1.8rem; pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      color: var(--gold-soft); pointer-events: none;
       transition: opacity 0.2s ease;
     }
-    .mv-loader small { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.8px; opacity: 0.85; }
+    .mv-spin {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 3px solid rgba(247, 232, 194, 0.22);
+      border-top-color: var(--gold);
+      animation: spin3d 0.75s linear infinite;
+    }
+    @keyframes spin3d { to { transform: rotate(360deg); } }
+    .mv-loader small { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.6px; opacity: 0.92; }
     .mv-slot.loaded .mv-loader { opacity: 0; }
 
     .tools-3d {
@@ -363,7 +370,7 @@
     <div class="left-tools">
       <a href="index.html" class="icon-btn nav-leave" title="Kembali ke Pameran">‹</a>
       <div class="page-pill">
-        <span>Hal.</span> <strong id="curr-num">4</strong> <span style="opacity:0.55">/ 12</span>
+        <span>Hal.</span> <strong id="curr-num">1</strong> <span style="opacity:0.55">/ 12</span>
         <span class="badge-3d-live" id="badge-3d">3D</span>
       </div>
     </div>
@@ -380,7 +387,7 @@
   </div>
 
   <div class="stage">
-    <div class="exhibit-frame" id="exhibit-frame">
+    <div class="exhibit-frame mode-2d" id="exhibit-frame">
       <div class="tools-3d" id="tools-3d">
         <button class="mini-3d-btn active" id="rot-btn" onclick="toggleRotate()">↻ Putar</button>
         <button class="mini-3d-btn" id="mood-btn" onclick="toggleStageMood()">🌙 Magis</button>
@@ -388,9 +395,12 @@
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
       </div>
 
-      <!-- Slot 3D Dinamik (dicipta hanya bila halaman 3D dibuka & dibersihkan bila keluar/Back) -->
+      <!-- Slot 3D Dinamik (resolusi penuh, dimuat pantas dari disk cache) -->
       <div class="mv-slot" id="mv-slot">
-        <div class="mv-loader"><span>🧊</span><small id="mv-loader-txt">Memuatkan Diorama 3D...</small></div>
+        <div class="mv-loader">
+          <div class="mv-spin"></div>
+          <small id="mv-loader-txt">Memuatkan Diorama 3D...</small>
+        </div>
       </div>
 
       <span class="stage-3d-hint" id="stage-3d-hint">👆 Seret 360° · Cubit Zum</span>
@@ -398,7 +408,7 @@
     </div>
 
     <div class="caption-area">
-      <div class="chapter-kicker" id="chapter-kicker">BABAK 04 · DUNIA 3D</div>
+      <div class="chapter-kicker" id="chapter-kicker">BABAK 01 · KAMPUNG DAMAI</div>
       <div class="scene-caption" id="caption"></div>
       <div class="subtitle-card" id="subtitle-card">
         <div class="sub-meta">
@@ -431,7 +441,7 @@
   </div>
 
   <script>
-    /* ================= ENJIN BUNYI UI HALUS (WEB AUDIO API) ================= */
+    /* ================= ENJIN BUNYI UI HALUS ================= */
     let uiCtx = null;
     function playChime(type = 'flip') {
       try {
@@ -490,8 +500,9 @@
       { n: 12, tag: "BABAK 12 · WARISAN ABADI", mood: "mood-climax", t: "Sompoton, Simbol Cinta Sejati", glb: null }
     ];
 
+    /* Mula dari Halaman 1 secara lalai */
     const params = new URLSearchParams(window.location.search);
-    let currentPage = Math.min(Math.max(parseInt(params.get('page')) || 4, 1), 12);
+    let currentPage = Math.min(Math.max(parseInt(params.get('page')) || 1, 1), 12);
     let currentLang = ['bm', 'en', 'kdz'].includes(params.get('lang')) ? params.get('lang') : 'bm';
 
     const mvSlot = document.getElementById('mv-slot'), mvLoaderTxt = document.getElementById('mv-loader-txt');
@@ -509,24 +520,25 @@
     let audio = new Audio(); audio.preload = 'none';
     let sfxAudio = new Audio(); sfxAudio.preload = 'none';
     let sfxEnabled = true, autoStory = false, toastTimer = null, isNightStage = false, autoRotateEnabled = true;
-    let mvScriptPromise = null, activeMountToken = 0;
+    let activeMountToken = 0, cacheWarmupStarted = false;
 
-    /* ================= PENGURUS 3D DINAMIK + PEMBERSIHAN BACK-BUTTON (ANTI-CRASH) ================= */
-    function getMV() { return mvSlot.querySelector('model-viewer'); }
-
-    function ensureModelViewerLoaded() {
-      if (customElements.get('model-viewer')) return Promise.resolve();
-      if (mvScriptPromise) return mvScriptPromise;
-      mvScriptPromise = new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.type = 'module';
-        s.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js';
-        s.onload = () => customElements.whenDefined('model-viewer').then(resolve);
-        s.onerror = reject;
-        document.head.appendChild(s);
-      });
-      return mvScriptPromise;
+    /* ================= PRAMUAT BERGILIR KE DISK CACHE (MUAT PANTAS HAL. 4, 6 & 10) ================= */
+    async function warmUpModelsSequentially() {
+      if (cacheWarmupStarted) return;
+      cacheWarmupStarted = true;
+      const urls = ['./models/page4.glb', './models/page6.glb', './models/page10.glb'];
+      for (const url of urls) {
+        if (document.hidden) break;
+        try {
+          const res = await fetch(url, { cache: 'force-cache' });
+          if (res.ok) await res.blob(); // Simpan ke disk cache pelayar tanpa makan VRAM GPU
+        } catch (e) {}
+        await new Promise(r => setTimeout(r, 350));
+      }
     }
+
+    /* ================= PENGURUS 3D RESOLUSI PENUH + ANTI-CRASH ================= */
+    function getMV() { return mvSlot.querySelector('model-viewer'); }
 
     function playAllAnimations(mvEl) {
       if (!mvEl) return;
@@ -585,12 +597,7 @@
       mvLoaderTxt.textContent = 'Memuatkan Diorama 3D...';
       mvSlot.style.display = 'flex';
 
-      try {
-        await ensureModelViewerLoaded();
-      } catch (e) {
-        if (myToken === activeMountToken) mvLoaderTxt.textContent = '⚠ Gagal memuatkan enjin 3D';
-        return;
-      }
+      await customElements.whenDefined('model-viewer');
       if (myToken !== activeMountToken || document.hidden) return;
 
       const mv = document.createElement('model-viewer');
@@ -602,6 +609,12 @@
       mv.setAttribute('interaction-prompt', 'none');
       mv.setAttribute('exposure', isNightStage ? '0.9' : '1.15');
       mv.setAttribute('camera-orbit', '35deg 68deg 108%');
+
+      mv.addEventListener('progress', e => {
+        if (myToken !== activeMountToken) return;
+        const pct = Math.round((e.detail.totalProgress || 0) * 100);
+        if (pct > 0 && pct < 100) mvLoaderTxt.textContent = `Memuatkan 3D... ${pct}%`;
+      });
 
       mv.addEventListener('pointerdown', () => stage3dHint.classList.add('faded'), { passive: true });
       mv.addEventListener('load', () => {
@@ -628,7 +641,6 @@
       unmount3D();
     }
 
-    // Pastikan butang Kembali & pautan keluar sentiasa responsif tanpa crash memori
     function navigateSafely(url) {
       cleanupBeforeLeave();
       setTimeout(() => { window.location.href = url; }, 35);
@@ -786,7 +798,7 @@
         exhibitFrame.classList.remove('switching');
         playPageSfx(num);
         if (autoPlayNow) startAudioPlayback();
-      }, 120);
+      }, 100);
     }
 
     function stepPage(delta) {
@@ -879,6 +891,8 @@
 
     updateLangUI();
     loadPage(currentPage, false);
+    // Mula pramuat fail .glb secara senyap ke disk cache selepas Halaman 1 siap dipaparkan
+    setTimeout(warmUpModelsSequentially, 700);
   </script>
 </body>
 </html>
