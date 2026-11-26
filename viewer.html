@@ -19,7 +19,7 @@
       --gourd: #BA5A28;
 
       --glass-tint: rgba(255, 253, 248, 0.9);
-      --glass-strong: rgba(255, 253, 248, 0.95);
+      --glass-strong: rgba(255, 253, 248, 0.96);
       --glass-border: rgba(255, 255, 255, 0.88);
       --glass-stroke: rgba(23, 51, 37, 0.11);
       --specular: inset 0 1px 1px rgba(255, 255, 255, 0.9);
@@ -52,7 +52,7 @@
     #story-progress-fill {
       height: 100%; width: 8.33%;
       background: linear-gradient(90deg, var(--forest-mid), var(--gold), var(--gourd));
-      transition: width 0.3s var(--ease);
+      transition: width 0.28s var(--ease);
     }
 
     /* LATAR STATIK RINGAN */
@@ -88,7 +88,7 @@
       border: 1px solid var(--glass-border); display: grid; place-items: center;
       font-size: 1.15rem; cursor: pointer;
       box-shadow: var(--shadow-glass), var(--specular);
-      transition: transform 0.18s ease, border-color 0.2s, background 0.2s;
+      transition: transform 0.16s ease, border-color 0.2s, background 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
     .icon-btn:hover { border-color: var(--gold); background: #fff; }
@@ -128,7 +128,7 @@
       color: #FAF5EB; text-decoration: none; font-weight: 700; font-size: 0.76rem;
       padding: 8px 14px; border-radius: 999px; white-space: nowrap;
       box-shadow: 0 8px 18px rgba(23, 51, 37, 0.22);
-      transition: transform 0.18s ease;
+      transition: transform 0.16s ease;
     }
     .ar-jump:active { transform: scale(0.94); }
 
@@ -147,7 +147,7 @@
       border: 2.5px solid rgba(255, 255, 255, 0.88);
       box-shadow: 0 20px 42px -12px rgba(23, 51, 37, 0.24);
       overflow: hidden;
-      transition: opacity 0.16s ease, background 0.35s ease;
+      transition: opacity 0.14s ease, background 0.35s ease;
     }
     .exhibit-frame.night-stage {
       background: radial-gradient(circle at 50% 52%, #1B3945 0%, #07131A 100%);
@@ -156,7 +156,7 @@
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 8;
       background: repeating-linear-gradient(135deg, var(--forest) 0 8px, var(--gold) 8px 13px, var(--gourd) 13px 18px, var(--forest) 18px 24px);
     }
-    .exhibit-frame.switching { opacity: 0.4; }
+    .exhibit-frame.switching { opacity: 0.45; }
 
     /* Bingkai Fit Ngam-Ngam untuk Gambar 2D */
     .exhibit-frame.mode-2d {
@@ -169,17 +169,17 @@
     }
     .exhibit-frame.mode-2d::before { display: none; }
 
-    /* SLOT 3D DINAMIK (RESOLUSI PENUH + ANTI-CRASH) */
+    /* SLOT 3D KEKAL (SATU MODEL-VIEWER DIGUNA SEMULA — ELAK KONTEKS WEBGL MATI) */
     .mv-slot {
       position: relative; width: 100%; height: 100%; z-index: 2;
       display: none; align-items: center; justify-content: center;
     }
-    .mv-slot model-viewer {
+    #mv {
       position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
       --poster-color: transparent;
     }
     .mv-loader {
-      position: relative; z-index: 1;
+      position: relative; z-index: 3;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
       color: var(--gold-soft); pointer-events: none;
       transition: opacity 0.2s ease;
@@ -191,7 +191,7 @@
       animation: spin3d 0.75s linear infinite;
     }
     @keyframes spin3d { to { transform: rotate(360deg); } }
-    .mv-loader small { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.6px; opacity: 0.92; }
+    .mv-loader small { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.5px; opacity: 0.95; }
     .mv-slot.loaded .mv-loader { opacity: 0; }
 
     .tools-3d {
@@ -395,12 +395,22 @@
         <button class="mini-3d-btn" onclick="resetCamera()">🎯 Reset</button>
       </div>
 
-      <!-- Slot 3D Dinamik (resolusi penuh, dimuat pantas dari disk cache) -->
+      <!-- Satu model-viewer kekal diguna semula (resolusi penuh, tidak pernah matikan WebGL) -->
       <div class="mv-slot" id="mv-slot">
         <div class="mv-loader">
           <div class="mv-spin"></div>
           <small id="mv-loader-txt">Memuatkan Diorama 3D...</small>
         </div>
+        <model-viewer
+          id="mv"
+          camera-controls
+          auto-rotate
+          autoplay
+          shadow-intensity="0"
+          interaction-prompt="none"
+          exposure="1.15"
+          camera-orbit="35deg 68deg 108%">
+        </model-viewer>
       </div>
 
       <span class="stage-3d-hint" id="stage-3d-hint">👆 Seret 360° · Cubit Zum</span>
@@ -500,11 +510,12 @@
       { n: 12, tag: "BABAK 12 · WARISAN ABADI", mood: "mood-climax", t: "Sompoton, Simbol Cinta Sejati", glb: null }
     ];
 
-    /* Mula dari Halaman 1 secara lalai */
+    /* Bermula di Halaman 1 secara lalai (tetap menyokong ?page=X dari galeri 12 Babak) */
     const params = new URLSearchParams(window.location.search);
     let currentPage = Math.min(Math.max(parseInt(params.get('page')) || 1, 1), 12);
     let currentLang = ['bm', 'en', 'kdz'].includes(params.get('lang')) ? params.get('lang') : 'bm';
 
+    const mv = document.getElementById('mv');
     const mvSlot = document.getElementById('mv-slot'), mvLoaderTxt = document.getElementById('mv-loader-txt');
     const artWrap = document.getElementById('art-wrap'), imgStage = document.getElementById('img-stage');
     const exhibitFrame = document.getElementById('exhibit-frame'), tools3D = document.getElementById('tools-3d');
@@ -520,9 +531,9 @@
     let audio = new Audio(); audio.preload = 'none';
     let sfxAudio = new Audio(); sfxAudio.preload = 'none';
     let sfxEnabled = true, autoStory = false, toastTimer = null, isNightStage = false, autoRotateEnabled = true;
-    let activeMountToken = 0, cacheWarmupStarted = false;
+    let switchTimer = null, autoNextTimer = null, loadedGlbSrc = '', cacheWarmupStarted = false;
 
-    /* ================= PRAMUAT BERGILIR KE DISK CACHE (MUAT PANTAS HAL. 4, 6 & 10) ================= */
+    /* ================= PRAMUAT BERGILIR KE DISK CACHE (HAL. 4, 6 & 10 PANTAS) ================= */
     async function warmUpModelsSequentially() {
       if (cacheWarmupStarted) return;
       cacheWarmupStarted = true;
@@ -531,15 +542,22 @@
         if (document.hidden) break;
         try {
           const res = await fetch(url, { cache: 'force-cache' });
-          if (res.ok) await res.blob(); // Simpan ke disk cache pelayar tanpa makan VRAM GPU
+          if (res.ok) await res.blob();
         } catch (e) {}
         await new Promise(r => setTimeout(r, 350));
       }
     }
 
-    /* ================= PENGURUS 3D RESOLUSI PENUH + ANTI-CRASH ================= */
-    function getMV() { return mvSlot.querySelector('model-viewer'); }
+    function preloadAdjacentImages(num) {
+      [num - 1, num + 1].forEach(n => {
+        if (n >= 1 && n <= 12 && !pages[n - 1].glb) {
+          const pre = new Image();
+          pre.src = `./images/page${n}.jpg`;
+        }
+      });
+    }
 
+    /* ================= ENJIN 3D STABIL + SEMUA ANIMASI SERENTAK ================= */
     function playAllAnimations(mvEl) {
       if (!mvEl) return;
       try {
@@ -560,85 +578,67 @@
       } catch (e) {}
     }
 
-    function unmount3D() {
-      activeMountToken++;
-      const mv = getMV();
-      if (mv) {
-        try {
-          mv.removeAttribute('auto-rotate');
-          if (typeof mv.pause === 'function') mv.pause();
-          const canvas = mv.shadowRoot && mv.shadowRoot.querySelector('canvas');
-          if (canvas) {
-            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-            if (gl) {
-              const lose = gl.getExtension('WEBGL_lose_context');
-              if (lose) lose.loseContext();
-            }
-          }
-        } catch (e) {}
-        mv.removeAttribute('src');
-        mv.remove();
+    mv.addEventListener('progress', e => {
+      const pct = Math.round((e.detail.totalProgress || 0) * 100);
+      if (pct > 0 && pct < 100) mvLoaderTxt.textContent = `Memuatkan 3D... ${pct}%`;
+    });
+
+    mv.addEventListener('pointerdown', () => stage3dHint.classList.add('faded'), { passive: true });
+
+    mv.addEventListener('load', () => {
+      const data = pages[currentPage - 1];
+      if (!data || !data.glb) return;
+      loadedGlbSrc = data.glb;
+      mvSlot.classList.add('loaded');
+      if (!document.hidden) {
+        if (typeof mv.play === 'function') mv.play();
+        requestAnimationFrame(() => playAllAnimations(mv));
+        setTimeout(() => playAllAnimations(mv), 160);
       }
+    });
+
+    mv.addEventListener('error', () => {
+      const data = pages[currentPage - 1];
+      if (!data || !data.glb) return;
+      mvLoaderTxt.textContent = '⚠ Gagal memuatkan 3D, cuba tekan semula';
+    });
+
+    function show3DModel(glbSrc) {
+      mvSlot.style.display = 'flex';
+      mv.exposure = isNightStage ? 0.9 : 1.15;
+      mv.cameraOrbit = '35deg 68deg 108%';
+      if (autoRotateEnabled) mv.setAttribute('auto-rotate', '');
+      else mv.removeAttribute('auto-rotate');
+
+      if (mv.getAttribute('src') === glbSrc && loadedGlbSrc === glbSrc) {
+        mvSlot.classList.add('loaded');
+        if (typeof mv.play === 'function') mv.play();
+        playAllAnimations(mv);
+      } else {
+        loadedGlbSrc = '';
+        mvSlot.classList.remove('loaded');
+        mvLoaderTxt.textContent = 'Memuatkan Diorama 3D...';
+        mv.setAttribute('src', glbSrc);
+      }
+    }
+
+    function hide3DModel() {
+      mv.removeAttribute('auto-rotate');
+      if (typeof mv.pause === 'function') mv.pause();
+      if (mv.getAttribute('src')) mv.removeAttribute('src');
+      loadedGlbSrc = '';
       mvSlot.classList.remove('loaded');
       mvSlot.style.display = 'none';
     }
 
-    async function mount3D(glbSrc) {
-      const existing = getMV();
-      if (existing && existing.getAttribute('src') === glbSrc) {
-        mvSlot.style.display = 'flex';
-        if (typeof existing.play === 'function') existing.play();
-        playAllAnimations(existing);
-        return;
-      }
-
-      unmount3D();
-      const myToken = ++activeMountToken;
-      mvLoaderTxt.textContent = 'Memuatkan Diorama 3D...';
-      mvSlot.style.display = 'flex';
-
-      await customElements.whenDefined('model-viewer');
-      if (myToken !== activeMountToken || document.hidden) return;
-
-      const mv = document.createElement('model-viewer');
-      mv.setAttribute('src', glbSrc);
-      mv.setAttribute('camera-controls', '');
-      if (autoRotateEnabled) mv.setAttribute('auto-rotate', '');
-      mv.setAttribute('autoplay', '');
-      mv.setAttribute('shadow-intensity', '0');
-      mv.setAttribute('interaction-prompt', 'none');
-      mv.setAttribute('exposure', isNightStage ? '0.9' : '1.15');
-      mv.setAttribute('camera-orbit', '35deg 68deg 108%');
-
-      mv.addEventListener('progress', e => {
-        if (myToken !== activeMountToken) return;
-        const pct = Math.round((e.detail.totalProgress || 0) * 100);
-        if (pct > 0 && pct < 100) mvLoaderTxt.textContent = `Memuatkan 3D... ${pct}%`;
-      });
-
-      mv.addEventListener('pointerdown', () => stage3dHint.classList.add('faded'), { passive: true });
-      mv.addEventListener('load', () => {
-        if (myToken !== activeMountToken) return;
-        mvSlot.classList.add('loaded');
-        if (!document.hidden) {
-          if (typeof mv.play === 'function') mv.play();
-          requestAnimationFrame(() => playAllAnimations(mv));
-          setTimeout(() => playAllAnimations(mv), 160);
-        }
-      });
-      mv.addEventListener('error', () => {
-        if (myToken !== activeMountToken) return;
-        mvLoaderTxt.textContent = '⚠ Gagal memuatkan model 3D';
-      });
-
-      mvSlot.appendChild(mv);
-    }
-
+    /* ================= PEMBERSIHAN MEMORI BILA KELUAR / TEKAN BACK ================= */
     function cleanupBeforeLeave() {
+      clearTimeout(switchTimer);
+      clearTimeout(autoNextTimer);
       stopAudio();
       sfxAudio.pause();
       sfxAudio.currentTime = 0;
-      unmount3D();
+      hide3DModel();
     }
 
     function navigateSafely(url) {
@@ -654,12 +654,8 @@
     });
 
     window.addEventListener('pagehide', cleanupBeforeLeave);
-    window.addEventListener('beforeunload', cleanupBeforeLeave);
     window.addEventListener('pageshow', e => {
-      if (e.persisted) {
-        const data = pages[currentPage - 1];
-        if (data && data.glb) mount3D(data.glb);
-      }
+      if (e.persisted) loadPage(currentPage, false);
     });
 
     ['touchstart', 'pointerdown'].forEach(evt => {
@@ -687,6 +683,13 @@
       arJumpLink.href = `ar.html?lang=${currentLang}`;
     }
 
+    function syncUrlState() {
+      try {
+        const nextUrl = `${window.location.pathname}?page=${currentPage}&lang=${currentLang}`;
+        window.history.replaceState(null, '', nextUrl);
+      } catch (e) {}
+    }
+
     function playPageSfx(num) {
       sfxAudio.pause(); sfxAudio.currentTime = 0;
       if (sfxEnabled && sfxList[num]) { sfxAudio.src = sfxList[num]; sfxAudio.loop = true; sfxAudio.volume = 0.42; sfxAudio.play().catch(() => {}); }
@@ -699,11 +702,9 @@
       showToast(sfxEnabled ? "🎵 Smart SFX dihidupkan" : "🔇 Smart SFX dimatikan");
     }
     function toggleRotate() {
-      const mv = getMV();
       const btn = document.getElementById('rot-btn');
       autoRotateEnabled = !autoRotateEnabled;
       btn.classList.toggle('active', autoRotateEnabled);
-      if (!mv) return;
       if (autoRotateEnabled) mv.setAttribute('auto-rotate', '');
       else mv.removeAttribute('auto-rotate');
     }
@@ -711,16 +712,13 @@
       isNightStage = !isNightStage;
       const btn = document.getElementById('mood-btn');
       exhibitFrame.classList.toggle('night-stage', isNightStage);
-      const mv = getMV();
-      if (mv) mv.exposure = isNightStage ? 0.9 : 1.15;
+      mv.exposure = isNightStage ? 0.9 : 1.15;
       btn.classList.toggle('active', isNightStage);
       btn.textContent = isNightStage ? '☀️ Pagi' : '🌙 Magis';
       playChime('flip');
       showToast(isNightStage ? "🌙 Pencahayaan Magis aktif" : "☀️ Pencahayaan Pagi aktif");
     }
     function resetCamera() {
-      const mv = getMV();
-      if (!mv) return;
       mv.cameraOrbit = '35deg 68deg 108%';
       mv.fieldOfView = 'auto';
       playChime('flip');
@@ -728,8 +726,7 @@
     }
 
     function snap3D() {
-      const mv = getMV();
-      if (!mv) return;
+      if (!mv.getAttribute('src')) return;
       try {
         const flash = document.getElementById('flash-overlay');
         flash.style.opacity = '0.85'; setTimeout(() => flash.style.opacity = '0', 180);
@@ -746,7 +743,7 @@
 
           ctx.strokeStyle = '#173325'; ctx.lineWidth = Math.max(8, c.width * 0.012);
           ctx.strokeRect(5, 5, c.width - 10, c.height - 10);
-          ctx.strokeStyle = '#DCA028'; ctx.lineWidth = Math.max(3, c.width * 0.005);
+          ctx.strokeStyle = '#DCA028'; ctx.lineWidth = 3;
           ctx.strokeRect(14, 14, c.width - 28, c.height - 28);
 
           ctx.fillStyle = 'rgba(23, 51, 37, 0.92)'; ctx.fillRect(0, c.height - 54, c.width, 54);
@@ -763,9 +760,13 @@
     }
 
     function loadPage(num, autoPlayNow = false) {
-      currentPage = num; stopAudio();
+      clearTimeout(switchTimer);
+      clearTimeout(autoNextTimer);
+      currentPage = num;
+      stopAudio();
       exhibitFrame.classList.add('switching');
-      setTimeout(() => {
+
+      switchTimer = setTimeout(() => {
         const data = pages[num - 1];
         document.body.className = data.mood;
         storyProgFill.style.width = `${(num / 12) * 100}%`;
@@ -775,6 +776,7 @@
         viewerSub.textContent = subtitles[`pg${num}`][currentLang];
         quizCtaPill.style.display = num === 12 ? 'inline-block' : 'none';
         updateLangUI();
+        syncUrlState();
         document.querySelectorAll('.num-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === num));
 
         if (data.glb) {
@@ -784,9 +786,9 @@
           badge3D.style.display = 'inline-block';
           stage3dHint.style.display = 'block';
           stage3dHint.classList.remove('faded');
-          mount3D(data.glb);
+          show3DModel(data.glb);
         } else {
-          unmount3D();
+          hide3DModel();
           tools3D.style.display = 'none';
           badge3D.style.display = 'none';
           stage3dHint.style.display = 'none';
@@ -795,10 +797,12 @@
           imgStage.onerror = () => { imgStage.src = './images/cover.jpg'; };
           artWrap.style.display = 'block';
         }
+
         exhibitFrame.classList.remove('switching');
+        preloadAdjacentImages(num);
         playPageSfx(num);
         if (autoPlayNow) startAudioPlayback();
-      }, 100);
+      }, 90);
     }
 
     function stepPage(delta) {
@@ -811,7 +815,9 @@
 
     function changeLang(lang) {
       playChime('flip');
-      currentLang = lang; updateLangUI();
+      currentLang = lang;
+      updateLangUI();
+      syncUrlState();
       viewerSub.textContent = subtitles[`pg${currentPage}`][lang];
       if (!audio.paused) { stopAudio(); startAudioPlayback(); }
     }
@@ -855,7 +861,7 @@
         showToast("🎉 Tahniah! Anda selesai meneroka kisah Sompoton");
         if (autoStory) { autoStory = false; document.getElementById('auto-story-btn').classList.remove('on'); document.getElementById('auto-story-btn').textContent = '✨ Auto-Cerita'; }
       } else if (autoStory && currentPage < 12) {
-        setTimeout(() => loadPage(currentPage + 1, true), 900);
+        autoNextTimer = setTimeout(() => loadPage(currentPage + 1, true), 900);
       } else if (sfxEnabled && sfxList[currentPage]) {
         sfxAudio.play().catch(() => {});
       }
@@ -877,21 +883,22 @@
       else if (e.code === 'Space') { e.preventDefault(); toggleAudio(); }
     });
 
-    // Bebaskan memori 3D & jeda audio apabila pengguna tukar tab
+    // Jeda audio & animasi apabila pengguna tukar tab
     document.addEventListener('visibilitychange', () => {
       const data = pages[currentPage - 1];
       if (document.hidden) {
         if (!audio.paused) toggleAudio();
         sfxAudio.pause();
-        unmount3D();
-      } else if (data && data.glb) {
-        mount3D(data.glb);
+        if (typeof mv.pause === 'function') mv.pause();
+      } else if (data && data.glb && mv.getAttribute('src')) {
+        if (typeof mv.play === 'function') mv.play();
+        playAllAnimations(mv);
       }
     });
 
     updateLangUI();
     loadPage(currentPage, false);
-    // Mula pramuat fail .glb secara senyap ke disk cache selepas Halaman 1 siap dipaparkan
+    // Mula pramuat fail .glb secara senyap ke disk cache selepas Halaman 1 siap
     setTimeout(warmUpModelsSequentially, 700);
   </script>
 </body>
